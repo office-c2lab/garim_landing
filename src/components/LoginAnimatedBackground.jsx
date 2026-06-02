@@ -45,7 +45,7 @@ const fragmentShaderSource = `
   }
 
   void main() {
-    vec2 uv = 0.5 * v_uv;
+    vec2 uv = 0.42 * v_uv;
     uv.x *= u_ratio;
 
     vec2 pointer = v_uv - u_pointer_position;
@@ -59,18 +59,18 @@ const fragmentShaderSource = `
 
     float noise = neuro_shape(uv, t, p);
 
-    noise = 1.08 * pow(noise, 3.0);
-    noise += pow(noise, 8.0);
-    noise = max(0.0, noise - 0.46);
+    noise = 1.12 * pow(noise, 2.9);
+    noise += pow(noise, 7.4);
+    noise = max(0.0, noise - 0.39);
 
     float distanceFromCenter = length(v_uv - 0.5);
-    float centerFade = 1.0 - smoothstep(0.10, 1.08, distanceFromCenter);
+    float centerFade = 1.0 - smoothstep(0.06, 1.16, distanceFromCenter);
 
     // 화면 위쪽에서 은은하게 내려오는 수면빛
     float surfaceLight = smoothstep(0.15, 1.0, v_uv.y);
 
-    float pointerGlow = p * 0.22;
-    float glow = noise * (0.92 + pointerGlow) * centerFade;
+    float pointerGlow = p * 0.24;
+    float glow = noise * (0.99 + pointerGlow) * centerFade;
 
     float pulse = 0.88 + 0.12 * sin(u_time * 0.00032 + u_scroll_progress * 6.28318);
 
@@ -81,15 +81,15 @@ const fragmentShaderSource = `
     vec3 surfaceCyan = vec3(0.720, 0.650, 1.000);
 
     vec3 color = mix(deepNavy, oceanBlue, surfaceLight * 0.78);
-    color = mix(color, aquaGlow, clamp(glow * 1.35 + pointerGlow, 0.0, 1.0));
+    color = mix(color, aquaGlow, clamp(glow * 1.4 + pointerGlow, 0.0, 1.0));
 
     // 위쪽에만 아주 약한 라벤더 빛 추가
-    color += surfaceCyan * pow(surfaceLight, 3.0) * 0.028;
+    color += surfaceCyan * pow(surfaceLight, 3.0) * 0.032;
 
     vec3 finalColor = color * glow * pulse;
-    finalColor += aquaGlow * pow(glow, 2.0) * 0.22;
+    finalColor += aquaGlow * pow(glow, 2.0) * 0.24;
 
-    float alpha = clamp(glow * 0.96, 0.0, 0.92);
+    float alpha = clamp(glow * 1.0, 0.0, 0.92);
 
     gl_FragColor = vec4(finalColor, alpha);
   }

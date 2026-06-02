@@ -5,9 +5,9 @@
   pointer-events: none;
 
   background:
-    radial-gradient(circle at 50% -14%, rgba(154, 132, 255, 0.14), transparent 46%),
-    radial-gradient(circle at 18% 18%, rgba(106, 90, 224, 0.1), transparent 34%),
-    radial-gradient(circle at 82% 82%, rgba(82, 56, 180, 0.12), transparent 40%),
+    radial-gradient(circle at 50% -14%, rgba(154, 132, 255, 0.15), transparent 50%),
+    radial-gradient(circle at 18% 18%, rgba(106, 90, 224, 0.11), transparent 38%),
+    radial-gradient(circle at 82% 82%, rgba(82, 56, 180, 0.13), transparent 46%),
     linear-gradient(180deg, #05040d 0%, #080712 50%, #020207 100%);
 }
 
@@ -27,9 +27,9 @@
 
 .login-animated-background__veil {
   background:
-    radial-gradient(circle at 50% 28%, rgba(197, 181, 255, 0.07), transparent 40%),
-    radial-gradient(circle at 16% 12%, rgba(156, 132, 255, 0.08), transparent 32%),
-    radial-gradient(circle at 86% 78%, rgba(106, 90, 224, 0.1), transparent 42%),
+    radial-gradient(circle at 50% 28%, rgba(197, 181, 255, 0.08), transparent 46%),
+    radial-gradient(circle at 16% 12%, rgba(156, 132, 255, 0.09), transparent 36%),
+    radial-gradient(circle at 86% 78%, rgba(106, 90, 224, 0.11), transparent 48%),
     linear-gradient(
       180deg,
       rgba(4, 4, 12, 0.1) 0%,
@@ -73,6 +73,6 @@
 
 @media (max-width: 768px) {
   .login-animated-background__canvas {
-    opacity: 0.82;
+    opacity: 0.94;
   }
 }
