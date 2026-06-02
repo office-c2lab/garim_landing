@@ -1,0 +1,64 @@
+.arena-opening-art {
+  position: relative;
+  width: min(86vw, 34rem);
+  height: clamp(11rem, 19vw, 13.25rem);
+  pointer-events: none;
+}
+
+.arena-opening-art__piece {
+  position: absolute;
+  left: 50%;
+  display: block;
+  height: auto;
+  filter: drop-shadow(0 18px 36px rgba(106, 90, 224, 0.28));
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  animation: garim-intro-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.arena-opening-art__piece--logo {
+  top: calc(50% - clamp(4.55rem, 7.2vw, 5.15rem));
+  width: clamp(6.65rem, 11.6vw, 8.25rem);
+}
+
+.arena-opening-art__piece--wordmark {
+  top: calc(50% + clamp(3.35rem, 4.9vw, 4.2rem));
+  width: min(86vw, 34rem);
+  animation-delay: 0.18s;
+}
+
+@keyframes garim-intro-rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 16px)) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .arena-opening-art {
+    width: min(88vw, 25rem);
+    height: 10.5rem;
+  }
+
+  .arena-opening-art__piece--logo {
+    top: calc(50% - 4rem);
+    width: clamp(5.6rem, 19vw, 6.8rem);
+  }
+
+  .arena-opening-art__piece--wordmark {
+    top: calc(50% + 2.85rem);
+    width: min(88vw, 25rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arena-opening-art__piece {
+    animation: none;
+    opacity: 1;
+  }
+}

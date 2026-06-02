@@ -1,0 +1,18 @@
+export const APP_PAGE_OUTER_WIDTH_CLASS =
+  'max-w-[96rem] lg:max-w-[88rem] xl:max-w-[96rem] 2xl:max-w-[100rem]';
+export const APP_PAGE_INNER_WIDTH_CLASS =
+  'max-w-[82rem] lg:max-w-[72rem] xl:max-w-[82rem] 2xl:max-w-[86rem]';
+export const APP_PAGE_HORIZONTAL_PADDING_CLASS = 'px-[clamp(1rem,2.2vw,1.75rem)]';
+export const APP_PAGE_TITLE_CLASS = 'text-[clamp(1.6rem,2.2vw,2rem)]';
+export const APP_PAGE_TITLE_SUPPORT_CLASS = 'text-[clamp(0.95rem,1.05vw,1.05rem)]';
+export const APP_LARGE_SECTION_TITLE_CLASS = 'text-[clamp(1.24rem,1.8vw,1.68rem)]';
+export const APP_PANEL_TITLE_CLASS = 'text-[clamp(1.02rem,1.25vw,1.28rem)]';
+export const APP_SECTION_TITLE_CLASS = 'text-[clamp(1.08rem,1.4vw,1.32rem)]';
+export const APP_SECTION_LABEL_CLASS = 'text-[clamp(0.94rem,1.1vw,1.02rem)]';
+export const APP_FORM_LABEL_TEXT_CLASS = 'text-[clamp(0.9rem,1vw,0.98rem)]';
+export const APP_BODY_TEXT_CLASS = 'text-[clamp(0.92rem,1vw,1rem)]';
+export const APP_HELPER_TEXT_CLASS = 'text-[clamp(0.88rem,1vw,0.96rem)]';
+export const APP_META_TEXT_CLASS = 'text-[clamp(0.84rem,0.95vw,0.92rem)]';
+export const APP_SMALL_META_TEXT_CLASS = 'text-[clamp(0.78rem,0.9vw,0.86rem)]';
+export const APP_BUTTON_TEXT_CLASS = 'text-[clamp(0.9rem,1vw,0.98rem)]';
+export const APP_STEP_TAB_TEXT_CLASS = 'text-[clamp(0.96rem,1.25vw,1.1rem)]';

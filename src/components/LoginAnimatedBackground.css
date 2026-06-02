@@ -1,0 +1,78 @@
+.login-animated-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at 50% -14%, rgba(154, 132, 255, 0.14), transparent 46%),
+    radial-gradient(circle at 18% 18%, rgba(106, 90, 224, 0.1), transparent 34%),
+    radial-gradient(circle at 82% 82%, rgba(82, 56, 180, 0.12), transparent 40%),
+    linear-gradient(180deg, #05040d 0%, #080712 50%, #020207 100%);
+}
+
+.login-animated-background__canvas,
+.login-animated-background__veil,
+.login-animated-background__grain {
+  position: absolute;
+  inset: 0;
+}
+
+.login-animated-background__canvas {
+  width: 100%;
+  height: 100%;
+  opacity: 0.98;
+  mix-blend-mode: screen;
+}
+
+.login-animated-background__veil {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(197, 181, 255, 0.07), transparent 40%),
+    radial-gradient(circle at 16% 12%, rgba(156, 132, 255, 0.08), transparent 32%),
+    radial-gradient(circle at 86% 78%, rgba(106, 90, 224, 0.1), transparent 42%),
+    linear-gradient(
+      180deg,
+      rgba(4, 4, 12, 0.1) 0%,
+      rgba(5, 5, 14, 0.3) 48%,
+      rgba(1, 1, 5, 0.64) 100%
+    );
+  mix-blend-mode: screen;
+}
+
+.login-animated-background__grain::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  opacity: 0.06;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.7) 0.7px, transparent 0.7px);
+  background-size: 8px 8px;
+  transform: rotate(10deg);
+}
+
+.hero-shader-background--preview .login-animated-background {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(154, 132, 255, 0.13), transparent 36%),
+    radial-gradient(circle at 18% 18%, rgba(106, 90, 224, 0.09), transparent 28%),
+    radial-gradient(circle at 82% 82%, rgba(82, 56, 180, 0.1), transparent 32%),
+    linear-gradient(180deg, #05040d 0%, #080712 50%, #020207 100%);
+}
+
+.hero-shader-background--preview .login-animated-background__veil {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(197, 181, 255, 0.07), transparent 32%),
+    radial-gradient(circle at 16% 12%, rgba(156, 132, 255, 0.08), transparent 26%),
+    radial-gradient(circle at 86% 78%, rgba(106, 90, 224, 0.09), transparent 32%),
+    linear-gradient(
+      180deg,
+      rgba(4, 4, 12, 0.1) 0%,
+      rgba(5, 5, 14, 0.3) 48%,
+      rgba(1, 1, 5, 0.64) 100%
+    );
+}
+
+@media (max-width: 768px) {
+  .login-animated-background__canvas {
+    opacity: 0.82;
+  }
+}
