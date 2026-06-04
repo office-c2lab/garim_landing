@@ -271,10 +271,16 @@ export function MonitoringLogView({
 }) {
   const [searchParams] = useSearchParams();
   const defaultDateRange = useMemo(() => createDefaultDateRange(), []);
-  const [startDate, setStartDate] = useState(defaultDateRange.startDate);
-  const [endDate, setEndDate] = useState(defaultDateRange.endDate);
+  const [startDate, setStartDate] = useState(
+    () => searchParams.get('startDate') ?? defaultDateRange.startDate
+  );
+  const [endDate, setEndDate] = useState(
+    () => searchParams.get('endDate') ?? defaultDateRange.endDate
+  );
   const [selectedPolicy, setSelectedPolicy] = useState('전체 정책');
-  const [selectedUser, setSelectedUser] = useState(ALL_USERS_OPTION);
+  const [selectedUser, setSelectedUser] = useState(
+    () => searchParams.get('user') ?? ALL_USERS_OPTION
+  );
   const [selectedLogId, setSelectedLogId] = useState();
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);

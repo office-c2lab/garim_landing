@@ -8,7 +8,7 @@ import { Container } from './LandingPage.primitives';
 export default function NavbarSection({ className = '' }) {
   const items = useMemo(
     () => [
-      { label: 'Security for AI', href: '#features' },
+      { label: 'AI ACCESS CONTROL', href: '#features' },
       { label: '검증 기능', href: '#judge' },
       { label: '등록 방식', href: '#showcase' },
       { label: '결과 분석', href: '#history' },
@@ -44,7 +44,7 @@ export default function NavbarSection({ className = '' }) {
   to="/dashboard"
   className="group inline-flex items-center gap-2 rounded-xl border border-[#d8d2ff] bg-white px-4 py-2 text-sm font-medium text-[#5b4fd2] shadow-[0_8px_20px_rgba(106,90,224,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-[#6a5ae0] hover:bg-[#6a5ae0] hover:text-white hover:shadow-[0_12px_28px_rgba(106,90,224,0.22)] focus:outline-none focus-visible:-translate-y-0.5 focus-visible:border-[#6a5ae0] focus-visible:bg-[#6a5ae0] focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#a99dff] focus-visible:ring-offset-2"
 >
-  GARIM으로 검증 시작
+  도입 문의하기
   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
 </Link>
         </div>

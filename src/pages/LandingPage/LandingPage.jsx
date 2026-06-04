@@ -6,6 +6,7 @@ import Hero from './HeroSection';
 import NavbarSection from './NavbarSection';
 
 const Features = lazy(() => import('./FeaturesSection'));
+const SupportedAi = lazy(() => import('./SupportedAiSection'));
 const JudgeStackOnlySection = lazy(() => import('./JudgeStackOnlySection'));
 const Showcase = lazy(() => import('./ShowcaseSection'));
 const Testimonials = lazy(() => import('./TestimonialsSection'));
@@ -65,11 +66,14 @@ export default function LandingPage() {
           GenAI Access Risk Inspection Management
         </p>
         <h2 className="mt-5 text-balance text-3xl font-semibold tracking-[-0.04em] text-[#171717] sm:text-5xl">
-          생성형 AI의 신뢰성과 안전성을 검증하는 솔루션
+          중앙 집중형 AI 보안 가드레일 플랫폼
         </h2> 
       </section>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 880 }} />}>
         <Features />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
+        <SupportedAi />
       </Suspense>
       <LazySectionMount minHeight={980} margin="-12% 0px">
         <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 980 }} />}>

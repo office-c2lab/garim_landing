@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import { Fragment, useMemo, useState } from 'react';
+import GlassPagination from '../../components/GlassPagination.jsx';
 import SectionCard from '../../components/SectionCard.jsx';
 import { MonitoringDropdown } from '../../components/monitoring/MonitoringListComponents.jsx';
 import {
@@ -18,6 +19,7 @@ import {
 } from '../../queries/userManagementQueries.js';
 
 const DEFAULT_DEPARTMENT_OPTION = '전체 부서';
+const ROWS_PER_PAGE = 10;
 
 function getFallbackValue(value) {
   return value?.trim() || '-';
@@ -139,12 +141,12 @@ function UserDetailPanel({ user, onDelete, onSave, isSaving }) {
           </DetailField>
         </DetailSection>
 
-        <div className="flex justify-end gap-3 border-t border-[#DDE3EF] px-5 py-4 xl:col-span-2">
+        <div className="flex justify-end gap-3 border-t border-slate-200 px-5 py-5 sm:px-6 xl:col-span-2">
           <button
             type="button"
             onClick={handleCancel}
             disabled={isSaving}
-            className="h-10 min-w-[6.5rem] rounded-md border border-[#D7DDE8] bg-white px-5 text-[13px] font-bold text-[#344054] transition hover:bg-[#F8FAFF]"
+            className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-500 transition hover:bg-slate-50"
           >
             취소
           </button>
@@ -152,7 +154,7 @@ function UserDetailPanel({ user, onDelete, onSave, isSaving }) {
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="h-10 min-w-[6.5rem] rounded-md border border-[#4338CA] bg-[#4338CA] px-5 text-[13px] font-bold text-white transition hover:bg-[#3730A3] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-6 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSaving ? '저장 중' : '저장'}
           </button>
@@ -168,6 +170,7 @@ export default function UserPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [department, setDepartment] = useState(DEFAULT_DEPARTMENT_OPTION);
   const [deletedUserIds, setDeletedUserIds] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const { data: clientsData, isError, isFetching, isLoading } = useRegisteredClientsQuery();
   const { mutate: patchClientMetadata, isPending: isSaving } = usePatchClientMetadataMutation();
 
@@ -203,6 +206,29 @@ export default function UserPage() {
       return matchesQuery && matchesDepartment;
     });
   }, [deletedUserIds, department, searchQuery, users]);
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ROWS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const visibleUsers = filteredUsers.slice(
+    (safePage - 1) * ROWS_PER_PAGE,
+    safePage * ROWS_PER_PAGE
+  );
+
+  const handleChangeDepartment = nextDepartment => {
+    setDepartment(nextDepartment);
+    setCurrentPage(1);
+    setSelectedId(null);
+  };
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+    setSelectedId(null);
+  };
+
+  const handlePageChange = page => {
+    setCurrentPage(page);
+    setSelectedId(null);
+  };
 
   const handleSaveSelectedUser = draft => {
     if (!selectedUser) return;
@@ -241,7 +267,7 @@ export default function UserPage() {
             <div className="flex flex-col gap-3 lg:flex-row">
               <MonitoringDropdown
                 value={department}
-                onChange={setDepartment}
+                onChange={handleChangeDepartment}
                 options={departmentOptions}
                 ariaLabel="전체 부서"
                 widthClass="w-full lg:w-[12rem] lg:shrink-0"
@@ -261,7 +287,7 @@ export default function UserPage() {
                 </label>
                 <button
                   type="button"
-                  onClick={() => setSearchQuery(searchInput)}
+                  onClick={handleSearch}
                   className="inline-flex h-12 min-w-[6rem] items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81]"
                 >
                   검색
@@ -311,7 +337,7 @@ export default function UserPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user, index) => {
+                  {visibleUsers.map((user, index) => {
                     const isSelected = user.id === selectedId;
 
                     return (
@@ -393,6 +419,16 @@ export default function UserPage() {
             ) : null}
           </div>
         </SectionCard>
+
+        {filteredUsers.length ? (
+          <div className="mt-1 shrink-0 pb-0">
+            <GlassPagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        ) : null}
       </div>
     </PageLayout>
   );

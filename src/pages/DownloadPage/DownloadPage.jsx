@@ -3,42 +3,40 @@ import {
   Download,
   FileArchive,
   Folder,
-  Globe2,
+  LogOut,
   Mail,
   MousePointerClick,
-  RefreshCw,
+  Phone,
   Rocket,
   ShieldCheck,
-  Settings,
   Trash2,
-  TriangleAlert,
-  MessageSquare,
 } from 'lucide-react';
 import garimMoonImage from '../../assets/images/garim_moon.png';
 import garimLogo from '../../assets/icons/GARIM.png';
 import logoIcon from '../../assets/icons/logo.png';
 import packIcon from '../../assets/images/pac.png';
+import { useTemplateSettingsQuery } from '../../queries/companySettingsQueries.js';
 import { useWindowsSetupDownloadMutation } from '../../queries/downloadQueries.js';
-import { useSupportSettingsStore } from '../../stores/supportSettingsStore.js';
+import { normalizeTemplateSettings } from '../../utils/companyTemplate.js';
 
 const installSteps = [
-  [Download, '팩 파일 다운로드', 'garim-windows-setup.zip\n파일을 다운로드합니다.'],
+  [Download, '압축 파일 다운로드', 'garim-windows-setup.zip\n파일을 다운로드합니다.'],
   [FileArchive, '압축 해제', '다운로드한 zip 파일의\n압축을 풉니다.'],
+  [LogOut, 'AI 서비스 종료', 'AI 서비스 웹페이지나 앱을\n완전히 종료합니다.'],
   [
     MousePointerClick,
     '설치 파일 실행',
     '압축을 푼 폴더 안에서\ngarim-start.cmd 파일을 실행합니다.',
   ],
   [ShieldCheck, '보안 확인 허용', 'Windows 보안 확인 창이나\n인증서 설치 확인 창을 허용합니다.'],
-  [RefreshCw, 'AI 서비스 종료', 'AI 서비스 웹페이지나 앱을\n완전히 종료합니다.'],
   [Rocket, '다시 접속', '브라우저 또는 앱을 다시 실행하고\nAI 서비스에 접속합니다.'],
 ];
 
 const deleteSteps = [
+  [LogOut, 'AI 서비스 종료', 'AI 서비스 웹페이지나 앱을\n완전히 종료합니다.'],
   [Folder, '설치 폴더 열기', '압축을 풀었던\ngarim-windows-setup 폴더를 엽니다.'],
   [Trash2, '삭제 파일 실행', 'garim-delete.cmd\n파일을 실행합니다.'],
   [ShieldCheck, '보안 확인 허용', 'Windows 보안 확인 창 내용을\n확인한 뒤 허용합니다.'],
-  [RefreshCw, 'AI 서비스 종료', 'AI 서비스 웹페이지나 앱을\n완전히 종료합니다.'],
   [Rocket, '다시 실행', '브라우저 또는 앱을\n다시 실행합니다.'],
 ];
 
@@ -59,10 +57,10 @@ const cautionItems = [
 ];
 
 const verifyItems = [
-  [Globe2, '서비스 접속이 정상적으로 가능한지 확인'],
-  [Settings, '정책 또는 설정이 정상 반영되었는지 확인'],
-  [TriangleAlert, '오류 메시지가 표시되지 않는지 확인'],
-  [MessageSquare, '문제가 발생하면 관리자에게 문의'],
+  ['AI 서비스 접속 확인', '서비스 접속이 정상적으로 가능한지 확인해 주세요.'],
+  ['정책 반영 확인', '정책 또는 설정이 정상 반영되었는지 확인해 주세요.'],
+  ['오류 메시지 확인', '오류 메시지가 표시되지 않는지 확인해 주세요.'],
+  ['관리자 문의', '문제가 지속되면 관리자에게 문의해 주세요.'],
 ];
 
 function Section({ children, className = '', ...props }) {
@@ -80,7 +78,9 @@ function SectionHeader({ title, description }) {
   return (
     <div className="max-w-[52rem]">
       <h2 className="text-[1.75rem] font-black tracking-[-0.03em] text-slate-900">{title}</h2>
-      <p className="mt-3 text-base font-semibold leading-7 text-[#526078]">{description}</p>
+      <p className="mt-3 whitespace-pre-line text-base font-semibold leading-7 text-[#526078]">
+        {description}
+      </p>
     </div>
   );
 }
@@ -104,14 +104,9 @@ function CompactGuideCard({ icon, number, title, description }) {
   );
 }
 
-function GuideNotice({ children }) {
-  return (
-    <p className="mt-5 text-sm font-semibold leading-6 text-[#6C4FE0]">{children}</p>
-  );
-}
-
 export default function DownloadPage() {
-  const template = useSupportSettingsStore(state => state.template);
+  const { data: templateSettings } = useTemplateSettingsQuery();
+  const template = normalizeTemplateSettings(templateSettings);
   const { mutate: requestWindowsSetupDownload, isPending: isDownloadPending } =
     useWindowsSetupDownloadMutation();
 
@@ -134,6 +129,9 @@ export default function DownloadPage() {
             <a href="#pack-download" className="transition hover:text-[#C4B5FD]">
               다운로드
             </a>
+            <a href="#delete" className="transition hover:text-[#C4B5FD]">
+              삭제 안내
+            </a>
             <a href="#contact" className="transition hover:text-[#C4B5FD]">
               문의하기
             </a>
@@ -148,7 +146,6 @@ export default function DownloadPage() {
           backgroundPosition: 'center bottom',
         }}
       >
-        
         <div className="relative z-10 mx-auto max-w-[820px] text-center">
           <h1 className="text-[clamp(2.4rem,5vw,4.2rem)] font-bold leading-tight tracking-[-0.02em]">
             운영지원
@@ -160,27 +157,24 @@ export default function DownloadPage() {
             type="button"
             onClick={handleDownloadClick}
             disabled={isDownloadPending}
-            className="mt-9 inline-flex h-16 items-center justify-center gap-3 rounded-xl border border-[#6D4CFF] bg-[#5B39D6] px-12 text-lg font-black text-white shadow-[0_18px_36px_rgba(91,57,214,0.34)] transition hover:bg-[#4C2FC0]"
+            className="mt-9 inline-flex h-16 items-center justify-center gap-3 rounded-xl border border-[#5B39D6] bg-[#5B39D6] px-8 text-lg font-black text-white shadow-[0_14px_30px_rgba(91,57,214,0.24)] transition hover:bg-[#4C2FC0]"
           >
-            <Download className="h-6 w-6" />
+            <Download className="h-5 w-5" />
             {isDownloadPending ? '다운로드 준비 중' : '압축 파일 다운로드'}
           </button>
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-12 px-8 py-12">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-16 px-8 py-12">
         <section id="apply" className="scroll-mt-28">
           <SectionHeader
             title="설치 안내"
-            description="다운로드한 압축 파일을 실행한 뒤 안내에 따라 GARIM 설정을 적용해 주세요."
+            description={
+              '다운로드한 압축 파일을 실행한 뒤 안내에 따라 GARIM 설정을 적용해 주세요.\n설치 후 관련 대상 AI 서비스 접속은 회사 보안 프록시를 통해 연결되며,\n 정책에 따라 일부 요청은 허용·차단·기록될 수 있습니다.'
+            }
           />
 
-          <GuideNotice>
-            설치 후에는 관련 대상 AI 서비스 접속이 회사 보안 프록시를 통해 연결되며, 정책에 따라
-            일부 요청은 허용·차단·기록될 수 있습니다.
-          </GuideNotice>
-
-          <div className="mt-6 grid gap-7 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {installSteps.map(([Icon, title, description], index) => (
               <CompactGuideCard
                 key={title}
@@ -205,7 +199,7 @@ export default function DownloadPage() {
             }
           />
 
-          <div className="mt-8 rounded-xl border border-[#DDE4EF] bg-white p-6">
+          <div className="mt-8 rounded-xl border border-[#DDE4EF] bg-[#FAFBFF] p-6">
             <div className="grid gap-6 lg:grid-cols-[10rem_1fr_auto] lg:items-center">
               <img src={packIcon} alt="" className="h-40 w-40 object-contain" />
               <div>
@@ -213,9 +207,6 @@ export default function DownloadPage() {
                   <h3 className="break-all text-[clamp(1.35rem,3vw,2rem)] font-black tracking-[-0.03em] text-slate-900">
                     garim-windows-setup.zip
                   </h3>
-                  <span className="rounded-md border border-[#E3E8F2] bg-white px-3 py-1 text-xs font-black text-[#526078]">
-                    최신 버전
-                  </span>
                 </div>
                 <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm font-bold text-[#64728C]">
                   <span>버전 v0.1.0</span>
@@ -237,7 +228,6 @@ export default function DownloadPage() {
                   <Download className="h-5 w-5" />
                   {isDownloadPending ? '다운로드 준비 중' : '압축 파일 다운로드'}
                 </button>
-                <span className="text-center text-base font-black text-[#526078]">3KB</span>
               </div>
             </div>
           </div>
@@ -254,7 +244,10 @@ export default function DownloadPage() {
                 key={title}
                 className="flex min-h-[5.75rem] items-start gap-4 rounded-[10px] border border-[#E3E8F2] bg-[#FAFBFF] px-5 py-4"
               >
-                <CircleCheck className="mt-1 h-5 w-5 shrink-0 text-[#5B39D6]" />
+                <CircleCheck
+                  className="mt-1 h-5 w-5 shrink-0 fill-[#6D4CFF] text-[#6D4CFF] [&>path:last-child]:stroke-white"
+                  strokeWidth={3}
+                />
                 <div className="min-w-0">
                   <p className="text-base font-black text-slate-900">{title}</p>
                   <p className="mt-1 whitespace-pre-line text-sm font-semibold leading-6 text-[#526078]">
@@ -266,23 +259,33 @@ export default function DownloadPage() {
           </div>
         </Section>
 
-        <section className="scroll-mt-28">
+        <section id="delete" className="scroll-mt-28">
           <SectionHeader
             title="삭제 안내"
-            description="GARIM 적용을 해제해야 하는 경우 아래 순서대로 진행해 주세요."
+            description={
+              'GARIM 적용을 해제해야 하는 경우 아래 순서대로 진행해 주세요.\n삭제 후에는 설정된 PAC 프록시와 설치된 인증서가 제거됩니다.'
+            }
           />
 
-          <GuideNotice>삭제 후에는 설정된 PAC 프록시와 설치된 인증서가 제거됩니다.</GuideNotice>
-
-          <div className="mt-6 grid gap-7 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {deleteSteps.map(([Icon, title, description], index) => (
-              <CompactGuideCard
+              <div
                 key={title}
-                icon={Icon}
-                number={index + 1}
-                title={title}
-                description={description}
-              />
+                className={
+                  index === 3
+                    ? 'xl:col-start-1 xl:translate-x-[calc(50%+0.875rem)]'
+                    : index === 4
+                      ? 'xl:col-start-2 xl:translate-x-[calc(50%+0.875rem)]'
+                      : ''
+                }
+              >
+                <CompactGuideCard
+                  icon={Icon}
+                  number={index + 1}
+                  title={title}
+                  description={description}
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -292,17 +295,24 @@ export default function DownloadPage() {
             title="적용 후 확인 방법"
             description="적용이 완료되면 아래 항목을 확인해 주세요."
           />
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {verifyItems.map(([icon, text]) => {
-              const Icon = icon;
-
-              return (
-                <div key={text} className="flex items-center gap-4 border-l border-[#E3E8F2] px-5">
-                  <Icon className="h-11 w-11 shrink-0 text-[#5B39D6]" />
-                  <p className="text-base font-bold leading-7 text-[#344054]">{text}</p>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {verifyItems.map(([title, description]) => (
+              <div
+                key={title}
+                className="flex min-h-[5.75rem] items-start gap-4 rounded-[10px] border border-[#E3E8F2] bg-[#FAFBFF] px-5 py-4"
+              >
+                <CircleCheck
+                  className="mt-1 h-5 w-5 shrink-0 fill-[#6D4CFF] text-[#6D4CFF] [&>path:last-child]:stroke-white"
+                  strokeWidth={3}
+                />
+                <div className="min-w-0">
+                  <h3 className="text-base font-black text-slate-900">{title}</h3>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-[#526078]">
+                    {description}
+                  </p>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </Section>
 
@@ -311,8 +321,8 @@ export default function DownloadPage() {
             title="문제가 발생했나요?"
             description="압축 파일 다운로드, 실행 또는 적용 중 문제가 발생하면 관리자에게 문의해 주세요."
           />
-          <div className="mt-8 grid overflow-hidden rounded-xl border border-[#E3E8F2] bg-white lg:grid-cols-[1.3fr_1fr_1fr]">
-            <div className="flex items-center gap-5 px-10 py-7">
+          <div className="mt-8 grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
+            <div className="flex items-center gap-5 rounded-[10px] border border-[#E3E8F2] bg-[#FAFBFF] px-10 py-7">
               <img src={template.logoSrc} alt="" className="h-20 w-20 shrink-0 object-contain" />
               <div>
                 <p className="text-base font-black text-slate-900">{template.companyName}</p>
@@ -321,8 +331,8 @@ export default function DownloadPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-5 border-t border-[#E3E8F2] px-10 py-7 lg:border-l lg:border-t-0">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F4F1FF] text-[#5B39D6]">
+            <div className="flex items-center gap-5 rounded-[10px] border border-[#E3E8F2] bg-[#FAFBFF] px-10 py-7">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#5B39D6] text-[#F4F1FF]">
                 <Mail className="h-8 w-8" />
               </div>
               <div>
@@ -330,9 +340,9 @@ export default function DownloadPage() {
                 <p className="mt-2 text-base font-bold text-[#526078]">{template.adminEmail}</p>
               </div>
             </div>
-            <div className="flex items-center gap-5 border-t border-[#E3E8F2] px-10 py-7 lg:border-l lg:border-t-0">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F4F1FF] text-[#5B39D6]">
-                <MessageSquare className="h-8 w-8" />
+            <div className="flex items-center gap-5 rounded-[10px] border border-[#E3E8F2] bg-[#FAFBFF] px-10 py-7">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#5B39D6] text-[#F4F1FF]">
+                <Phone className="h-8 w-8" />
               </div>
               <div>
                 <p className="text-base font-black text-slate-900">전화</p>

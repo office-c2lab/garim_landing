@@ -254,12 +254,14 @@ function SummaryCard({ title, value, change, trend }) {
   const isUp = trend === 'up';
 
   return (
-    <article className="rounded-[18px] border border-[#E2E8F4] bg-white px-5 py-5 shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-[0.96rem] font-semibold text-[#20273D]">{title}</p>
+    <article className="rounded-[18px] border border-[#E2E8F4] bg-white px-5 py-5 shadow-[0_10px_28px_rgba(15,23,42,0.05)] xl:px-3 xl:py-4 2xl:px-5 2xl:py-5">
+      <div className="flex items-start justify-between gap-3 xl:gap-1.5 2xl:gap-3">
+        <p className="text-[0.96rem] font-semibold text-[#20273D] xl:text-[0.78rem] 2xl:text-[0.96rem]">
+          {title}
+        </p>
         <span
           className={cn(
-            'inline-flex items-center gap-1 text-[0.95rem] font-bold',
+            'inline-flex shrink-0 items-center gap-1 text-[0.95rem] font-bold xl:text-[0.78rem] 2xl:text-[0.95rem]',
             isUp ? 'text-[#2BB658]' : 'text-[#FF4B57]'
           )}
         >
@@ -267,7 +269,7 @@ function SummaryCard({ title, value, change, trend }) {
           {isUp ? '⌃' : '⌄'}
         </span>
       </div>
-      <strong className="mt-5 block text-[2.25rem] leading-none font-black tracking-[-0.05em] text-[#0E1731]">
+      <strong className="mt-5 block text-[2.25rem] leading-none font-black tracking-[-0.05em] text-[#0E1731] xl:mt-4 xl:text-[1.75rem] 2xl:mt-5 2xl:text-[2.25rem]">
         {value}
       </strong>
     </article>
@@ -625,7 +627,7 @@ export default function DashboardPage() {
 
   return (
     <PageLayout>
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
         {summaryCards.map(card => (
           <SummaryCard key={card.title} {...card} />
         ))}

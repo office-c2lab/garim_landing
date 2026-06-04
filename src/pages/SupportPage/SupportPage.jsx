@@ -1,19 +1,71 @@
 import { ChevronUp, Copy, ExternalLink, Info, RefreshCw, Tag, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import SectionCard from '../../components/SectionCard.jsx';
 import PageLayout from '../../layout/PageLayout.jsx';
 import {
+  useDownloadSettingsQuery,
+  usePatchDownloadSettingsMutation,
+  usePatchTemplateSettingsMutation,
+  useTemplateSettingsQuery,
+} from '../../queries/companySettingsQueries.js';
+import {
+  createTemplateSettingsPayload,
+  normalizeTemplateSettings,
+} from '../../utils/companyTemplate.js';
+import {
   normalizeDownloadPath,
+  normalizeDownloadSettings,
   reservedDownloadPaths,
-  useSupportSettingsStore,
-} from '../../stores/supportSettingsStore.js';
+} from '../../utils/downloadSettings.js';
 
 const urlExamples = ['/download', '/guide', '/support/download'];
 const modalCancelButtonClass =
   'inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-500 transition hover:bg-slate-50';
 const modalPrimaryButtonClass =
   'inline-flex h-11 items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-6 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81]';
+const DOWNLOAD_PREVIEW_WIDTH = 1280;
+
+function DownloadPreviewFrame({ previewKey, src }) {
+  const frameContainerRef = useRef(null);
+  const [previewScale, setPreviewScale] = useState(1);
+
+  useEffect(() => {
+    const frameContainer = frameContainerRef.current;
+    if (!frameContainer) return undefined;
+
+    const updatePreviewScale = () => {
+      setPreviewScale(Math.min(frameContainer.clientWidth / DOWNLOAD_PREVIEW_WIDTH, 1));
+    };
+
+    updatePreviewScale();
+
+    const resizeObserver = new ResizeObserver(updatePreviewScale);
+    resizeObserver.observe(frameContainer);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={frameContainerRef}
+      className="relative h-[28rem] w-full overflow-hidden rounded-[10px] border border-[#E2E8F0] bg-white lg:h-[34rem]"
+    >
+      <iframe
+        key={previewKey}
+        src={src}
+        title="다운로드 페이지 미리보기"
+        className="absolute top-0 left-0 border-0 bg-white"
+        style={{
+          width: `${DOWNLOAD_PREVIEW_WIDTH}px`,
+          height: `${100 / previewScale}%`,
+          transform: `scale(${previewScale})`,
+          transformOrigin: 'top left',
+        }}
+      />
+    </div>
+  );
+}
 
 function InfoRow({ label, children }) {
   return (
@@ -45,8 +97,10 @@ function CardHeader({ title, action, onAction }) {
   );
 }
 
-function TemplateEditModal({ template, onClose, onSave }) {
+function TemplateEditModal({ template, onClose, onSave, isSaving }) {
   const [draft, setDraft] = useState(template);
+  const [logoError, setLogoError] = useState('');
+  const logoInputRef = useRef(null);
 
   const updateDraft = (key, value) => {
     setDraft(current => ({ ...current, [key]: value }));
@@ -55,6 +109,37 @@ function TemplateEditModal({ template, onClose, onSave }) {
   const handleSubmit = event => {
     event.preventDefault();
     onSave(draft);
+  };
+
+  const handleLogoChange = event => {
+    const [file] = event.target.files ?? [];
+    event.target.value = '';
+
+    if (!file) return;
+
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      setLogoError('PNG 또는 JPG 이미지만 선택할 수 있습니다.');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setLogoError('이미지 크기는 2MB 이하여야 합니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const logoDataUrl = String(reader.result);
+      setDraft(current => ({
+        ...current,
+        logoPath: logoDataUrl,
+        logoSrc: logoDataUrl,
+      }));
+      setLogoError('');
+    };
+    reader.onerror = () => setLogoError('이미지를 불러오지 못했습니다.');
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -98,15 +183,27 @@ function TemplateEditModal({ template, onClose, onSave }) {
                   className="h-12 w-12 rounded-xl border border-[#E2E8F0] object-cover"
                 />
                 <div className="min-w-0">
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange={handleLogoChange}
+                    className="sr-only"
+                  />
                   <button
                     type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={isSaving}
                     className="inline-flex h-10 items-center justify-center rounded-lg border border-[#D6DAE6] bg-white px-4 text-sm font-bold text-[#344054] transition hover:bg-[#F8FAFC]"
                   >
                     변경
                   </button>
                   <p className="mt-2 text-xs font-semibold text-[#667085]">
-                    권장 사이즈: 512x512px / PNG, JPG 파일
+                    권장 사이즈: 512x512px / PNG, JPG / 최대 2MB
                   </p>
+                  {logoError ? (
+                    <p className="mt-2 text-xs font-semibold text-[#DC2626]">{logoError}</p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -173,11 +270,20 @@ function TemplateEditModal({ template, onClose, onSave }) {
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[#EEF2F7] px-6 py-5">
-          <button type="button" onClick={onClose} className={modalCancelButtonClass}>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSaving}
+            className={modalCancelButtonClass}
+          >
             취소
           </button>
-          <button type="submit" className={modalPrimaryButtonClass}>
-            저장
+          <button
+            type="submit"
+            disabled={isSaving}
+            className={`${modalPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-60`}
+          >
+            {isSaving ? '저장 중' : '저장'}
           </button>
         </div>
       </form>
@@ -185,7 +291,7 @@ function TemplateEditModal({ template, onClose, onSave }) {
   );
 }
 
-function DownloadUrlModal({ currentPath, onClose, onApply }) {
+function DownloadUrlModal({ currentPath, onClose, onApply, isSaving }) {
   const [draftPath, setDraftPath] = useState(currentPath);
   const normalizedDraftPath = normalizeDownloadPath(draftPath);
   const isValid =
@@ -295,15 +401,20 @@ function DownloadUrlModal({ currentPath, onClose, onApply }) {
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[#EEF2F7] px-6 py-5">
-          <button type="button" onClick={onClose} className={modalCancelButtonClass}>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSaving}
+            className={modalCancelButtonClass}
+          >
             취소
           </button>
           <button
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || isSaving}
             className={`${modalPrimaryButtonClass} disabled:cursor-not-allowed disabled:border-[#C7C9D9] disabled:bg-[#C7C9D9] disabled:shadow-none`}
           >
-            적용
+            {isSaving ? '적용 중' : '적용'}
           </button>
         </div>
       </form>
@@ -316,10 +427,22 @@ export default function SupportPage() {
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isDownloadUrlModalOpen, setIsDownloadUrlModalOpen] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
-  const template = useSupportSettingsStore(state => state.template);
-  const downloadPath = useSupportSettingsStore(state => state.downloadPath);
-  const setTemplate = useSupportSettingsStore(state => state.setTemplate);
-  const setDownloadPath = useSupportSettingsStore(state => state.setDownloadPath);
+  const {
+    data: templateSettings,
+    isError: isTemplateError,
+    isLoading: isTemplateLoading,
+  } = useTemplateSettingsQuery();
+  const { mutate: patchTemplateSettings, isPending: isTemplateSaving } =
+    usePatchTemplateSettingsMutation();
+  const {
+    data: downloadSettings,
+    isError: isDownloadSettingsError,
+    isLoading: isDownloadSettingsLoading,
+  } = useDownloadSettingsQuery();
+  const { mutate: patchDownloadSettings, isPending: isDownloadSettingsSaving } =
+    usePatchDownloadSettingsMutation();
+  const template = useMemo(() => normalizeTemplateSettings(templateSettings), [templateSettings]);
+  const { downloadPath } = normalizeDownloadSettings(downloadSettings);
   const fullDownloadUrl = useMemo(() => {
     if (typeof window === 'undefined') return downloadPath;
     return `${window.location.origin}${downloadPath}`;
@@ -330,14 +453,24 @@ export default function SupportPage() {
   };
 
   const handleSaveTemplate = nextTemplate => {
-    setTemplate(nextTemplate);
-    setIsTemplateModalOpen(false);
+    patchTemplateSettings(createTemplateSettingsPayload(nextTemplate), {
+      onSuccess: () => {
+        setPreviewKey(current => current + 1);
+        setIsTemplateModalOpen(false);
+      },
+    });
   };
 
   const handleApplyDownloadPath = nextPath => {
-    setDownloadPath(nextPath);
-    setPreviewKey(current => current + 1);
-    setIsDownloadUrlModalOpen(false);
+    patchDownloadSettings(
+      { download_path: nextPath },
+      {
+        onSuccess: () => {
+          setPreviewKey(current => current + 1);
+          setIsDownloadUrlModalOpen(false);
+        },
+      }
+    );
   };
 
   return (
@@ -365,6 +498,13 @@ export default function SupportPage() {
             <InfoRow label="이메일">{template.adminEmail}</InfoRow>
             <InfoRow label="전화번호">{template.adminPhone}</InfoRow>
           </dl>
+          {isTemplateLoading || isTemplateError ? (
+            <div className="border-t border-dashed border-[#DCEAF1] px-6 py-4 text-center text-sm text-[#94A3B8]">
+              {isTemplateError
+                ? '템플릿 정보를 불러오지 못했습니다.'
+                : '템플릿 정보를 불러오는 중입니다.'}
+            </div>
+          ) : null}
         </SectionCard>
 
         <SectionCard className="overflow-hidden">
@@ -444,13 +584,15 @@ export default function SupportPage() {
                     새로고침
                   </button>
                 </div>
-                <iframe
-                  key={previewKey}
-                  src={downloadPath}
-                  title="다운로드 페이지 미리보기"
-                  className="h-[28rem] w-full rounded-[10px] border border-[#E2E8F0] bg-white lg:h-[34rem]"
-                />
+                <DownloadPreviewFrame previewKey={previewKey} src={downloadPath} />
               </div>
+            </div>
+          ) : null}
+          {isDownloadSettingsLoading || isDownloadSettingsError ? (
+            <div className="border-t border-dashed border-[#DCEAF1] px-6 py-4 text-center text-sm text-[#94A3B8]">
+              {isDownloadSettingsError
+                ? '다운로드 URL 정보를 불러오지 못했습니다.'
+                : '다운로드 URL 정보를 불러오는 중입니다.'}
             </div>
           ) : null}
         </SectionCard>
@@ -461,6 +603,7 @@ export default function SupportPage() {
           template={template}
           onClose={() => setIsTemplateModalOpen(false)}
           onSave={handleSaveTemplate}
+          isSaving={isTemplateSaving}
         />
       ) : null}
 
@@ -469,6 +612,7 @@ export default function SupportPage() {
           currentPath={downloadPath}
           onClose={() => setIsDownloadUrlModalOpen(false)}
           onApply={handleApplyDownloadPath}
+          isSaving={isDownloadSettingsSaving}
         />
       ) : null}
     </PageLayout>

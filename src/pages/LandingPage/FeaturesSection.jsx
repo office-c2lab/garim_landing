@@ -17,14 +17,14 @@ export default function FeaturesSection() {
           <div className="flex flex-col gap-7 lg:pr-8">
             <motion.div className="max-w-xl space-y-4" {...SECTION_TITLE_REVEAL}>
               <SectionTitle
-                eyebrow="security for ai"
-                title="왜 RADAR가 필요한가요?"
+                eyebrow="AI GUARDRAIL"
+                title="AI 가드레일이란?"
                 desc={
                   <>
-생성형 AI는 질문 방식과 대화 맥락에 따라<br />
-매번 다른 응답을 생성합니다.<br />
-RADAR는 AI 서비스의 잠재적 리스크를<br />
-책임성과 보안성 기준으로 자동 검증합니다.
+AI 가드레일은 AI 사용을 막는 장벽이 아니라,<br />
+위험한 사용만 제어하는 보안 기준입니다.<br />
+GARIM은 개인정보·기밀정보·위험 프롬프트를 실시간으로 탐지하고,<br />
+정책에 따라 차단하거나 마스킹합니다.
                   </>
                 }
               />

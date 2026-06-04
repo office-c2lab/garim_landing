@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AppToggle from '../../components/AppToggle.jsx';
+import GlassPagination from '../../components/GlassPagination.jsx';
 import {
   APP_PAGE_HORIZONTAL_PADDING_CLASS,
   APP_PAGE_INNER_WIDTH_CLASS,
@@ -7,6 +8,8 @@ import {
 } from '../../constants/contentLayout.js';
 import { MonitoringDomainTable } from '../../components/monitoring/MonitoringListComponents.jsx';
 import ServiceLogoBadge from '../../components/ServiceLogoBadge.jsx';
+
+const ROWS_PER_PAGE = 10;
 
 const initialDomains = [
   {
@@ -43,6 +46,10 @@ const initialDomains = [
 
 export default function DomainPage() {
   const [domains, setDomains] = useState(initialDomains);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(domains.length / ROWS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const visibleDomains = domains.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE);
 
   const handleToggle = id => {
     setDomains(current =>
@@ -59,7 +66,7 @@ export default function DomainPage() {
       >
         <section className="rounded-[22px] border border-[#E6EAF4] bg-[radial-gradient(circle_at_top,#FFFFFF_0%,#FBFCFF_72%,#F6F8FD_100%)] p-0 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
           <MonitoringDomainTable
-            rows={domains}
+            rows={visibleDomains}
             renderLogo={domain => <ServiceLogoBadge name={domain.name} url={domain.url} />}
             renderToggle={domain => (
               <AppToggle
@@ -70,6 +77,16 @@ export default function DomainPage() {
             )}
           />
         </section>
+
+        {domains.length ? (
+          <div className="mt-1 shrink-0 pb-0">
+            <GlassPagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   );

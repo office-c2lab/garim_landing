@@ -171,7 +171,7 @@ export default function HeroSection({ onVisibilityChange }) {
               className="absolute bottom-[-10px] left-[20%] right-[20%] z-[2] h-5 rounded-full bg-[#6a5ae0] opacity-0 blur-[12.5px] transition duration-300 group-hover:opacity-100"
             />
 
-            <span className="relative z-[1]">내 AI 서비스, 지금 검증하기</span>
+            <span className="relative z-[1]">도입 문의하기</span>
 
             <style>
               {`

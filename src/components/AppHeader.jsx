@@ -1,5 +1,4 @@
 import { LogOut } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import settingIcon from '../assets/icons/setting.svg';
 import settingWhiteIcon from '../assets/icons/setting-white.svg';
@@ -19,6 +18,7 @@ const PAGE_TITLES = {
   '/support': 'Operation Support',
   '/mypage': 'My Page',
   '/settings': 'Settings',
+  '/notifications': 'Notifications',
   '/download': 'Download',
 };
 
@@ -31,10 +31,9 @@ const PAGE_DESCRIPTIONS = {
   '/support': '운영 가이드, 템플릿, 배포 URL을 관리할 수 있습니다.',
   '/mypage': '관리자 계정 정보와 비밀번호를 관리할 수 있습니다.',
   '/settings': '드롭다운 선택 항목과 공통 운영 값을 관리할 수 있습니다.',
+  '/notifications': '검토가 필요한 항목과 시스템 변경 알림을 확인할 수 있습니다.',
   '/download': 'GARIM 에이전트와 운영 가이드 파일을 다운로드할 수 있습니다.',
 };
-
-const PENDING_FEATURE_MESSAGE = '아직 구현 안 되었습니다.';
 
 function HeaderIconButton({
   label,
@@ -70,77 +69,29 @@ function FilledBellIcon({ className = '' }) {
   );
 }
 
-function HeaderPopover({ children, className = 'w-36' }) {
-  return (
-    <div
-      className={`absolute top-[calc(100%+8px)] right-0 z-30 overflow-hidden rounded-xl border border-[#E4E7F2] bg-white shadow-[0_18px_48px_rgba(11,18,32,0.18)] ${className}`.trim()}
-    >
-      {children}
-    </div>
-  );
-}
-
-function PendingFeatureMenu() {
-  return (
-    <HeaderPopover className="w-44">
-      <div className="flex min-h-11 items-center justify-center px-4 py-3 text-center text-sm font-semibold text-[#4338CA]">
-        {PENDING_FEATURE_MESSAGE}
-      </div>
-    </HeaderPopover>
-  );
-}
-
 export default function AppHeader({ onMenuClick, isSidebarOpen = false }) {
-  const [openPopover, setOpenPopover] = useState(null);
-  const popoverRootRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const pageTitle = PAGE_TITLES[location.pathname] ?? 'GARIM';
   const pageDescription = PAGE_DESCRIPTIONS[location.pathname] ?? '';
   const isSettingsActive = location.pathname.startsWith('/settings');
+  const isNotificationsActive = location.pathname.startsWith('/notifications');
   const userName = 'C2lab';
 
-  useEffect(() => {
-    if (!openPopover) return undefined;
-
-    const handlePointerDown = event => {
-      if (!event.target.closest('[data-header-popover-root="true"]')) {
-        setOpenPopover(null);
-      }
-    };
-
-    const handleKeyDown = event => {
-      if (event.key === 'Escape') {
-        setOpenPopover(null);
-      }
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [openPopover]);
-
-  const togglePopover = key => {
-    setOpenPopover(current => (current === key ? null : key));
-  };
-
   const handleLogout = () => {
-    setOpenPopover(null);
     navigate('/login');
   };
 
   const handleNavigateMyPage = () => {
-    setOpenPopover(null);
     navigate('/mypage');
   };
 
   const handleNavigateSettings = () => {
-    setOpenPopover(null);
     navigate('/settings');
+  };
+
+  const handleNavigateNotifications = () => {
+    navigate('/notifications');
   };
 
   return (
@@ -169,7 +120,7 @@ export default function AppHeader({ onMenuClick, isSidebarOpen = false }) {
         </div>
 
         <div className="ml-auto flex items-center gap-1.5">
-          <div ref={popoverRootRef} className="relative" data-header-popover-root="true">
+          <div className="relative" data-header-popover-root="true">
             <button
               type="button"
               className="flex h-9 items-center rounded-full px-3 text-[0.82rem] font-semibold text-white/82 transition hover:bg-white/8 hover:text-white"
@@ -185,12 +136,11 @@ export default function AppHeader({ onMenuClick, isSidebarOpen = false }) {
               tooltip=""
               className="group active:bg-[#4338CA] active:text-white"
               hoverClassName="hover:bg-[#4338CA] hover:text-white"
-              isActive={openPopover === 'alarm'}
-              onClick={() => togglePopover('alarm')}
+              isActive={isNotificationsActive}
+              onClick={handleNavigateNotifications}
             >
               <FilledBellIcon className="h-[17px] w-[17px] lg:h-[18px] lg:w-[18px]" />
             </HeaderIconButton>
-            {openPopover === 'alarm' ? <PendingFeatureMenu /> : null}
           </div>
           <div className="relative" data-header-popover-root="true">
             <HeaderIconButton
@@ -285,12 +235,11 @@ export default function AppHeader({ onMenuClick, isSidebarOpen = false }) {
                       tooltip=""
                       className="group active:bg-[#4338CA] active:text-white"
                       hoverClassName="hover:bg-[#4338CA] hover:text-white"
-                      isActive={openPopover === 'alarm'}
-                      onClick={() => togglePopover('alarm')}
+                      isActive={isNotificationsActive}
+                      onClick={handleNavigateNotifications}
                     >
                       <FilledBellIcon className="h-[21px] w-[21px] lg:h-[20px] lg:w-[20px] xl:h-[22px] xl:w-[22px]" />
                     </HeaderIconButton>
-                    {openPopover === 'alarm' ? <PendingFeatureMenu /> : null}
                   </div>
 
                   <div className="relative" data-header-popover-root="true">

@@ -12,12 +12,12 @@ import LandingPage from './pages/LandingPage/LandingPage.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import MyPage from './pages/MyPage/MyPage.jsx';
 import SettingsPage from './pages/SettingsPage/SettingsPage.jsx';
+import NotificationPage from './pages/NotificationPage/NotificationPage.jsx';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage.jsx';
-import { DEFAULT_DOWNLOAD_PATH, useSupportSettingsStore } from './stores/supportSettingsStore.js';
+import { useDownloadSettingsQuery } from './queries/companySettingsQueries.js';
+import { DEFAULT_DOWNLOAD_PATH, normalizeDownloadSettings } from './utils/downloadSettings.js';
 
-function DownloadEntryRoute() {
-  const downloadPath = useSupportSettingsStore(state => state.downloadPath);
-
+function DownloadEntryRoute({ downloadPath }) {
   if (downloadPath !== DEFAULT_DOWNLOAD_PATH) {
     return <Navigate to={downloadPath} replace />;
   }
@@ -26,7 +26,8 @@ function DownloadEntryRoute() {
 }
 
 export default function App() {
-  const downloadPath = useSupportSettingsStore(state => state.downloadPath);
+  const { data: downloadSettings } = useDownloadSettingsQuery();
+  const { downloadPath } = normalizeDownloadSettings(downloadSettings);
   const hasCustomDownloadPath = downloadPath !== DEFAULT_DOWNLOAD_PATH;
 
   return (
@@ -34,7 +35,10 @@ export default function App() {
       <Route path="/landing" element={<LandingPage />} />
       <Route path="/radar" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path={DEFAULT_DOWNLOAD_PATH} element={<DownloadEntryRoute />} />
+      <Route
+        path={DEFAULT_DOWNLOAD_PATH}
+        element={<DownloadEntryRoute downloadPath={downloadPath} />}
+      />
       {hasCustomDownloadPath ? <Route path={downloadPath} element={<DownloadPage />} /> : null}
       <Route element={<AppShell />}>
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -46,6 +50,7 @@ export default function App() {
         <Route path="/support" element={<SupportPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/notifications" element={<NotificationPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

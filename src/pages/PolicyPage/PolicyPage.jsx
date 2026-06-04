@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Check, CircleHelp, Info, Plus, Search, X } from 'lucide-react';
 
+import GlassPagination from '../../components/GlassPagination.jsx';
 import ServiceLogoBadge, { ALL_SERVICE_LOGO_NAMES } from '../../components/ServiceLogoBadge.jsx';
 import SectionCard from '../../components/SectionCard.jsx';
 import { MonitoringDropdown } from '../../components/monitoring/MonitoringListComponents.jsx';
@@ -15,6 +16,8 @@ import {
 } from '../../components/monitoring/monitoringTableStyles.js';
 import caretDownIcon from '../../assets/icons/caret_down.svg';
 import PageLayout from '../../layout/PageLayout.jsx';
+
+const ROWS_PER_PAGE = 10;
 
 const policies = [
   {
@@ -661,6 +664,7 @@ export default function PolicyPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createStep, setCreateStep] = useState(1);
   const [createDraft, setCreateDraft] = useState(() => createEmptyPolicy());
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredPolicies = useMemo(() => {
     return policyList.filter(policy => {
@@ -673,26 +677,14 @@ export default function PolicyPage() {
       return matchesCategory && matchesSearch;
     });
   }, [policyList, searchQuery, selectedCategory]);
+  const totalPages = Math.max(1, Math.ceil(filteredPolicies.length / ROWS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const visiblePolicies = filteredPolicies.slice(
+    (safePage - 1) * ROWS_PER_PAGE,
+    safePage * ROWS_PER_PAGE
+  );
 
   const selectedPolicy = policyList.find(policy => policy.id === selectedId) ?? null;
-
-  useEffect(() => {
-    if (!selectedPolicy) {
-      setDraftPolicy(null);
-      return;
-    }
-
-    setDraftPolicy(createPolicyDraft(selectedPolicy));
-  }, [selectedPolicy]);
-
-  useEffect(() => {
-    if (!selectedId) return;
-
-    const hasSelectedPolicy = filteredPolicies.some(policy => policy.id === selectedId);
-    if (!hasSelectedPolicy) {
-      setSelectedId(null);
-    }
-  }, [filteredPolicies, selectedId]);
 
   useEffect(() => {
     if (!isCreateModalOpen) return undefined;
@@ -720,6 +712,7 @@ export default function PolicyPage() {
     const nextPolicies = policyList.filter(policy => policy.id !== selectedPolicy.id);
     setPolicyList(nextPolicies);
     setSelectedId(null);
+    setDraftPolicy(null);
   };
 
   const handleSavePolicy = () => {
@@ -733,10 +726,39 @@ export default function PolicyPage() {
 
   const handleCancelEdit = () => {
     setSelectedId(null);
+    setDraftPolicy(null);
   };
 
   const handleSelectPolicy = policyId => {
-    setSelectedId(current => (current === policyId ? null : policyId));
+    if (selectedId === policyId) {
+      setSelectedId(null);
+      setDraftPolicy(null);
+      return;
+    }
+
+    const policy = policyList.find(item => item.id === policyId);
+    setSelectedId(policyId);
+    setDraftPolicy(policy ? createPolicyDraft(policy) : null);
+  };
+
+  const handleChangeCategory = category => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+    setSelectedId(null);
+    setDraftPolicy(null);
+  };
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+    setSelectedId(null);
+    setDraftPolicy(null);
+  };
+
+  const handlePageChange = page => {
+    setCurrentPage(page);
+    setSelectedId(null);
+    setDraftPolicy(null);
   };
 
   const handleTogglePolicyStatus = policyId => {
@@ -772,9 +794,11 @@ export default function PolicyPage() {
     const newPolicy = toPolicyRecord(createDraft);
     setPolicyList(current => [newPolicy, ...current]);
     setSelectedId(newPolicy.id);
+    setDraftPolicy(createPolicyDraft(newPolicy));
     setSearchInput('');
     setSearchQuery('');
     setSelectedCategory('전체 분류');
+    setCurrentPage(1);
     closeCreateModal();
   };
 
@@ -792,7 +816,7 @@ export default function PolicyPage() {
             <div className="flex flex-col gap-3 lg:flex-row">
               <MonitoringDropdown
                 value={selectedCategory}
-                onChange={setSelectedCategory}
+                onChange={handleChangeCategory}
                 options={categoryOptions}
                 ariaLabel="전체 분류"
                 widthClass="w-full lg:w-[12rem] lg:shrink-0"
@@ -812,7 +836,7 @@ export default function PolicyPage() {
                 </label>
                 <button
                   type="button"
-                  onClick={() => setSearchQuery(searchInput)}
+                  onClick={handleSearch}
                   className="inline-flex h-12 min-w-[6rem] items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81]"
                 >
                   검색
@@ -848,7 +872,7 @@ export default function PolicyPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredPolicies.map((policy, index) => {
+                  {visiblePolicies.map((policy, index) => {
                     const isSelected = policy.id === selectedId;
 
                     return (
@@ -960,6 +984,16 @@ export default function PolicyPage() {
             ) : null}
           </div>
         </SectionCard>
+
+        {filteredPolicies.length ? (
+          <div className="mt-1 shrink-0 pb-0">
+            <GlassPagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        ) : null}
       </div>
 
       {isCreateModalOpen ? (

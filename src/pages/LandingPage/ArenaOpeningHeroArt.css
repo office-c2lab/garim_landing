@@ -1,6 +1,6 @@
 .arena-opening-art {
   position: relative;
-  width: min(86vw, 34rem);
+  width: min(86vw, 31rem);
   height: clamp(11rem, 19vw, 13.25rem);
   pointer-events: none;
 }
@@ -17,13 +17,13 @@
 }
 
 .arena-opening-art__piece--logo {
-  top: calc(50% - clamp(4.55rem, 7.2vw, 5.15rem));
-  width: clamp(6.65rem, 11.6vw, 8.25rem);
+  top: calc(50% - clamp(6.02rem, 9.26vw, 6.92rem));
+  width: clamp(8.35rem, 14.4vw, 10.75rem);
 }
 
 .arena-opening-art__piece--wordmark {
-  top: calc(50% + clamp(3.35rem, 4.9vw, 4.2rem));
-  width: min(86vw, 34rem);
+  top: calc(50% + clamp(3.47rem, 5.01vw, 4.32rem));
+  width: min(86vw, 31rem);
   animation-delay: 0.18s;
 }
 
@@ -41,18 +41,18 @@
 
 @media (max-width: 640px) {
   .arena-opening-art {
-    width: min(88vw, 25rem);
+    width: min(88vw, 24rem);
     height: 10.5rem;
   }
 
   .arena-opening-art__piece--logo {
-    top: calc(50% - 4rem);
-    width: clamp(5.6rem, 19vw, 6.8rem);
+    top: calc(50% - 4.96rem);
+    width: clamp(6.4rem, 19.5vw, 8.1rem);
   }
 
   .arena-opening-art__piece--wordmark {
-    top: calc(50% + 2.85rem);
-    width: min(88vw, 25rem);
+    top: calc(50% + 2.82rem);
+    width: min(88vw, 24rem);
   }
 }
 
