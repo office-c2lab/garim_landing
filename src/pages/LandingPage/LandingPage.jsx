@@ -6,6 +6,7 @@ import Hero from './HeroSection';
 import NavbarSection from './NavbarSection';
 
 const Features = lazy(() => import('./FeaturesSection'));
+const GuardrailArchitecture = lazy(() => import('./GuardrailArchitectureSection'));
 const SupportedAi = lazy(() => import('./SupportedAiSection'));
 const JudgeStackOnlySection = lazy(() => import('./JudgeStackOnlySection'));
 const Showcase = lazy(() => import('./ShowcaseSection'));
@@ -71,6 +72,9 @@ export default function LandingPage() {
       </section>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 880 }} />}>
         <Features />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
+        <GuardrailArchitecture />
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
         <SupportedAi />
