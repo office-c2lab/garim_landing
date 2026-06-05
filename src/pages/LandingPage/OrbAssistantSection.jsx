@@ -13,16 +13,16 @@ function ShaderOrb() {
 
       <div className="relative h-full w-full overflow-hidden rounded-full border border-white/16 bg-[#05040d] shadow-[0_0_34px_rgba(169,157,255,0.42),0_0_92px_rgba(106,90,224,0.28)]">
         <LoginAnimatedBackground
-          className="absolute inset-[-12%] h-[124%] w-[124%] opacity-100 contrast-[1.85] saturate-[1.8] brightness-[1.45]"
+          className="!absolute !inset-0 !h-full !w-full  contrast-[1.85] saturate-[1.8] brightness-[1.45]"
           minimumGlow={0.16}
-          speed={0.00025}
+          speed={0.0005}
           intensity={2.05}
           alphaFloor={0.16}
         />
         <LoginAnimatedBackground
-          className="absolute inset-[-18%] h-[136%] w-[136%] rotate-180 scale-110 opacity-75 mix-blend-screen contrast-[1.65] saturate-[1.75] brightness-[1.28]"
+          className="!absolute !inset-0 !h-full !w-full rotate-180  mix-blend-screen contrast-[1.65] saturate-[1.75] brightness-[1.28]"
           minimumGlow={0.1}
-          speed={0.00043}
+          speed={0.0005}
           intensity={1.55}
           alphaFloor={0.08}
         />
