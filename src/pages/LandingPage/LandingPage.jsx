@@ -69,6 +69,9 @@ export default function LandingPage() {
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
         <PromptMonitoring />
       </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
+        <OrbAssistant />
+      </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
         <PolicyManagement />
       </Suspense>
@@ -77,9 +80,6 @@ export default function LandingPage() {
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 560 }} />}>
         <EasyDeployment />
-      </Suspense>
-      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
-        <OrbAssistant />
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 920 }} />}>
         <FAQ />

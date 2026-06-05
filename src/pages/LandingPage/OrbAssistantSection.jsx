@@ -20,14 +20,7 @@ function ShaderOrb() {
           className="absolute inset-[-42%] h-[184%] w-[184%] rotate-180 scale-150 opacity-60 mix-blend-screen contrast-125 saturate-150 brightness-110"
           minimumGlow={0.12}
         />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(circle_at_42%_36%,rgba(169,157,255,0.6),transparent_18%),radial-gradient(circle_at_62%_62%,rgba(106,90,224,0.46),transparent_24%),radial-gradient(circle_at_34%_70%,rgba(79,70,229,0.36),transparent_22%),radial-gradient(circle_at_50%_50%,rgba(197,181,255,0.18),transparent_42%)] mix-blend-screen"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-[-12%] opacity-58 blur-[1px] [background:conic-gradient(from_120deg_at_50%_50%,rgba(169,157,255,0.08)_0deg,rgba(169,157,255,0.5)_58deg,rgba(106,90,224,0.18)_118deg,rgba(255,255,255,0.26)_164deg,rgba(106,90,224,0.16)_226deg,rgba(169,157,255,0.42)_304deg,rgba(169,157,255,0.08)_360deg)] [animation:garim-orb-spin_14s_linear_infinite]"
-        />
+
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[radial-gradient(circle_at_32%_24%,rgba(255,255,255,0.22),transparent_17%),radial-gradient(circle_at_62%_68%,rgba(169,157,255,0.12),transparent_28%),radial-gradient(circle_at_50%_50%,rgba(106,90,224,0)_42%,rgba(2,2,7,0.16)_100%)]"
