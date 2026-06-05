@@ -20,6 +20,9 @@ const fragmentShaderSource = `
   uniform vec2 u_pointer_position;
   uniform float u_scroll_progress;
   uniform float u_minimum_glow;
+  uniform float u_speed;
+  uniform float u_intensity;
+  uniform float u_alpha_floor;
 
   vec2 rotate(vec2 uv, float th) {
     return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
@@ -56,7 +59,7 @@ const fragmentShaderSource = `
     p = 0.5 * pow(1.0 - p, 2.0);
 
     // 기존보다 살짝 느리게 해서 물결처럼 보이게
-    float t = 0.00072 * u_time;
+    float t = u_speed * u_time;
 
     float noise = neuro_shape(uv, t, p);
 
@@ -88,10 +91,10 @@ const fragmentShaderSource = `
     // 위쪽에만 아주 약한 라벤더 빛 추가
     color += surfaceCyan * pow(surfaceLight, 3.0) * 0.032;
 
-    vec3 finalColor = color * glow * pulse;
-    finalColor += aquaGlow * pow(glow, 2.0) * 0.24;
+    vec3 finalColor = color * glow * pulse * u_intensity;
+    finalColor += aquaGlow * pow(glow, 2.0) * 0.24 * u_intensity;
 
-    float alpha = clamp(glow * 1.0, 0.0, 0.92);
+    float alpha = clamp(max(glow * 1.0, u_alpha_floor), 0.0, 0.92);
 
     gl_FragColor = vec4(finalColor, alpha);
   }
@@ -132,7 +135,13 @@ function createProgram(gl) {
   return program;
 }
 
-export default function LoginAnimatedBackground({ className = '', minimumGlow = 0 }) {
+export default function LoginAnimatedBackground({
+  className = '',
+  minimumGlow = 0,
+  speed = 0.00072,
+  intensity = 1,
+  alphaFloor = 0,
+}) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -156,6 +165,9 @@ export default function LoginAnimatedBackground({ className = '', minimumGlow = 
     const pointerLocation = gl.getUniformLocation(program, 'u_pointer_position');
     const scrollLocation = gl.getUniformLocation(program, 'u_scroll_progress');
     const minimumGlowLocation = gl.getUniformLocation(program, 'u_minimum_glow');
+    const speedLocation = gl.getUniformLocation(program, 'u_speed');
+    const intensityLocation = gl.getUniformLocation(program, 'u_intensity');
+    const alphaFloorLocation = gl.getUniformLocation(program, 'u_alpha_floor');
     const vertexBuffer = gl.createBuffer();
 
     if (
@@ -165,6 +177,9 @@ export default function LoginAnimatedBackground({ className = '', minimumGlow = 
       !pointerLocation ||
       !scrollLocation ||
       !minimumGlowLocation ||
+      !speedLocation ||
+      !intensityLocation ||
+      !alphaFloorLocation ||
       !vertexBuffer
     ) {
       gl.deleteProgram(program);
@@ -228,6 +243,9 @@ export default function LoginAnimatedBackground({ className = '', minimumGlow = 
       gl.uniform2f(pointerLocation, pointer.x, pointer.y);
       gl.uniform1f(scrollLocation, 0.18 + 0.12 * Math.sin(now * 0.0002));
       gl.uniform1f(minimumGlowLocation, minimumGlow);
+      gl.uniform1f(speedLocation, speed);
+      gl.uniform1f(intensityLocation, intensity);
+      gl.uniform1f(alphaFloorLocation, alphaFloor);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
       if (!prefersReducedMotion) {
@@ -258,7 +276,7 @@ export default function LoginAnimatedBackground({ className = '', minimumGlow = 
       gl.deleteBuffer(vertexBuffer);
       gl.deleteProgram(program);
     };
-  }, [minimumGlow]);
+  }, [alphaFloor, intensity, minimumGlow, speed]);
 
   return (
     <div
