@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
 import ServiceLogoBadge from '@/components/ServiceLogoBadge';
 import { Container } from './LandingPage.primitives';
@@ -8,13 +8,8 @@ const SUPPORTED_SERVICES = ['ChatGPT', 'Gemini', 'Claude', 'Genspark', 'MS Copil
 export default function SupportedAiSection() {
   return (
     <section className="relative overflow-hidden bg-white px-5 py-14 sm:py-20">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px max-w-[72rem] bg-gradient-to-r from-transparent via-[#dcd7ff] to-transparent"
-      />
-
       <Container className="flex flex-col items-center text-center">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
@@ -29,11 +24,11 @@ export default function SupportedAiSection() {
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#6b6f76] sm:text-base">
             주요 외부 AI 서비스의 접근과 프롬프트를 하나의 정책으로 안전하게 관리합니다.
           </p>
-        </motion.div>
+        </Motion.div>
 
         <div className="mt-10 flex flex-wrap items-start justify-center gap-4 sm:mt-12 sm:gap-6">
           {SUPPORTED_SERVICES.map((service, index) => (
-            <motion.div
+            <Motion.div
               key={service}
               className="group flex w-[6.5rem] flex-col items-center gap-3"
               initial={{ opacity: 0, y: 14 }}
@@ -49,7 +44,7 @@ export default function SupportedAiSection() {
               <span className="text-xs font-semibold text-[#57534e] transition group-hover:text-[#5b4fd2] sm:text-sm">
                 {service}
               </span>
-            </motion.div>
+            </Motion.div>
           ))}
         </div>
       </Container>

@@ -164,6 +164,128 @@ function UserDetailPanel({ user, onDelete, onSave, isSaving }) {
   );
 }
 
+export function UserManagementTable({
+  rows,
+  selectedId,
+  selectedUser,
+  onSelectUser,
+  onDeleteUser,
+  onSaveUser,
+  isSaving = false,
+  statusMessage = '',
+  className = '',
+  tableClassName = '',
+}) {
+  return (
+    <div className={`${monitoringTableSurfaceClass} ${className}`.trim()}>
+      <div className="overflow-x-auto">
+        <table className={`${monitoringTableClass} text-left ${tableClassName}`.trim()}>
+          <thead className={monitoringTableHeadClass}>
+            <tr className={monitoringTableHeaderRowClass}>
+              <th className={`${monitoringTableHeaderCellClass} w-[4%] px-4`} />
+              <th className={`${monitoringTableHeaderCellClass} w-[15%] whitespace-nowrap px-3`}>
+                IP 주소
+              </th>
+              <th className={`${monitoringTableHeaderCellClass} w-[10%] whitespace-nowrap px-3`}>
+                사용자명
+              </th>
+              <th className={`${monitoringTableHeaderCellClass} w-[26%] whitespace-nowrap px-3`}>
+                이메일
+              </th>
+              <th className={`${monitoringTableHeaderCellClass} w-[10%] whitespace-nowrap px-3`}>
+                부서
+              </th>
+              <th className={`${monitoringTableHeaderCellClass} w-[17%] whitespace-nowrap px-3`}>
+                직책
+              </th>
+              <th className={`${monitoringTableHeaderCellClass} w-[18%] whitespace-nowrap px-3`}>
+                최초 등록일
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((user, index) => {
+              const isSelected = user.id === selectedId;
+
+              return (
+                <Fragment key={user.id}>
+                  <tr
+                    onClick={() => onSelectUser(user.id)}
+                    className={monitoringTableRowClass({
+                      selected: isSelected,
+                      striped: index % 2 === 1,
+                      interactive: true,
+                    })}
+                  >
+                    <td className={monitoringTableCellClass(index, 'px-4 align-middle')}>
+                      <button
+                        type="button"
+                        aria-label={`${user.name} 선택`}
+                        className={`flex h-5 w-5 items-center justify-center rounded-full border transition ${
+                          isSelected ? 'border-[#4338CA]' : 'border-slate-300'
+                        }`.trim()}
+                      >
+                        <span
+                          className={`h-2.5 w-2.5 rounded-full transition ${
+                            isSelected ? 'bg-[#4338CA]' : 'bg-transparent'
+                          }`.trim()}
+                        />
+                      </button>
+                    </td>
+                    <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
+                      <span className="font-semibold text-slate-800">{user.ip}</span>
+                    </td>
+                    <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
+                      {getFallbackValue(user.name)}
+                    </td>
+                    <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
+                      <div className="truncate">{getFallbackValue(user.email)}</div>
+                    </td>
+                    <td
+                      className={monitoringTableCellClass(
+                        index,
+                        'whitespace-nowrap px-3 font-semibold'
+                      )}
+                    >
+                      {getFallbackValue(user.department)}
+                    </td>
+                    <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
+                      <div className="truncate">{getFallbackValue(user.position)}</div>
+                    </td>
+                    <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
+                      {user.createdAt}
+                    </td>
+                  </tr>
+                  {isSelected ? (
+                    <tr>
+                      <td colSpan={7} className="border-t border-[#E5EBF5] bg-white p-0">
+                        {selectedUser ? (
+                          <UserDetailPanel
+                            key={selectedUser.id}
+                            user={selectedUser}
+                            onDelete={() => onDeleteUser(selectedUser.id)}
+                            onSave={onSaveUser}
+                            isSaving={isSaving}
+                          />
+                        ) : null}
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {statusMessage ? (
+        <section className="border-t border-dashed border-[#DCEAF1] px-6 py-4 text-center text-sm text-[#94A3B8]">
+          {statusMessage}
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
 export default function UserPage() {
   const [selectedId, setSelectedId] = useState(null);
   const [searchInput, setSearchInput] = useState('');
@@ -298,126 +420,16 @@ export default function UserPage() {
         </div>
 
         <SectionCard className="overflow-hidden">
-          <div className={monitoringTableSurfaceClass}>
-            <div className="overflow-hidden">
-              <table className={`${monitoringTableClass} text-left`}>
-                <thead className={monitoringTableHeadClass}>
-                  <tr className={monitoringTableHeaderRowClass}>
-                    <th className={`${monitoringTableHeaderCellClass} w-[4%] px-4`} />
-                    <th
-                      className={`${monitoringTableHeaderCellClass} w-[15%] whitespace-nowrap px-3`}
-                    >
-                      IP 주소
-                    </th>
-                    <th
-                      className={`${monitoringTableHeaderCellClass} w-[10%] whitespace-nowrap px-3`}
-                    >
-                      사용자명
-                    </th>
-                    <th
-                      className={`${monitoringTableHeaderCellClass} w-[26%] whitespace-nowrap px-3`}
-                    >
-                      이메일
-                    </th>
-                    <th
-                      className={`${monitoringTableHeaderCellClass} w-[10%] whitespace-nowrap px-3`}
-                    >
-                      부서
-                    </th>
-                    <th
-                      className={`${monitoringTableHeaderCellClass} w-[17%] whitespace-nowrap px-3`}
-                    >
-                      직책
-                    </th>
-                    <th
-                      className={`${monitoringTableHeaderCellClass} w-[18%] whitespace-nowrap px-3`}
-                    >
-                      최초 등록일
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visibleUsers.map((user, index) => {
-                    const isSelected = user.id === selectedId;
-
-                    return (
-                      <Fragment key={user.id}>
-                        <tr
-                          onClick={() =>
-                            setSelectedId(current => (current === user.id ? null : user.id))
-                          }
-                          className={monitoringTableRowClass({
-                            selected: isSelected,
-                            striped: index % 2 === 1,
-                            interactive: true,
-                          })}
-                        >
-                          <td className={monitoringTableCellClass(index, 'px-4 align-middle')}>
-                            <button
-                              type="button"
-                              aria-label={`${user.name} 선택`}
-                              className={`flex h-5 w-5 items-center justify-center rounded-full border transition ${
-                                isSelected ? 'border-[#4338CA]' : 'border-slate-300'
-                              }`.trim()}
-                            >
-                              <span
-                                className={`h-2.5 w-2.5 rounded-full transition ${
-                                  isSelected ? 'bg-[#4338CA]' : 'bg-transparent'
-                                }`.trim()}
-                              />
-                            </button>
-                          </td>
-                          <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
-                            <span className="font-semibold text-slate-800">{user.ip}</span>
-                          </td>
-                          <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
-                            {getFallbackValue(user.name)}
-                          </td>
-                          <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
-                            <div className="truncate">{getFallbackValue(user.email)}</div>
-                          </td>
-                          <td
-                            className={monitoringTableCellClass(
-                              index,
-                              'whitespace-nowrap px-3 font-semibold'
-                            )}
-                          >
-                            {getFallbackValue(user.department)}
-                          </td>
-                          <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
-                            <div className="truncate">{getFallbackValue(user.position)}</div>
-                          </td>
-                          <td className={monitoringTableCellClass(index, 'whitespace-nowrap px-3')}>
-                            {user.createdAt}
-                          </td>
-                        </tr>
-                        {isSelected ? (
-                          <tr>
-                            <td colSpan={7} className="border-t border-[#E5EBF5] bg-white p-0">
-                              {selectedUser ? (
-                                <UserDetailPanel
-                                  key={selectedUser.id}
-                                  user={selectedUser}
-                                  onDelete={() => handleDeleteUser(selectedUser.id)}
-                                  onSave={handleSaveSelectedUser}
-                                  isSaving={isSaving}
-                                />
-                              ) : null}
-                            </td>
-                          </tr>
-                        ) : null}
-                      </Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            {statusMessage ? (
-              <section className="border-t border-dashed border-[#DCEAF1] px-6 py-4 text-center text-sm text-[#94A3B8]">
-                {statusMessage}
-              </section>
-            ) : null}
-          </div>
+          <UserManagementTable
+            rows={visibleUsers}
+            selectedId={selectedId}
+            selectedUser={selectedUser}
+            onSelectUser={userId => setSelectedId(current => (current === userId ? null : userId))}
+            onDeleteUser={handleDeleteUser}
+            onSaveUser={handleSaveSelectedUser}
+            isSaving={isSaving}
+            statusMessage={statusMessage}
+          />
         </SectionCard>
 
         {filteredUsers.length ? (

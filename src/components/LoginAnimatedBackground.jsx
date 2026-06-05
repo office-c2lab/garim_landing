@@ -19,6 +19,7 @@ const fragmentShaderSource = `
   uniform float u_ratio;
   uniform vec2 u_pointer_position;
   uniform float u_scroll_progress;
+  uniform float u_minimum_glow;
 
   vec2 rotate(vec2 uv, float th) {
     return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
@@ -71,6 +72,7 @@ const fragmentShaderSource = `
 
     float pointerGlow = p * 0.24;
     float glow = noise * (0.99 + pointerGlow) * centerFade;
+    glow = max(glow, u_minimum_glow);
 
     float pulse = 0.88 + 0.12 * sin(u_time * 0.00032 + u_scroll_progress * 6.28318);
 
@@ -130,7 +132,7 @@ function createProgram(gl) {
   return program;
 }
 
-export default function LoginAnimatedBackground({ className = '' }) {
+export default function LoginAnimatedBackground({ className = '', minimumGlow = 0 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -153,6 +155,7 @@ export default function LoginAnimatedBackground({ className = '' }) {
     const ratioLocation = gl.getUniformLocation(program, 'u_ratio');
     const pointerLocation = gl.getUniformLocation(program, 'u_pointer_position');
     const scrollLocation = gl.getUniformLocation(program, 'u_scroll_progress');
+    const minimumGlowLocation = gl.getUniformLocation(program, 'u_minimum_glow');
     const vertexBuffer = gl.createBuffer();
 
     if (
@@ -161,6 +164,7 @@ export default function LoginAnimatedBackground({ className = '' }) {
       !ratioLocation ||
       !pointerLocation ||
       !scrollLocation ||
+      !minimumGlowLocation ||
       !vertexBuffer
     ) {
       gl.deleteProgram(program);
@@ -223,6 +227,7 @@ export default function LoginAnimatedBackground({ className = '' }) {
       gl.uniform1f(timeLocation, now);
       gl.uniform2f(pointerLocation, pointer.x, pointer.y);
       gl.uniform1f(scrollLocation, 0.18 + 0.12 * Math.sin(now * 0.0002));
+      gl.uniform1f(minimumGlowLocation, minimumGlow);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
       if (!prefersReducedMotion) {
@@ -253,7 +258,7 @@ export default function LoginAnimatedBackground({ className = '' }) {
       gl.deleteBuffer(vertexBuffer);
       gl.deleteProgram(program);
     };
-  }, []);
+  }, [minimumGlow]);
 
   return (
     <div

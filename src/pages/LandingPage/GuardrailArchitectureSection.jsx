@@ -32,10 +32,6 @@ export default function GuardrailArchitectureSection() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(106,90,224,0.18),transparent_32%),radial-gradient(circle_at_18%_85%,rgba(91,79,210,0.08),transparent_28%)]"
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6a5ae0]/60 to-transparent"
-      />
 
       <Container className="relative">
         <Motion.div

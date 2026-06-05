@@ -1,32 +1,19 @@
-import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useInView } from 'framer-motion';
+import React, { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, motion as Motion } from 'framer-motion';
 
-import { JUDGE_SHOTS } from './LandingPage.constants';
 import Hero from './HeroSection';
 import NavbarSection from './NavbarSection';
 
 const Features = lazy(() => import('./FeaturesSection'));
 const GuardrailArchitecture = lazy(() => import('./GuardrailArchitectureSection'));
 const SupportedAi = lazy(() => import('./SupportedAiSection'));
-const JudgeStackOnlySection = lazy(() => import('./JudgeStackOnlySection'));
-const Showcase = lazy(() => import('./ShowcaseSection'));
-const Testimonials = lazy(() => import('./TestimonialsSection'));
+const PromptMonitoring = lazy(() => import('./PromptMonitoringSection'));
+const PolicyManagement = lazy(() => import('./PolicyManagementSection'));
+const AccessManagement = lazy(() => import('./AccessManagementSection'));
+const EasyDeployment = lazy(() => import('./EasyDeploymentSection'));
+const OrbAssistant = lazy(() => import('./OrbAssistantSection'));
 const FAQ = lazy(() => import('./FaqCompositeSection'));
 const Footer = lazy(() => import('./FooterSection'));
-
-function LazySectionMount({ children, minHeight = 600, margin = '-10% 0px' }) {
-  const ref = useRef(null);
-  const shouldRender = useInView(ref, {
-    once: true,
-    margin,
-  });
-
-  return (
-    <div ref={ref} style={{ minHeight }}>
-      {shouldRender ? children : <div aria-hidden="true" style={{ minHeight }} />}
-    </div>
-  );
-}
 
 export default function LandingPage() {
   const [showFloatingNav, setShowFloatingNav] = useState(false);
@@ -49,7 +36,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white text-[#171717]">
       <AnimatePresence>
         {showFloatingNav ? (
-          <motion.div
+          <Motion.div
             className="fixed inset-x-0 top-0 z-[70]"
             initial={{ opacity: 0, y: -18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -57,7 +44,7 @@ export default function LandingPage() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <NavbarSection className="shadow-[0_10px_34px_rgba(23,23,23,0.08)]" />
-          </motion.div>
+          </Motion.div>
         ) : null}
       </AnimatePresence>
 
@@ -68,7 +55,7 @@ export default function LandingPage() {
         </p>
         <h2 className="mt-5 text-balance text-3xl font-semibold tracking-[-0.04em] text-[#171717] sm:text-5xl">
           중앙 집중형 AI 보안 가드레일 플랫폼
-        </h2> 
+        </h2>
       </section>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 880 }} />}>
         <Features />
@@ -79,19 +66,21 @@ export default function LandingPage() {
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
         <SupportedAi />
       </Suspense>
-      <LazySectionMount minHeight={980} margin="-12% 0px">
-        <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 980 }} />}>
-          <JudgeStackOnlySection shots={JUDGE_SHOTS} />
-        </Suspense>
-      </LazySectionMount>
-      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 880 }} />}>
-        <Showcase />
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
+        <PromptMonitoring />
       </Suspense>
-      <LazySectionMount minHeight={720} margin="12% 0px">
-        <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
-          <Testimonials />
-        </Suspense>
-      </LazySectionMount>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
+        <PolicyManagement />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
+        <AccessManagement />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 560 }} />}>
+        <EasyDeployment />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
+        <OrbAssistant />
+      </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 920 }} />}>
         <FAQ />
       </Suspense>

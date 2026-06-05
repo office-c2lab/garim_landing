@@ -74,7 +74,7 @@ function Section({ children, className = '', ...props }) {
   );
 }
 
-function SectionHeader({ title, description }) {
+export function SectionHeader({ title, description }) {
   return (
     <div className="max-w-[52rem]">
       <h2 className="text-[1.75rem] font-black tracking-[-0.03em] text-slate-900">{title}</h2>
@@ -85,7 +85,7 @@ function SectionHeader({ title, description }) {
   );
 }
 
-function CompactGuideCard({ icon, number, title, description }) {
+export function CompactGuideCard({ icon, number, title, description }) {
   const Icon = icon;
 
   return (

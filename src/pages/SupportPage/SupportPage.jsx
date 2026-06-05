@@ -67,7 +67,7 @@ function DownloadPreviewFrame({ previewKey, src }) {
   );
 }
 
-function InfoRow({ label, children }) {
+export function InfoRow({ label, children }) {
   return (
     <div className="grid min-h-[4rem] grid-cols-[10rem_1fr] items-center border-t border-slate-200 px-6 text-sm sm:grid-cols-[12rem_1fr]">
       <dt className="font-bold text-slate-500">{label}</dt>
@@ -88,7 +88,7 @@ function OutlineButton({ children, onClick }) {
   );
 }
 
-function CardHeader({ title, action, onAction }) {
+export function CardHeader({ title, action, onAction }) {
   return (
     <div className="flex items-center justify-between border-b border-[#E7EBF4] bg-[linear-gradient(180deg,#F8FAFF_0%,#F2F5FC_100%)] px-6 py-5">
       <h2 className="text-lg font-bold text-[#20264D]">{title}</h2>

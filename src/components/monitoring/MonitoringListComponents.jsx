@@ -522,15 +522,17 @@ export function MonitoringDataTable({
   rowNumberStart = 1,
   className = '',
   bodyClassName = '',
+  showSelection = true,
 }) {
-  const allRowsSelected = rows.length > 0 && rows.every(row => selectedRowIds.includes(row.id));
+  const allRowsSelected =
+    showSelection && rows.length > 0 && rows.every(row => selectedRowIds.includes(row.id));
 
   return (
     <div className={`${monitoringTableSurfaceClass} ${className}`.trim()}>
       <div className={monitoringTableScrollClass}>
         <table className={`min-w-[980px] ${monitoringTableClass} xl:min-w-0`}>
           <colgroup>
-            <col className="w-[38px]" />
+            {showSelection ? <col className="w-[38px]" /> : null}
             <col className="w-[40px]" />
             <col className="w-[108px]" />
             <col className="w-[74px]" />
@@ -542,15 +544,17 @@ export function MonitoringDataTable({
           </colgroup>
           <thead className={monitoringTableHeadClass}>
             <tr className={monitoringTableHeaderRowClass}>
-              <th className={`${monitoringTableHeaderCellClass} px-0 text-center align-middle`}>
-                <input
-                  type="checkbox"
-                  checked={allRowsSelected}
-                  onChange={() => onToggleAllRowsSelection?.(rows.map(row => row.id))}
-                  aria-label="현재 페이지 전체 선택"
-                  className="mx-auto block h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#4338CA]"
-                />
-              </th>
+              {showSelection ? (
+                <th className={`${monitoringTableHeaderCellClass} px-0 text-center align-middle`}>
+                  <input
+                    type="checkbox"
+                    checked={allRowsSelected}
+                    onChange={() => onToggleAllRowsSelection?.(rows.map(row => row.id))}
+                    aria-label="현재 페이지 전체 선택"
+                    className="mx-auto block h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#4338CA]"
+                  />
+                </th>
+              ) : null}
               <th className={`${monitoringTableHeaderCellClass} px-0 text-center`}>No.</th>
               <th className={`${monitoringTableHeaderCellClass} xl:px-5`}>탐지 일시</th>
               <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>서비스</th>
@@ -576,18 +580,20 @@ export function MonitoringDataTable({
                     })}
                     onClick={() => onSelectRow(row)}
                   >
-                    <td
-                      className={monitoringTableCellClass(index, 'px-0 text-center align-middle')}
-                      onClick={event => event.stopPropagation()}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => onToggleRowSelection?.(row.id)}
-                        aria-label={`${row.aiType} 행 선택`}
-                        className="mx-auto block h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#4338CA]"
-                      />
-                    </td>
+                    {showSelection ? (
+                      <td
+                        className={monitoringTableCellClass(index, 'px-0 text-center align-middle')}
+                        onClick={event => event.stopPropagation()}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => onToggleRowSelection?.(row.id)}
+                          aria-label={`${row.aiType} 행 선택`}
+                          className="mx-auto block h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#4338CA]"
+                        />
+                      </td>
+                    ) : null}
                     <td
                       className={monitoringTableCellClass(
                         index,
@@ -677,7 +683,10 @@ export function MonitoringDataTable({
                   </tr>
                   {isSelected && renderExpandedRow ? (
                     <tr>
-                      <td colSpan={9} className="border-t border-[#E5EBF5] bg-white px-0 py-0">
+                      <td
+                        colSpan={showSelection ? 9 : 8}
+                        className="border-t border-[#E5EBF5] bg-white px-0 py-0"
+                      >
                         {renderExpandedRow(row)}
                       </td>
                     </tr>
