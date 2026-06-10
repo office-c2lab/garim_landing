@@ -8,12 +8,8 @@
 .arena-opening-art__piece {
   position: absolute;
   left: 50%;
-  display: block;
-  height: auto;
   filter: drop-shadow(0 18px 36px rgba(106, 90, 224, 0.28));
-  opacity: 0;
   transform: translate(-50%, -50%);
-  animation: garim-intro-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .arena-opening-art__piece--logo {
@@ -24,18 +20,87 @@
 .arena-opening-art__piece--wordmark {
   top: calc(50% + clamp(3.47rem, 5.01vw, 4.32rem));
   width: min(86vw, 31rem);
-  animation-delay: 0.18s;
 }
 
-@keyframes garim-intro-rise {
-  from {
-    opacity: 0;
-    transform: translate(-50%, calc(-50% + 16px)) scale(0.96);
-  }
+.arena-opening-art__vector,
+.arena-opening-art__raster {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 
+.arena-opening-art__vector {
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+  opacity: 1;
+  animation: garim-vector-to-raster 220ms ease 1.9s forwards;
+}
+
+.arena-opening-art__raster {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  animation: garim-raster-reveal 240ms ease 1.86s forwards;
+}
+
+.arena-opening-art__raster--logo {
+  transform: translateY(-0.1%);
+}
+
+.arena-opening-art__raster--wordmark {
+  transform: translateY(0.1%);
+}
+
+.arena-opening-art__path {
+  fill: transparent;
+  stroke: rgba(194, 173, 255, 0.98);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 18px rgba(106, 90, 224, 0.22));
+  animation: login-intro-draw 2.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.arena-opening-art__path--logo {
+  stroke-width: 10;
+}
+
+.arena-opening-art__path--wordmark {
+  stroke-width: 8;
+  animation: login-intro-draw 2.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.arena-opening-art__shine {
+  opacity: 0;
+}
+
+.arena-opening-art__wordmark-glow,
+.arena-opening-art__wordmark-shine {
+  opacity: 0;
+}
+
+.arena-opening-art__wordmark-glow {
+  opacity: 0;
+}
+
+@keyframes login-intro-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes garim-vector-to-raster {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes garim-raster-reveal {
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -59,6 +124,29 @@
 @media (prefers-reduced-motion: reduce) {
   .arena-opening-art__piece {
     animation: none;
+  }
+
+  .arena-opening-art__path {
+    animation: none;
+    fill-opacity: 0;
+    stroke-dashoffset: 0;
+    stroke-opacity: 1;
+  }
+
+  .arena-opening-art__vector {
+    animation: none;
+    opacity: 0;
+  }
+
+  .arena-opening-art__raster {
+    animation: none;
     opacity: 1;
+  }
+
+  .arena-opening-art__shine,
+  .arena-opening-art__wordmark-glow,
+  .arena-opening-art__wordmark-shine {
+    animation: none;
+    opacity: 0;
   }
 }
