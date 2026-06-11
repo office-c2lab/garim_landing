@@ -48,8 +48,11 @@ const fragmentShaderSource = `
   }
 
   void main() {
-    vec2 uv = 0.42 * v_uv;
-    uv.x *= u_ratio;
+    vec2 centered = v_uv - 0.5;
+    centered.x *= u_ratio;
+
+    // 기존 0.92보다 낮춰서 패턴 자체를 조금 더 크게 보이게 함
+    vec2 uv = centered * 0.78;
 
     vec2 pointer = v_uv - u_pointer_position;
     pointer.x *= u_ratio;
@@ -65,12 +68,22 @@ const fragmentShaderSource = `
     noise = max(0.0, noise - 0.39);
 
     float distanceFromCenter = length(v_uv - 0.5);
-    float centerFade = 1.0 - smoothstep(0.06, 1.16, distanceFromCenter);
+
+    // 기존 0.28, 0.58보다 범위를 넓혀서 중앙 효과 영역을 조금 키움
+    float coreMask = 1.0 - smoothstep(0.34, 0.68, distanceFromCenter);
+    float innerSoftness = smoothstep(0.03, 0.24, distanceFromCenter);
+    float centerOnlyMask = coreMask * (0.72 + innerSoftness * 0.28);
+
+    // 정중앙에 너무 모여 보이는 밝은 패턴만 약화
+    // 전체 패턴은 유지하고, 중심부만 살짝 눌러줌
+    float centerKnotFade = mix(0.52, 1.0, smoothstep(0.018, 0.13, distanceFromCenter));
+
     float surfaceLight = smoothstep(0.15, 1.0, v_uv.y);
 
-    float pointerGlow = p * 0.24;
-    float glow = noise * (0.99 + pointerGlow) * centerFade;
-    glow = max(glow, u_minimum_glow);
+    float pointerGlow = p * 0.16;
+
+    float glow = noise * (0.95 + pointerGlow) * centerOnlyMask * centerKnotFade;
+    glow = max(glow, u_minimum_glow * centerOnlyMask * centerKnotFade);
 
     float pulse = 0.88 + 0.12 * sin(u_time * 0.00032 + u_scroll_progress * 6.28318);
 
@@ -79,14 +92,14 @@ const fragmentShaderSource = `
     vec3 aquaGlow = vec3(0.416, 0.353, 0.878);
     vec3 surfaceCyan = vec3(0.720, 0.650, 1.000);
 
-    vec3 color = mix(deepNavy, oceanBlue, surfaceLight * 0.78);
-    color = mix(color, aquaGlow, clamp(glow * 1.4 + pointerGlow, 0.0, 1.0));
-    color += surfaceCyan * pow(surfaceLight, 3.0) * 0.032;
+    vec3 color = mix(deepNavy, oceanBlue, surfaceLight * 0.52);
+    color = mix(color, aquaGlow, clamp(glow * 1.65 + pointerGlow * centerOnlyMask, 0.0, 1.0));
+    color += surfaceCyan * pow(surfaceLight, 3.0) * 0.018 * centerOnlyMask;
 
     vec3 finalColor = color * glow * pulse * u_intensity;
-    finalColor += aquaGlow * pow(glow, 2.0) * 0.24 * u_intensity;
+    finalColor += aquaGlow * pow(glow, 2.0) * 0.28 * u_intensity;
 
-    float alpha = clamp(max(glow * 1.0, u_alpha_floor), 0.0, 0.92);
+    float alpha = clamp(max(glow, u_alpha_floor * centerOnlyMask * centerKnotFade), 0.0, 0.88);
 
     gl_FragColor = vec4(finalColor, alpha);
   }
@@ -150,6 +163,7 @@ function ShaderBackground({
     }
 
     const gl = canvas.getContext('webgl', { alpha: true, antialias: true });
+
     if (!gl) {
       return undefined;
     }
@@ -182,7 +196,13 @@ function ShaderBackground({
       return undefined;
     }
 
-    const pointer = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 };
+    const pointer = {
+      x: 0.5,
+      y: 0.5,
+      targetX: 0.5,
+      targetY: 0.5,
+    };
+
     const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let rafId = 0;
 
@@ -211,6 +231,11 @@ function ShaderBackground({
 
     const updatePointer = (x, y) => {
       const rect = container.getBoundingClientRect();
+
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+        return;
+      }
+
       const localX = (x - rect.left) / Math.max(rect.width, 1);
       const localY = 1 - (y - rect.top) / Math.max(rect.height, 1);
 
@@ -224,6 +249,7 @@ function ShaderBackground({
 
     const handleTouchMove = event => {
       const touch = event.targetTouches[0];
+
       if (touch) {
         updatePointer(touch.clientX, touch.clientY);
       }
@@ -240,6 +266,7 @@ function ShaderBackground({
       gl.uniform1f(speedLocation, speed);
       gl.uniform1f(intensityLocation, intensity);
       gl.uniform1f(alphaFloorLocation, alphaFloor);
+
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
       if (!prefersReducedMotion) {
@@ -251,6 +278,7 @@ function ShaderBackground({
       typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resize) : null;
 
     resize();
+
     resizeObserver?.observe(container);
     window.addEventListener('resize', resize);
     window.addEventListener('pointermove', handlePointerMove);
@@ -283,7 +311,9 @@ function ShaderBackground({
       aria-hidden="true"
     >
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-[0.98] mix-blend-screen" />
+
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(197,181,255,0.08),transparent_46%),radial-gradient(circle_at_16%_12%,rgba(156,132,255,0.09),transparent_36%),radial-gradient(circle_at_86%_78%,rgba(106,90,224,0.11),transparent_48%),linear-gradient(180deg,rgba(4,4,12,0.1)_0%,rgba(5,5,14,0.3)_48%,rgba(1,1,5,0.64)_100%)] mix-blend-screen" />
+
       <div className="absolute inset-[-100%] rotate-[10deg] opacity-[0.06] [background-image:radial-gradient(rgba(255,255,255,0.7)_0.7px,transparent_0.7px)] [background-size:8px_8px]" />
     </div>
   );
@@ -310,30 +340,33 @@ function CloseIcon() {
 export function GarimAlertOrb({ className = '' }) {
   return (
     <div className={cx('relative flex h-[230px] w-[230px] shrink-0 items-center justify-center', className)}>
-      <div className="absolute inset-[-36px] rounded-full bg-[#6a5ae0]/24 blur-3xl" />
-      <div className="absolute inset-[-16px] rounded-full border border-[#b8aaff]/18 bg-[#6a5ae0]/8 blur-[1px]" />
+      <div className="absolute inset-[-36px] rounded-full bg-[#6a5ae0]/20 blur-3xl" />
+      <div className="absolute inset-[-16px] rounded-full border border-[#b8aaff]/14 bg-[#6a5ae0]/6 blur-[1px]" />
 
-      <div className="relative h-full w-full overflow-hidden rounded-full border border-white/16 bg-[#05040d] shadow-[0_0_34px_rgba(169,157,255,0.42),0_0_92px_rgba(106,90,224,0.28)]">
+      <div className="relative h-full w-full overflow-hidden rounded-full border border-white/16 bg-[#05040d] shadow-[0_0_30px_rgba(169,157,255,0.34),0_0_78px_rgba(106,90,224,0.22)]">
         <ShaderBackground
-          className="contrast-[1.85] saturate-[1.8] brightness-[1.45]"
-          minimumGlow={0.16}
+          className="contrast-[1.9] saturate-[1.75] brightness-[1.35]"
+          minimumGlow={0.04}
           speed={0.0005}
           intensity={2.05}
-          alphaFloor={0.16}
+          alphaFloor={0.02}
         />
+
         <ShaderBackground
-          className="rotate-180 mix-blend-screen contrast-[1.65] saturate-[1.75] brightness-[1.28]"
-          minimumGlow={0.1}
+          className="rotate-180 mix-blend-screen contrast-[1.7] saturate-[1.65] brightness-[1.18]"
+          minimumGlow={0.02}
           speed={0.0005}
-          intensity={1.55}
-          alphaFloor={0.08}
+          intensity={1.45}
+          alphaFloor={0.01}
         />
 
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(circle_at_32%_24%,rgba(255,255,255,0.22),transparent_17%),radial-gradient(circle_at_62%_68%,rgba(169,157,255,0.12),transparent_28%),radial-gradient(circle_at_50%_50%,rgba(106,90,224,0)_42%,rgba(2,2,7,0.16)_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_32%_24%,rgba(255,255,255,0.18),transparent_17%),radial-gradient(circle_at_62%_68%,rgba(169,157,255,0.1),transparent_28%),radial-gradient(circle_at_50%_50%,rgba(106,90,224,0)_42%,rgba(2,2,7,0.2)_100%)]"
         />
+
         <div aria-hidden="true" className="absolute inset-[10px] rounded-full border border-white/10" />
+
         <div
           aria-hidden="true"
           className="absolute left-1/2 top-1/2 h-[72%] w-[132%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full border border-[#d9d3ff]/20"
@@ -356,6 +389,7 @@ export default function GarimAlertModal({
   renderCta,
 }) {
   const resolvedCtaHref = ctaHref || ctaTo;
+
   const ctaClassName =
     'mt-7 inline-flex h-12 min-w-[190px] items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-7 text-[15px] font-bold text-white no-underline shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:border-[#3730A3] hover:bg-[#3730A3] active:border-[#312E81] active:bg-[#312E81]';
 
@@ -363,7 +397,7 @@ export default function GarimAlertModal({
     <aside
       aria-label="GARIM Alert"
       className={cx(
-        'relative mx-auto flex min-h-[560px] w-full max-w-[390px] animate-[garim-alert-modal-enter_550ms_ease-out_both] flex-col overflow-hidden rounded-[34px] border border-white/12 bg-[#070724]/94 text-white shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-xl motion-reduce:animate-none',
+        'relative flex min-h-[560px] w-full max-w-[390px] animate-[garim-alert-modal-enter_550ms_ease-out_both] flex-col overflow-hidden rounded-[34px] border border-white/12 bg-[#070724]/94 text-white shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-xl motion-reduce:animate-none',
         className,
       )}
     >
@@ -386,6 +420,7 @@ export default function GarimAlertModal({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_52%_24%,rgba(126,58,242,0.2),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_42%)]"
       />
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute right-[-120px] top-0 h-full w-[210px] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)] blur-sm"
@@ -394,7 +429,7 @@ export default function GarimAlertModal({
       <header className="relative flex h-14 items-center justify-between px-5">
         <div className="flex items-center gap-2">
           <span className="text-sm font-extrabold tracking-[0.08em] text-white">GARIM</span>
-          <span className="text-sm font-bold text-white/88">Alert</span>
+          <span className="text-sm font-bold text-white/88">ALARM</span>
         </div>
 
         <button
