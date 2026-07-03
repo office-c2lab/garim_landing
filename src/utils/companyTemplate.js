@@ -1,4 +1,5 @@
-import logoIcon from '../assets/icons/logo.png';
+import logoIcon from '../assets/icons/logo.svg';
+import { API_BASE_URL } from '../api/client.js';
 
 export const defaultCompanyTemplate = {
   logoPath: '',
@@ -10,7 +11,13 @@ export const defaultCompanyTemplate = {
 };
 
 function resolveLogoSrc(logoPath) {
-  return logoPath || defaultCompanyTemplate.logoSrc;
+  if (!logoPath) return defaultCompanyTemplate.logoSrc;
+  if (/^(https?:|data:|blob:)/.test(logoPath)) return logoPath;
+
+  const baseUrl = API_BASE_URL.replace(/\/+$/, '');
+  const assetPath = logoPath.startsWith('/') ? logoPath : `/${logoPath}`;
+
+  return `${baseUrl}${assetPath}`;
 }
 
 export function normalizeTemplateSettings(settings = {}) {
@@ -19,6 +26,7 @@ export function normalizeTemplateSettings(settings = {}) {
   return {
     logoPath,
     logoSrc: resolveLogoSrc(logoPath),
+    logoFile: null,
     companyName: settings.company_name ?? defaultCompanyTemplate.companyName,
     companyDescription: settings.company_description ?? defaultCompanyTemplate.companyDescription,
     adminEmail: settings.support_email ?? defaultCompanyTemplate.adminEmail,
@@ -28,10 +36,10 @@ export function normalizeTemplateSettings(settings = {}) {
 
 export function createTemplateSettingsPayload(template) {
   return {
-    logo_path: template.logoPath,
     company_name: template.companyName,
     company_description: template.companyDescription,
     support_email: template.adminEmail,
     support_phone: template.adminPhone,
+    logo_file: template.logoFile,
   };
 }

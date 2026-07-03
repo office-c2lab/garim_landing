@@ -40,14 +40,13 @@ export default function FeaturesSection() {
           <div className="flex flex-col gap-7 lg:pr-4">
             <Motion.div className="max-w-xl space-y-4" {...SECTION_TITLE_REVEAL}>
               <SectionTitle
-                eyebrow="AI GUARDRAIL"
-                title="AI 가드레일이란?"
+                eyebrow="AI GOVERNANCE"
+                title="AI 거버넌스 솔루션"
                 desc={
                   <>
-AI 가드레일은 AI 사용을 막는 장벽이 아니라,<br />
-위험한 사용만 제어하는 보안 기준입니다.<br />
-GARIM은 개인정보·기밀정보·위험 프롬프트를 실시간으로 탐지하고,<br />
-정책에 따라 차단하거나 마스킹합니다.
+GARIM은 기업 내 생성형 AI 사용을 실시간으로 탐지하고,<br />
+개인정보·민감정보가 포함된 프롬프트를 식별해<br />
+기업 정책에 따라 차단하거나 마스킹합니다.<br />
                   </>
                 }
               />

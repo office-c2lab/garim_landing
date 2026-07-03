@@ -7,7 +7,7 @@ import ArenaOpeningHeroArt from './ArenaOpeningHeroArt';
 
 export default function HeroSection({ onVisibilityChange }) {
   const heroRef = useRef(null);
-  const shaderRevealMs = 2170;
+  const shaderRevealMs = 2620;
   const [showAnimatedBackground, setShowAnimatedBackground] = useState(() => {
     if (typeof window === 'undefined') {
       return false;
@@ -36,17 +36,20 @@ export default function HeroSection({ onVisibilityChange }) {
       return undefined;
     }
 
+    if (showAnimatedBackground) {
+      const fadeTimeoutId = window.setTimeout(() => {
+        setIsAnimatedBackgroundVisible(true);
+      }, 80);
+
+      return () => window.clearTimeout(fadeTimeoutId);
+    }
+
     const mountTimeoutId = window.setTimeout(() => {
       setShowAnimatedBackground(true);
     }, shaderRevealMs);
 
-    const fadeTimeoutId = window.setTimeout(() => {
-      setIsAnimatedBackgroundVisible(true);
-    }, shaderRevealMs);
-
     return () => {
       window.clearTimeout(mountTimeoutId);
-      window.clearTimeout(fadeTimeoutId);
     };
   }, [isAnimatedBackgroundVisible, showAnimatedBackground]);
 
@@ -58,7 +61,7 @@ export default function HeroSection({ onVisibilityChange }) {
       {showAnimatedBackground ? (
         <div
           className={`absolute inset-0 transition-opacity duration-[2200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            isAnimatedBackgroundVisible ? 'opacity-100' : 'opacity-[0.02]'
+            isAnimatedBackgroundVisible ? 'opacity-100' : 'opacity-0'
           }`.trim()}
           aria-hidden="true"
         >
@@ -66,14 +69,12 @@ export default function HeroSection({ onVisibilityChange }) {
         </div>
       ) : null}
 
-      {showAnimatedBackground ? (
-        <div
-          className={`pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(106,90,224,0.18),transparent_42%),linear-gradient(180deg,rgba(5,4,13,0.82)_0%,rgba(8,7,18,0.5)_46%,rgba(2,2,7,0.2)_100%)] transition-opacity duration-[2400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            isAnimatedBackgroundVisible ? 'opacity-0' : 'opacity-100'
-          }`.trim()}
-          aria-hidden="true"
-        />
-      ) : null}
+      <div
+        className={`pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(91,57,214,0.18),transparent_42%),linear-gradient(180deg,rgba(5,4,13,0.82)_0%,rgba(8,7,18,0.5)_46%,rgba(2,2,7,0.2)_100%)] transition-opacity duration-[2600ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isAnimatedBackgroundVisible ? 'opacity-0' : 'opacity-100'
+        }`.trim()}
+        aria-hidden="true"
+      />
 
       <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center gap-10 px-5 py-8 text-center sm:gap-12 sm:px-8 sm:py-10">
         <ArenaOpeningHeroArt />
@@ -85,31 +86,31 @@ export default function HeroSection({ onVisibilityChange }) {
           className="flex max-w-4xl flex-wrap items-center justify-center gap-x-5 gap-y-2 text-center sm:gap-x-6"
         >
           <span className="text-[0.78rem] font-medium uppercase tracking-[0.32em] text-white sm:text-[0.88rem]">
-            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#a99dff] sm:text-[1.34rem]">
+            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#8B7CFF] sm:text-[1.34rem]">
               G
             </span>
             enAI
           </span>
           <span className="text-[0.78rem] font-medium uppercase tracking-[0.32em] text-white sm:text-[0.88rem]">
-            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#a99dff] sm:text-[1.34rem]">
+            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#8B7CFF] sm:text-[1.34rem]">
               A
             </span>
             ccess
           </span>
           <span className="text-[0.78rem] font-medium uppercase tracking-[0.32em] text-white sm:text-[0.88rem]">
-            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#a99dff] sm:text-[1.34rem]">
+            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#8B7CFF] sm:text-[1.34rem]">
               R
             </span>
             isk
           </span>
           <span className="text-[0.78rem] font-medium uppercase tracking-[0.32em] text-white sm:text-[0.88rem]">
-            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#a99dff] sm:text-[1.34rem]">
+            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#8B7CFF] sm:text-[1.34rem]">
               I
             </span>
             nspection
           </span>
           <span className="text-[0.78rem] font-medium uppercase tracking-[0.32em] text-white sm:text-[0.88rem]">
-            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#a99dff] sm:text-[1.34rem]">
+            <span className="mr-1 text-[1.22rem] font-semibold tracking-[0.18em] text-[#8B7CFF] sm:text-[1.34rem]">
               M
             </span>
             anagement
@@ -124,7 +125,7 @@ export default function HeroSection({ onVisibilityChange }) {
         >
           <Link
             to="/dashboard"
-            className="group relative z-[1] inline-flex min-w-[280px] items-center justify-center overflow-hidden rounded-2xl bg-[#1d1d1d] px-7 py-4 text-base font-bold leading-[26px] text-[#747474] no-underline shadow-[0_4px_12px_rgba(0,0,0,0.18),0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_1px_rgba(255,255,255,0.05)] transition duration-300 hover:scale-[1.04] hover:bg-[#6a5ae0] hover:text-white hover:shadow-[0_0_90px_rgba(106,90,224,0.4),0_4px_12px_rgba(0,0,0,0.18),0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_1px_rgba(255,255,255,0.32)] active:scale-[1.02]"
+            className="group relative z-[1] inline-flex min-w-[280px] items-center justify-center overflow-hidden rounded-2xl bg-[#1d1d1d] px-7 py-4 text-base font-bold leading-[26px] text-[#747474] no-underline shadow-[0_4px_12px_rgba(0,0,0,0.18),0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_1px_rgba(255,255,255,0.05)] transition duration-300 hover:scale-[1.04] hover:bg-[#5B39D6] hover:text-white hover:shadow-[0_0_90px_rgba(91,57,214,0.4),0_4px_12px_rgba(0,0,0,0.18),0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_1px_rgba(255,255,255,0.32)] active:scale-[1.02]"
           >
             <span
               aria-hidden="true"
@@ -168,7 +169,7 @@ export default function HeroSection({ onVisibilityChange }) {
 
             <span
               aria-hidden="true"
-              className="absolute bottom-[-10px] left-[20%] right-[20%] z-[2] h-5 rounded-full bg-[#6a5ae0] opacity-0 blur-[12.5px] transition duration-300 group-hover:opacity-100"
+              className="absolute bottom-[-10px] left-[20%] right-[20%] z-[2] h-5 rounded-full bg-[#5B39D6] opacity-0 blur-[12.5px] transition duration-300 group-hover:opacity-100"
             />
 
             <span className="relative z-[1]">도입 문의하기</span>

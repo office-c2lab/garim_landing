@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 
-import logoIcon from '../../assets/icons/logo.png';
+import logoIcon from '../../assets/icons/simbol.svg';
 
 export default function ArenaJudgeLoader({
   className = '',

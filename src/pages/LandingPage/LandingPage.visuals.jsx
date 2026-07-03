@@ -133,7 +133,7 @@ function ChatInput({ inputValue, setInputValue, handleSend, isDisabled, compact 
       <button
   className={`absolute flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
     inputValue.trim()
-      ? 'cursor-pointer bg-[#6a5ae0] hover:bg-[#5b4fd2]'
+      ? 'cursor-pointer bg-[#5B39D6] hover:bg-[#5B39D6]'
       : 'bg-[#D9DADB]'
   } ${compact ? 'right-3 bottom-3' : 'right-4 bottom-4'} ${
     isDisabled ? 'cursor-not-allowed opacity-50' : ''
@@ -449,7 +449,7 @@ export function AgenticCommerceVisual() {
                   content={firstUserPrompt}
                   animateOnMount
                   typingDelayMs={firstUserDelayMs}
-                  userBubbleClassName="bg-[#5b4fd2] text-white shadow-[0_16px_36px_rgba(106,90,224,0.24)]"
+                  userBubbleClassName="bg-[#5B39D6] text-white shadow-[0_16px_36px_rgba(91,57,214,0.24)]"
                   assistantBubbleClassName="border border-[#ddd8ff] bg-[#faf9ff] text-[#272052] shadow-[0_16px_34px_rgba(15,23,42,0.12)]"
                   assistantTextClassName="font-semibold text-[#1d173f]"
                 />
@@ -463,14 +463,14 @@ export function AgenticCommerceVisual() {
                   content={firstAssistantReply}
                   animateOnMount
                   typingDelayMs={firstAssistantDelayMs}
-                  userBubbleClassName="bg-[#5b4fd2] text-white shadow-[0_16px_36px_rgba(106,90,224,0.24)]"
+                  userBubbleClassName="bg-[#5B39D6] text-white shadow-[0_16px_36px_rgba(91,57,214,0.24)]"
                   assistantBubbleClassName="border border-[#ddd8ff] bg-[#faf9ff] text-[#272052] shadow-[0_16px_34px_rgba(15,23,42,0.12)]"
                   assistantTextClassName="font-semibold text-[#1d173f]"
                 />
               </div>
 
               <motion.div
-                className="ml-auto mb-2 pt-3 text-[0.72rem] font-semibold tracking-[0.08em] text-[#6a5ae0] text-right"
+                className="ml-auto mb-2 pt-3 text-[0.72rem] font-semibold tracking-[0.08em] text-[#5B39D6] text-right"
                 initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                 whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.45 }}
@@ -487,7 +487,7 @@ export function AgenticCommerceVisual() {
                   content={secondUserPrompt}
                   animateOnMount
                   typingDelayMs={secondUserDelayMs}
-                  userBubbleClassName="bg-[#5b4fd2] text-white shadow-[0_16px_36px_rgba(106,90,224,0.24)]"
+                  userBubbleClassName="bg-[#5B39D6] text-white shadow-[0_16px_36px_rgba(91,57,214,0.24)]"
                   assistantBubbleClassName="border border-[#ddd8ff] bg-[#faf9ff] text-[#272052] shadow-[0_16px_34px_rgba(15,23,42,0.12)]"
                   assistantTextClassName="font-semibold text-[#1d173f]"
                 />
@@ -501,7 +501,7 @@ export function AgenticCommerceVisual() {
                   content={secondAssistantReply}
                   animateOnMount
                   typingDelayMs={secondAssistantDelayMs}
-                  userBubbleClassName="bg-[#5b4fd2] text-white shadow-[0_16px_36px_rgba(106,90,224,0.24)]"
+                  userBubbleClassName="bg-[#5B39D6] text-white shadow-[0_16px_36px_rgba(91,57,214,0.24)]"
                   assistantBubbleClassName="border border-[#ddd8ff] bg-[#faf9ff] text-[#272052] shadow-[0_16px_34px_rgba(15,23,42,0.12)]"
                   assistantTextClassName="font-semibold text-[#1d173f]"
                 />

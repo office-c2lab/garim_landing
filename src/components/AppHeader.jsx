@@ -1,12 +1,11 @@
-import { LogOut } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import settingIcon from '../assets/icons/setting.svg';
-import settingWhiteIcon from '../assets/icons/setting-white.svg';
 import {
   APP_PAGE_HORIZONTAL_PADDING_CLASS,
   APP_PAGE_INNER_WIDTH_CLASS,
   APP_PAGE_OUTER_WIDTH_CLASS,
 } from '../constants/contentLayout.js';
+import { useSystemIpaddrQuery, useSystemResourceStream } from '../queries/systemQueries.js';
 import RadarBrand from './RadarBrand.jsx';
 
 const PAGE_TITLES = {
@@ -14,274 +13,70 @@ const PAGE_TITLES = {
   '/monitoring': 'Prompt Monitoring',
   '/users': 'User Management',
   '/policies': 'Policy Management',
-  '/domains': 'Domains',
+  '/domains': 'Domains Management',
   '/support': 'Operation Support',
   '/mypage': 'My Page',
-  '/settings': 'Settings',
-  '/notifications': 'Notifications',
   '/download': 'Download',
 };
 
-const PAGE_DESCRIPTIONS = {
-  '/dashboard': 'GARIM 서비스 현황과 주요 탐지 현황을 한눈에 확인할 수 있습니다.',
-  '/monitoring': '프롬프트 처리 이력 전체와 상태별 모니터링 결과를 확인할 수 있습니다.',
-  '/users': '사용자별 접근 권한과 IP 기반 보안 설정을 관리할 수 있습니다.',
-  '/policies': '정책을 관리하고 서비스별 적용 기준을 설정할 수 있습니다.',
-  '/domains': '외부 AI 서비스 도메인을 관리하고 사용 여부를 설정할 수 있습니다.',
-  '/support': '운영 가이드, 템플릿, 배포 URL을 관리할 수 있습니다.',
-  '/mypage': '관리자 계정 정보와 비밀번호를 관리할 수 있습니다.',
-  '/settings': '드롭다운 선택 항목과 공통 운영 값을 관리할 수 있습니다.',
-  '/notifications': '검토가 필요한 항목과 시스템 변경 알림을 확인할 수 있습니다.',
-  '/download': 'GARIM 에이전트와 운영 가이드 파일을 다운로드할 수 있습니다.',
-};
-
-function HeaderIconButton({
-  label,
-  tooltip = label,
-  className = '',
-  hoverClassName = 'hover:bg-white hover:text-[#7B8090]',
-  isActive = false,
-  onClick,
-  children,
-  ...props
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={tooltip}
-      onClick={onClick}
-      className={`group relative flex h-[31px] w-[31px] cursor-pointer items-center justify-center rounded-full transition lg:h-[30px] lg:w-[30px] xl:h-[34px] xl:w-[34px] ${
-        isActive ? 'bg-[#4338CA] text-white' : `bg-[#F3F4F6] text-[#9EA2AE] ${hoverClassName}`
-      } ${className}`.trim()}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
-
-function FilledBellIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
-      <path d="M12 2.75a5.25 5.25 0 0 0-5.25 5.25v1.13c0 .92-.24 1.83-.69 2.63l-1.07 1.88A2.25 2.25 0 0 0 6.94 17h10.12a2.25 2.25 0 0 0 1.95-3.36l-1.07-1.88a5.38 5.38 0 0 1-.69-2.63V8A5.25 5.25 0 0 0 12 2.75Zm0 18.5a2.63 2.63 0 0 0 2.47-1.75H9.53A2.63 2.63 0 0 0 12 21.25Z" />
-    </svg>
-  );
-}
-
-export default function AppHeader({ onMenuClick, isSidebarOpen = false }) {
+export default function AppHeader({ onMenuClick, isSidebarOpen = false, pageMetaOverride = null }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const pageTitle = PAGE_TITLES[location.pathname] ?? 'GARIM';
-  const pageDescription = PAGE_DESCRIPTIONS[location.pathname] ?? '';
-  const isSettingsActive = location.pathname.startsWith('/settings');
-  const isNotificationsActive = location.pathname.startsWith('/notifications');
-  const userName = 'C2lab';
-
-  const handleLogout = () => {
-    navigate('/login');
-  };
-
-  const handleNavigateMyPage = () => {
-    navigate('/mypage');
-  };
-
-  const handleNavigateSettings = () => {
-    navigate('/settings');
-  };
-
-  const handleNavigateNotifications = () => {
-    navigate('/notifications');
-  };
+  const pageTitle = pageMetaOverride?.title ?? PAGE_TITLES[location.pathname] ?? 'GARIM';
+  const pageSubtitle = pageMetaOverride?.subtitle ?? '';
+  const { data: ipaddrData } = useSystemIpaddrQuery();
+  const { data: resourceData } = useSystemResourceStream();
 
   return (
-    <header className="w-full bg-[#1A1A1A]">
-      <div className="flex h-[var(--app-header-height)] items-center justify-between px-3 sm:px-4 lg:hidden">
-        <div className="flex min-w-0 items-center gap-3">
+    <header className="w-full border-b border-[#E7ECF5] bg-white shadow-[0_1px_0_rgba(15,23,42,0.02)]">
+      <div className="flex h-[var(--app-header-height)] items-center justify-between px-[var(--app-page-x)] lg:hidden">
+        <div className="flex min-w-0 items-center gap-[var(--app-gap-sm)]">
           <button
             type="button"
             aria-label={isSidebarOpen ? '메뉴 닫기' : '메뉴 열기'}
             aria-expanded={isSidebarOpen}
             aria-controls="app-sidebar-drawer"
             onClick={onMenuClick}
-            className={`flex h-10 items-center rounded-full border px-4 transition ${
-              isSidebarOpen ? 'border-white/25 bg-white/12' : 'border-white/15 bg-white/6'
+            className={`flex h-[var(--app-control-sm)] items-center rounded-full border px-[var(--app-pad-md)] transition ${
+              isSidebarOpen
+                ? 'border-[#C7D2FE] bg-[#EEF2FF]'
+                : 'border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#C7D2FE] hover:bg-[#EEF2FF]'
             }`.trim()}
           >
-            <RadarBrand
-              className="gap-1.5"
-              logoClassName="h-[1.4rem]"
-              radarClassName="w-[5.3rem]"
-            />
+            <RadarBrand radarClassName="w-[clamp(6.2rem,22vw,7.1rem)]" />
           </button>
-          <h1 className="truncate text-[1rem] font-bold tracking-[-0.03em] text-white">
-            {pageTitle}
-          </h1>
+          <HeaderTitle title={pageTitle} subtitle={pageSubtitle} compact />
         </div>
 
-        <div className="ml-auto flex items-center gap-1.5">
-          <div className="relative" data-header-popover-root="true">
-            <button
-              type="button"
-              className="flex h-9 items-center rounded-full px-3 text-[0.82rem] font-semibold text-white/82 transition hover:bg-white/8 hover:text-white"
-              onClick={handleNavigateMyPage}
-            >
-              <span className="text-[#8F7CFF]">{userName}</span>
-              <span className="pl-1 text-white/82">님 반갑습니다.</span>
-            </button>
-          </div>
-          <div className="relative" data-header-popover-root="true">
-            <HeaderIconButton
-              label="알람"
-              tooltip=""
-              className="group active:bg-[#4338CA] active:text-white"
-              hoverClassName="hover:bg-[#4338CA] hover:text-white"
-              isActive={isNotificationsActive}
-              onClick={handleNavigateNotifications}
-            >
-              <FilledBellIcon className="h-[17px] w-[17px] lg:h-[18px] lg:w-[18px]" />
-            </HeaderIconButton>
-          </div>
-          <div className="relative" data-header-popover-root="true">
-            <HeaderIconButton
-              label="설정"
-              tooltip=""
-              className="group active:bg-[#4338CA] active:text-white"
-              hoverClassName="hover:bg-[#4338CA] hover:text-white"
-              isActive={isSettingsActive}
-              onClick={handleNavigateSettings}
-            >
-              <img
-                src={settingIcon}
-                alt=""
-                aria-hidden="true"
-                className={`h-[15px] w-[15px] transition-opacity group-hover:opacity-0 group-active:opacity-0 ${
-                  isSettingsActive ? 'opacity-0' : 'opacity-100'
-                }`.trim()}
-              />
-              <img
-                src={settingWhiteIcon}
-                alt=""
-                aria-hidden="true"
-                className={`pointer-events-none absolute h-[15px] w-[15px] transition-opacity group-hover:opacity-100 group-active:opacity-100 ${
-                  isSettingsActive ? 'opacity-100' : 'opacity-0'
-                }`.trim()}
-              />
-            </HeaderIconButton>
-          </div>
-          <div className="relative" data-header-popover-root="true">
-            <HeaderIconButton
-              label="로그아웃"
-              tooltip=""
-              className="group active:bg-[#4338CA] active:text-white"
-              hoverClassName="hover:bg-[#4338CA] hover:text-white"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-[15px] w-[15px] stroke-[2.1] lg:h-[16px] lg:w-[16px]" />
-            </HeaderIconButton>
-          </div>
+        <div className="ml-auto flex items-center gap-[var(--app-gap-xs)]">
+          <HeaderSystemStatus compact ipaddrData={ipaddrData} resourceData={resourceData} />
         </div>
       </div>
 
       <div className="hidden h-[var(--app-header-height)] lg:flex">
-        <div className="flex h-full w-[var(--app-sidebar-width)] items-center justify-center px-3 lg:px-3 xl:px-3.5">
+        <div className="flex h-full w-[var(--app-sidebar-width)] items-center justify-center px-[var(--app-pad-sm)]">
           <button
             type="button"
             className="shrink-0 cursor-pointer"
             onClick={() => navigate('/dashboard')}
             aria-label="대시보드로 이동"
           >
-            <RadarBrand
-              className="gap-1.5 lg:gap-1.5 xl:gap-2"
-              logoClassName="h-[1.9rem] lg:h-[1.8rem] xl:h-[2.05rem] 2xl:h-[2.2rem]"
-              radarClassName="w-[6rem] lg:w-[5.8rem] xl:w-[6.7rem] 2xl:w-[7.15rem]"
-            />
+            <RadarBrand radarClassName="w-[clamp(8rem,9.4vw,9.5rem)]" />
           </button>
         </div>
 
-        <div className="h-full min-w-0 flex-1 lg:px-5 xl:px-5 2xl:px-5">
+        <div className="h-full min-w-0 flex-1 px-[var(--app-pad-md)]">
           <div
             className={`mx-auto flex h-full w-full ${APP_PAGE_HORIZONTAL_PADDING_CLASS} ${APP_PAGE_OUTER_WIDTH_CLASS}`.trim()}
           >
             <div
-              className={`mx-auto flex w-full items-center justify-between gap-4 xl:gap-1.5 ${APP_PAGE_INNER_WIDTH_CLASS}`.trim()}
+              className={`mx-auto flex w-full items-center justify-between gap-[var(--app-gap-md)] ${APP_PAGE_INNER_WIDTH_CLASS}`.trim()}
             >
-              <div className="flex min-w-0 items-center gap-3 pr-4">
-                <h1 className="shrink-0 text-[clamp(1.1rem,1.5vw,1.45rem)] font-bold tracking-[-0.035em] text-white">
-                  {pageTitle}
-                </h1>
-                {pageDescription ? (
-                  <p className="min-w-0 truncate text-[0.88rem] font-medium text-white/58">
-                    {pageDescription}
-                  </p>
-                ) : null}
+              <div className="flex min-w-0 items-center gap-[var(--app-gap-sm)] pr-[var(--app-pad-md)]">
+                <HeaderTitle title={pageTitle} subtitle={pageSubtitle} />
               </div>
-              <div className="flex shrink-0 items-center gap-4 xl:gap-5">
-                <div className="relative" data-header-popover-root="true">
-                  <button
-                    type="button"
-                    className="hidden h-9 items-center rounded-full px-3 text-[0.88rem] font-semibold text-white/82 transition hover:bg-white/8 hover:text-white xl:flex"
-                    onClick={handleNavigateMyPage}
-                  >
-                    <span className="text-[#8F7CFF]">{userName}</span>
-                    <span className="pl-1 text-white/82">님 반갑습니다.</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-1 xl:gap-1.5">
-                  <div className="relative" data-header-popover-root="true">
-                    <HeaderIconButton
-                      label="알람"
-                      tooltip=""
-                      className="group active:bg-[#4338CA] active:text-white"
-                      hoverClassName="hover:bg-[#4338CA] hover:text-white"
-                      isActive={isNotificationsActive}
-                      onClick={handleNavigateNotifications}
-                    >
-                      <FilledBellIcon className="h-[21px] w-[21px] lg:h-[20px] lg:w-[20px] xl:h-[22px] xl:w-[22px]" />
-                    </HeaderIconButton>
-                  </div>
-
-                  <div className="relative" data-header-popover-root="true">
-                    <HeaderIconButton
-                      label="설정"
-                      tooltip=""
-                      className="group active:bg-[#4338CA] active:text-white"
-                      hoverClassName="hover:bg-[#4338CA] hover:text-white"
-                      isActive={isSettingsActive}
-                      onClick={handleNavigateSettings}
-                    >
-                      <img
-                        src={settingIcon}
-                        alt=""
-                        aria-hidden="true"
-                        className={`h-[16px] w-[16px] transition-opacity group-hover:opacity-0 group-active:opacity-0 lg:h-[15px] lg:w-[15px] xl:h-[17px] xl:w-[17px] ${
-                          isSettingsActive ? 'opacity-0' : 'opacity-100'
-                        }`.trim()}
-                      />
-                      <img
-                        src={settingWhiteIcon}
-                        alt=""
-                        aria-hidden="true"
-                        className={`pointer-events-none absolute h-[16px] w-[16px] transition-opacity group-hover:opacity-100 group-active:opacity-100 lg:h-[15px] lg:w-[15px] xl:h-[17px] xl:w-[17px] ${
-                          isSettingsActive ? 'opacity-100' : 'opacity-0'
-                        }`.trim()}
-                      />
-                    </HeaderIconButton>
-                  </div>
-
-                  <div className="relative" data-header-popover-root="true">
-                    <HeaderIconButton
-                      label="로그아웃"
-                      tooltip=""
-                      className="group active:bg-[#4338CA] active:text-white"
-                      hoverClassName="hover:bg-[#4338CA] hover:text-white"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="h-[16px] w-[16px] stroke-[4] lg:h-[15px] lg:w-[15px] xl:h-[17px] xl:w-[17px]" />
-                    </HeaderIconButton>
-                  </div>
-                </div>
+              <div className="flex shrink-0 items-center gap-[var(--app-gap-md)]">
+                <HeaderSystemStatus ipaddrData={ipaddrData} resourceData={resourceData} />
               </div>
             </div>
           </div>
@@ -289,4 +84,196 @@ export default function AppHeader({ onMenuClick, isSidebarOpen = false }) {
       </div>
     </header>
   );
+}
+
+function HeaderTitle({ title, subtitle, compact = false }) {
+  const titleColorClass = subtitle ? 'text-[#A78BFA]' : 'text-[#4E15BD]';
+
+  return (
+    <div className="flex min-w-0 items-center gap-[var(--app-gap-xs)]">
+      <h1
+        className={
+          compact
+            ? `truncate text-[clamp(0.9rem,3.6vw,1rem)] font-bold tracking-[-0.03em] ${titleColorClass}`
+            : `shrink-0 text-[clamp(1.1rem,1.5vw,1.45rem)] font-bold tracking-[-0.035em] ${titleColorClass}`
+        }
+      >
+        {title}
+      </h1>
+      {subtitle ? (
+        <>
+          <ChevronRight
+            strokeWidth={3}
+            className={
+              compact
+                ? 'h-[var(--app-icon-xs)] w-[var(--app-icon-xs)] shrink-0 text-[#4E15BD]'
+                : 'h-[var(--app-icon-sm)] w-[var(--app-icon-sm)] shrink-0 text-[#4E15BD]'
+            }
+            aria-hidden="true"
+          />
+          <span
+            className={
+              compact
+                ? 'truncate text-[clamp(0.9rem,3.6vw,1rem)] font-bold tracking-[-0.03em] text-[#4E15BD]'
+                : 'truncate text-[clamp(1.1rem,1.5vw,1.45rem)] font-bold tracking-[-0.035em] text-[#4E15BD]'
+            }
+          >
+            {subtitle}
+          </span>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+function HeaderSystemStatus({ compact = false, ipaddrData, resourceData }) {
+  const serverIp = getPrimaryIpAddress(ipaddrData);
+  const diskValue = formatPercent(resourceData?.disk?.percent);
+  const items = [
+    {
+      label: 'CPU',
+      value: formatPercent(resourceData?.cpu?.percent),
+      tooltipRows: getCpuTooltipRows(resourceData?.cpu),
+      widthClass: compact ? 'w-[6.4rem]' : 'w-[6.7rem]',
+      valueWidthClass: 'w-[6ch]',
+    },
+    {
+      label: '메모리',
+      value: formatPercent(resourceData?.memory?.percent),
+      tooltipRows: getMemoryTooltipRows(resourceData?.memory),
+      widthClass: compact ? 'w-[7.3rem]' : 'w-[7.7rem]',
+      valueWidthClass: 'w-[6ch]',
+    },
+    {
+      label: '저장공간',
+      value: diskValue,
+      tooltipRows: getDiskTooltipRows(resourceData?.disk),
+      widthClass: compact ? 'w-[7.3rem]' : 'w-[7.9rem]',
+      valueWidthClass: 'w-[6ch]',
+    },
+    {
+      label: '서버 IP',
+      value: serverIp,
+      tooltipRows: getIpTooltipRows(ipaddrData),
+      widthClass: 'w-fit',
+      valueWidthClass: 'w-auto',
+    },
+  ];
+
+  return (
+    <div
+      className={`flex items-center ${compact ? 'gap-[var(--app-gap-xs)]' : 'gap-[var(--app-gap-sm)]'}`.trim()}
+    >
+      {items.map(item => (
+        <HeaderStatusTooltip key={item.label} rows={item.tooltipRows}>
+          <div
+            aria-label={item.tooltipRows?.length ? `${item.label} 상세 정보` : undefined}
+            className={`flex h-[var(--app-control-xs)] ${item.widthClass} items-center justify-between gap-[var(--app-gap-xs)] rounded-full bg-[#F8FAFF] font-extrabold text-[#475467] ring-1 ring-[#E2E8F0] ${
+              compact
+                ? 'px-[var(--app-pad-xs)] text-[clamp(0.64rem,2.4vw,0.72rem)]'
+                : 'px-[var(--app-pad-sm)] text-[clamp(0.74rem,0.9vw,0.82rem)]'
+            }`.trim()}
+          >
+            <span className="shrink-0 text-[#111827]">{item.label}</span>
+            <span
+              className={`${item.valueWidthClass} whitespace-nowrap text-right text-[#4F37FF] tabular-nums`}
+            >
+              {item.value}
+            </span>
+          </div>
+        </HeaderStatusTooltip>
+      ))}
+    </div>
+  );
+}
+
+function HeaderStatusTooltip({ rows, children }) {
+  if (!rows?.length) return children;
+
+  return (
+    <div className="group relative inline-flex">
+      {children}
+      <div
+        className="pointer-events-none absolute top-[calc(100%+0.5rem)] right-0 z-50 w-max min-w-[9.5rem] rounded-lg border border-[#C7D2FE] bg-white px-3 py-2 text-[12px] font-bold whitespace-nowrap text-[#4338CA] opacity-0 shadow-[0_10px_24px_rgba(67,56,202,0.14)] transition group-hover:opacity-100"
+        role="tooltip"
+      >
+        <dl className="grid gap-1.5">
+          {rows.map(row => (
+            <div
+              key={row.label}
+              className="grid grid-cols-[max-content_minmax(max-content,1fr)] gap-3"
+            >
+              <dt className="text-left text-[#667085]">{row.label}</dt>
+              <dd className="whitespace-nowrap text-right text-[#2E3363]">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  );
+}
+
+function getIpTooltipRows(ipaddrData) {
+  const addresses = Array.isArray(ipaddrData?.ip_addresses) ? ipaddrData.ip_addresses : [];
+  const ipv4Address = addresses.find(item => item?.family === 'ipv4' && item?.address);
+  const ipv6Address = addresses.find(item => item?.family === 'ipv6' && item?.address);
+
+  return [
+    { label: '서버 이름', value: ipaddrData?.hostname ?? '-' },
+    { label: 'IPv4', value: ipv4Address?.address ?? '-' },
+    { label: 'IPv6', value: ipv6Address?.address ?? '-' },
+  ];
+}
+
+function getCpuTooltipRows(cpu) {
+  const loadAverage = cpu?.load_average;
+
+  return [
+    {
+      label: '현재 사용 코어',
+      value:
+        typeof loadAverage?.used_cores === 'number' && typeof loadAverage?.total_cores === 'number'
+          ? `${formatNumber(loadAverage.used_cores)} / ${formatNumber(loadAverage.total_cores)}`
+          : '-',
+    },
+    { label: '1분 평균 부하', value: formatNumber(loadAverage?.['1m']) },
+    { label: '5분 평균 부하', value: formatNumber(loadAverage?.['5m']) },
+    { label: '15분 평균 부하', value: formatNumber(loadAverage?.['15m']) },
+  ];
+}
+
+function getMemoryTooltipRows(memory) {
+  return [
+    { label: '전체', value: memory?.total ?? '-' },
+    { label: '사용', value: memory?.used ?? '-' },
+    { label: '사용 가능', value: memory?.available ?? '-' },
+  ];
+}
+
+function getDiskTooltipRows(disk) {
+  return [
+    { label: '전체', value: disk?.total ?? '-' },
+    { label: '사용', value: disk?.used ?? '-' },
+    { label: '사용 가능', value: disk?.available ?? disk?.free ?? '-' },
+  ];
+}
+
+function getPrimaryIpAddress(ipaddrData) {
+  const addresses = Array.isArray(ipaddrData?.ip_addresses) ? ipaddrData.ip_addresses : [];
+  const ipv4Address = addresses.find(item => item?.family === 'ipv4' && item?.address);
+  const firstAddress = addresses.find(item => item?.address);
+
+  return ipv4Address?.address ?? firstAddress?.address ?? '-';
+}
+
+function formatPercent(value) {
+  if (typeof value !== 'number' || Number.isNaN(value)) return '-';
+
+  return `${value.toFixed(value % 1 === 0 ? 0 : 1)}%`;
+}
+
+function formatNumber(value) {
+  if (typeof value !== 'number' || Number.isNaN(value)) return '-';
+
+  return value.toFixed(value % 1 === 0 ? 0 : 2);
 }

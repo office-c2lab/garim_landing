@@ -524,7 +524,7 @@ function ChoiceButton({
   item,
   selected,
   onClick,
-  activeClassName = 'bg-[#5b4fd2] text-white shadow-[0_10px_24px_rgba(106,90,224,0.24)]',
+  activeClassName = 'bg-[#5B39D6] text-white shadow-[0_10px_24px_rgba(91,57,214,0.24)]',
 }) {
   return (
     <button
@@ -548,7 +548,7 @@ function DescriptionBlock({ item, descriptions, fallbackTitle, showExample = tru
 
   return (
     <div className="grid gap-3">
-      <div className="rounded-[14px] bg-[#6a5ae0] px-4 py-4 text-white shadow-[0_14px_34px_rgba(106,90,224,0.24)] sm:px-5">
+      <div className="rounded-[14px] bg-[#5B39D6] px-4 py-4 text-white shadow-[0_14px_34px_rgba(91,57,214,0.24)] sm:px-5">
         <p className="text-[0.9rem] font-extrabold leading-[150%] text-white">
           {displayTitle}
         </p>
@@ -557,7 +557,7 @@ function DescriptionBlock({ item, descriptions, fallbackTitle, showExample = tru
         </p>
       </div>
       {hasExample ? (
-        <div className="rounded-[14px] bg-[#6a5ae0] px-4 py-4 text-white shadow-[0_14px_34px_rgba(106,90,224,0.24)] sm:px-5">
+        <div className="rounded-[14px] bg-[#5B39D6] px-4 py-4 text-white shadow-[0_14px_34px_rgba(91,57,214,0.24)] sm:px-5">
           <p className="text-[0.9rem] font-extrabold leading-[150%] text-white">예시</p>
           <p className="mt-1 whitespace-pre-wrap text-[0.84rem] font-medium leading-[165%] text-white/90 sm:text-[0.9rem]">
             {descriptionEntry.example}
@@ -602,7 +602,7 @@ function PairedDefinitionPanel({
                 item={item}
                 selected={selectedPrimary === item}
                 onClick={() => onSelectPrimary(item)}
-                activeClassName="bg-[#5b4fd2] text-white shadow-[0_10px_24px_rgba(106,90,224,0.24)]"
+                activeClassName="bg-[#5B39D6] text-white shadow-[0_10px_24px_rgba(91,57,214,0.24)]"
               />
             ))}
           </div>
@@ -617,7 +617,7 @@ function PairedDefinitionPanel({
                 item={item}
                 selected={selectedSecondary === item}
                 onClick={() => onSelectSecondary(item)}
-                activeClassName="bg-[#6a5ae0] text-white shadow-[0_10px_24px_rgba(106,90,224,0.28)]"
+                activeClassName="bg-[#5B39D6] text-white shadow-[0_10px_24px_rgba(91,57,214,0.28)]"
               />
             ))}
           </div>

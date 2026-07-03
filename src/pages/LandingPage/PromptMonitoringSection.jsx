@@ -124,7 +124,7 @@ function MonitoringPreviewTable({ activeRowId, onSelectRow }) {
         onToggleRowSelection={handleToggleRowSelection}
         onToggleAllRowsSelection={handleToggleAllRowsSelection}
         bodyClassName="text-[13px]"
-        className="rounded-[28px] border-[#ded9ff] shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
+        className="rounded-[28px] border-[#D8D0FF] shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
         showSelection={false}
       />
     </Motion.div>
@@ -138,7 +138,7 @@ function MonitoringDetailCard({ row }) {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.24 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
-      className="overflow-hidden rounded-[28px] border border-[#ded9ff] bg-white shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
+      className="overflow-hidden rounded-[28px] border border-[#D8D0FF] bg-white shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
     >
       <MonitoringLogExpandedRow row={row} />
     </Motion.div>

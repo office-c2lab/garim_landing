@@ -1,3 +1,4 @@
+import { ChevronRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const DEFAULT_NAV_ITEMS = [
@@ -12,9 +13,9 @@ const DEFAULT_NAV_ITEMS = [
     path: '/monitoring',
     children: [
       { key: 'all', label: '전체', path: '/monitoring' },
-      { key: 'allow', label: '허용', path: '/monitoring?status=allow' },
-      { key: 'masking', label: '마스킹', path: '/monitoring?status=masking' },
       { key: 'block', label: '차단', path: '/monitoring?status=block' },
+      { key: 'masking', label: '마스킹', path: '/monitoring?status=masking' },
+      { key: 'allow', label: '검토필요', path: '/monitoring?status=allow' },
     ],
   },
   {
@@ -38,6 +39,10 @@ const DEFAULT_NAV_ITEMS = [
     path: '/support',
   },
 ];
+
+const ADMIN_PROFILE = {
+  name: 'C2lab 관리자',
+};
 
 function getIsActive(pathname, itemPath) {
   if (itemPath === '/dashboard') {
@@ -67,6 +72,7 @@ export default function AppSidebar({
   const location = useLocation();
 
   const sidebarTopPaddingClass = overlayHeader ? 'pt-0' : 'pt-0';
+  const isMyPageActive = getIsActive(location.pathname, '/mypage');
 
   const handleNavigate = path => {
     navigate(path);
@@ -74,24 +80,26 @@ export default function AppSidebar({
   };
 
   return (
-    <aside className="flex h-full w-full overflow-hidden  border-r border-[#E7ECF5] bg-white text-[#344054] shadow-[0_10px_30px_rgba(15,23,42,0.045)]">
-      <div className="flex h-full w-full flex-col px-3 lg:px-3 xl:px-3.5">
-        <div className={`flex min-h-0 flex-1 flex-col pb-4 ${sidebarTopPaddingClass}`.trim()}>
+    <aside className="flex h-full w-full overflow-hidden border-r border-[#E7ECF5] bg-white text-[#344054] shadow-[0_0.625rem_1.875rem_rgba(15,23,42,0.045)]">
+      <div className="flex h-full w-full flex-col px-[var(--app-pad-sm)]">
+        <div
+          className={`flex min-h-0 flex-1 flex-col pb-[var(--app-pad-md)] ${sidebarTopPaddingClass}`.trim()}
+        >
           <nav
-            className={`flex min-h-0 flex-1 ${showBrand ? 'pt-4' : 'pt-0'}`.trim()}
+            className={`flex min-h-0 flex-1 ${showBrand ? 'pt-[var(--app-pad-md)]' : 'pt-0'}`.trim()}
             aria-label="화면 이동 메뉴"
           >
-            <ul className="h-full w-full space-y-1.5 text-left">
+            <ul className="h-full w-full space-y-[var(--app-gap-xs)] text-left">
               {navItems.map(item => {
                 const isActive = getIsActive(location.pathname, item.path);
                 const isExpanded = isActive && item.children?.length;
 
                 return (
-                  <li key={item.key} className={isExpanded ? 'pb-1' : ''}>
+                  <li key={item.key} className={isExpanded ? 'pb-[var(--app-pad-xs)]' : ''}>
                     <button
                       type="button"
                       onClick={() => handleNavigate(item.path)}
-                      className={`group flex h-[46px] w-full cursor-pointer items-center gap-3 rounded-[14px] px-3.5 text-left transition duration-200 ${
+                      className={`group flex h-[var(--app-control-lg)] w-full cursor-pointer items-center gap-[var(--app-gap-sm)] rounded-[var(--app-radius-lg)] px-[var(--app-pad-sm)] text-left transition duration-200 ${
                         isActive
                           ? 'border border-[rgba(67,56,202,0.2)] bg-transparent text-[#4338CA] '
                           : 'border border-transparent bg-transparent text-[#5F6B85] hover:border-[#E7ECF5] hover:bg-[#F8FAFF] hover:text-[#1F2937]'
@@ -103,7 +111,7 @@ export default function AppSidebar({
                       </span>
                       <span
                         aria-hidden="true"
-                        className={`h-2.5 w-2.5 flex-none rounded-full transition duration-200 ${
+                        className={`h-[clamp(0.5rem,0.7vw,0.625rem)] w-[clamp(0.5rem,0.7vw,0.625rem)] flex-none rounded-full transition duration-200 ${
                           isActive
                             ? 'bg-[#4338CA] shadow-[0_0_0_4px_rgba(67,56,202,0.12),0_0_18px_rgba(67,56,202,0.2)]'
                             : 'bg-[#D8E0EB] group-hover:bg-[#C7D2FE]'
@@ -119,7 +127,7 @@ export default function AppSidebar({
                         }`.trim()}
                       >
                         <div className="min-h-0 overflow-hidden">
-                          <ul className="mt-0.5 py-1.5">
+                          <ul className="mt-[calc(var(--app-gap-xs)/3)] py-[var(--app-pad-xs)]">
                             {item.children.map((child, childIndex) => {
                               const isChildActive = getIsChildActive(location, child.path);
                               const isLastChild = childIndex === item.children.length - 1;
@@ -127,22 +135,22 @@ export default function AppSidebar({
                               return (
                                 <li
                                   key={child.key}
-                                  className="relative ml-[22px] pb-2 pl-5 last:pb-0"
+                                  className="relative ml-[clamp(1rem,1.55vw,1.375rem)] pb-[var(--app-pad-xs)] pl-[var(--app-pad-md)] last:pb-0"
                                 >
                                   <span
                                     aria-hidden="true"
                                     className={`absolute left-0 top-0 w-px bg-[#D9E0F0] ${
-                                      isLastChild ? 'h-[18px]' : 'bottom-0'
+                                      isLastChild ? 'h-[clamp(1rem,1.3vw,1.125rem)]' : 'bottom-0'
                                     }`.trim()}
                                   />
                                   <span
                                     aria-hidden="true"
-                                    className="absolute left-0 top-[18px] h-px w-5 bg-[#D9E0F0]"
+                                    className="absolute left-0 top-[clamp(1rem,1.3vw,1.125rem)] h-px w-[var(--app-pad-md)] bg-[#D9E0F0]"
                                   />
                                   <button
                                     type="button"
                                     onClick={() => handleNavigate(child.path)}
-                                    className={`flex h-9 w-full items-center rounded-[8px] px-4 text-left text-[clamp(0.82rem,1.05vw,0.9rem)] font-semibold transition duration-200 ${
+                                    className={`flex h-[var(--app-control-xs)] w-full items-center rounded-[var(--app-radius-sm)] px-[var(--app-pad-md)] text-left text-[clamp(0.82rem,1.05vw,0.9rem)] font-semibold transition duration-200 ${
                                       isChildActive
                                         ? 'bg-[#E8E2FF] text-[#3528B8]'
                                         : 'text-[#64728C] hover:bg-[#F8FAFF] hover:text-[#4338CA]'
@@ -163,6 +171,35 @@ export default function AppSidebar({
               })}
             </ul>
           </nav>
+          <div className="border-t border-[#E7ECF5] pt-[var(--app-pad-sm)]">
+            <button
+              type="button"
+              onClick={() => handleNavigate('/mypage')}
+              className={`group flex w-full cursor-pointer items-center gap-[var(--app-gap-sm)] rounded-[var(--app-radius-lg)] border px-[var(--app-pad-sm)] py-[var(--app-pad-sm)] text-left transition duration-200 ${
+                isMyPageActive
+                  ? 'border-[rgba(67,56,202,0.2)] bg-[#F8FAFF]'
+                  : 'border-transparent bg-transparent hover:border-[#E7ECF5] hover:bg-[#F8FAFF]'
+              }`.trim()}
+              aria-current={isMyPageActive ? 'page' : undefined}
+            >
+              <span className="min-w-0 flex-1">
+                <span
+                  className={`block truncate text-[clamp(0.82rem,1vw,0.9rem)] font-bold ${
+                    isMyPageActive ? 'text-[#4338CA]' : 'text-[#344054]'
+                  }`.trim()}
+                >
+                  {ADMIN_PROFILE.name}
+                </span>
+              </span>
+              <ChevronRight
+                className={`h-[var(--app-icon-xs)] w-[var(--app-icon-xs)] shrink-0 transition ${
+                  isMyPageActive ? 'text-[#4338CA]' : 'text-[#A7B0C0] group-hover:text-[#4338CA]'
+                }`.trim()}
+                strokeWidth={2.6}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </div>
       </div>
     </aside>

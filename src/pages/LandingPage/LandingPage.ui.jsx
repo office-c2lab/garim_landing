@@ -53,7 +53,7 @@ export function SectionTitle({ eyebrow, title, desc, align = 'left' }) {
   return (
     <div className={cn('flex w-full flex-col gap-3', alignClass)}>
       {eyebrow ? (
-        <div className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#6a5ae0]">
+        <div className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#5B39D6]">
           {eyebrow}
         </div>
       ) : null}

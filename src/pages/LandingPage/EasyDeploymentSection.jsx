@@ -39,11 +39,11 @@ function SupportPreview() {
       transition={{ duration: 0.55, ease: 'easeOut' }}
       className="space-y-5"
     >
-      <SectionCard className="overflow-hidden rounded-[28px] border-[#ded9ff] shadow-[0_24px_70px_rgba(64,48,150,0.12)]">
+      <SectionCard className="overflow-hidden rounded-[28px] border-[#D8D0FF] shadow-[0_24px_70px_rgba(64,48,150,0.12)]">
         <CardHeader title="템플릿 관리" action="수정하기" onAction={() => {}} />
         <dl>
           <InfoRow label="로고">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-[#4338CA] text-xs font-black text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-[#5B39D6] text-xs font-black text-white">
               {SUPPORT_TEMPLATE.logoLabel}
             </div>
           </InfoRow>
@@ -54,7 +54,7 @@ function SupportPreview() {
         </dl>
       </SectionCard>
 
-      <SectionCard className="overflow-hidden rounded-[28px] border-[#ded9ff] shadow-[0_24px_70px_rgba(64,48,150,0.12)]">
+      <SectionCard className="overflow-hidden rounded-[28px] border-[#D8D0FF] shadow-[0_24px_70px_rgba(64,48,150,0.12)]">
         <CardHeader title="다운로드 URL 관리" action="변경하기" onAction={() => {}} />
         <div className="px-6 py-5">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
@@ -66,7 +66,7 @@ function SupportPreview() {
             </div>
             <div className="flex min-w-0 items-center gap-4">
               <span className="shrink-0 text-sm font-bold text-slate-500">전체 주소</span>
-              <span className="truncate text-sm font-bold text-[#4338CA]">
+              <span className="truncate text-sm font-bold text-[#5B39D6]">
                 {SUPPORT_TEMPLATE.fullDownloadUrl}
               </span>
             </div>
@@ -84,7 +84,7 @@ function DownloadPreview() {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.22 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
-      className="overflow-hidden rounded-[28px] border border-[#ded9ff] bg-[#F3F6FA] p-6 shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
+      className="overflow-hidden rounded-[28px] border border-[#D8D0FF] bg-[#F3F6FA] p-6 shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
     >
       <SectionHeader
         title="설치 안내"

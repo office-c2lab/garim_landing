@@ -103,7 +103,7 @@ export default function AgentArenaPromoSection() {
               href="http://54.116.112.9"
               target="_blank"
               rel="noreferrer"
-              className="mt-8 inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#8f7dff]/35 bg-[linear-gradient(135deg,rgba(106,79,255,0.28),rgba(43,124,255,0.2))] px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(66,92,255,0.18),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:border-[#a99dff]/55 hover:bg-[linear-gradient(135deg,rgba(121,92,255,0.38),rgba(56,138,255,0.28))] hover:shadow-[0_16px_34px_rgba(76,102,255,0.28),inset_0_1px_0_rgba(255,255,255,0.2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9da4ff]"
+              className="mt-8 inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#8f7dff]/35 bg-[linear-gradient(135deg,rgba(106,79,255,0.28),rgba(43,124,255,0.2))] px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(66,92,255,0.18),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:border-[#8B7CFF]/55 hover:bg-[linear-gradient(135deg,rgba(121,92,255,0.38),rgba(56,138,255,0.28))] hover:shadow-[0_16px_34px_rgba(76,102,255,0.28),inset_0_1px_0_rgba(255,255,255,0.2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9da4ff]"
             >
               RADAR 확장 보기
               <ArrowRight className="h-4 w-4" />

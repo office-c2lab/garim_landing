@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import AppHeader from './AppHeader.jsx';
@@ -9,6 +9,7 @@ export default function AppShell({ showBrand = true }) {
   const isMobileSidebarOpen = useSidebarStore(state => state.isMobileSidebarOpen);
   const toggleMobileSidebar = useSidebarStore(state => state.toggleMobileSidebar);
   const closeMobileSidebar = useSidebarStore(state => state.closeMobileSidebar);
+  const [pageMetaOverride, setPageMetaOverride] = useState(null);
 
   useEffect(() => {
     if (!isMobileSidebarOpen) return undefined;
@@ -24,17 +25,14 @@ export default function AppShell({ showBrand = true }) {
   }, [isMobileSidebarOpen, closeMobileSidebar]);
 
   return (
-    <main
-      className="min-h-screen overflow-hidden bg-[#1A1A1A] text-white lg:h-screen"
-      style={{
-        '--app-header-height': 'clamp(2.75rem, 3.9vw, 3.6rem)',
-        '--app-sidebar-width': 'clamp(9.75rem, 12.8vw, 12.25rem)',
-        '--app-sidebar-mobile-width': 'min(68vw, 12.5rem)',
-      }}
-    >
+    <main className="min-h-screen overflow-hidden bg-[#F5F7FB] text-[#111827] lg:h-screen">
       <div className="h-full w-full overflow-hidden">
         <div className="fixed inset-x-0 top-0 z-30">
-          <AppHeader isSidebarOpen={isMobileSidebarOpen} onMenuClick={toggleMobileSidebar} />
+          <AppHeader
+            isSidebarOpen={isMobileSidebarOpen}
+            onMenuClick={toggleMobileSidebar}
+            pageMetaOverride={pageMetaOverride}
+          />
         </div>
 
         <div className="fixed top-[var(--app-header-height)] left-0 bottom-0 z-40 hidden w-[var(--app-sidebar-width)] lg:block">
@@ -66,10 +64,10 @@ export default function AppShell({ showBrand = true }) {
           </div>
         </div>
 
-        <section className="fixed top-[var(--app-header-height)] right-0 bottom-0 left-0 overflow-hidden border-t border-[#FFFFFF] bg-[#F5F7FB] text-[#111827] lg:left-[var(--app-sidebar-width)]  lg:border-l lg:border-[#FFFFFF]">
+        <section className="fixed top-[var(--app-header-height)] right-0 bottom-0 left-0 overflow-hidden border-t border-[#E7ECF5] bg-[#F5F7FB] text-[#111827] lg:left-[var(--app-sidebar-width)] lg:border-l lg:border-[#E7ECF5]">
           <div className="hover-scrollbar relative h-full overflow-y-auto overflow-x-hidden">
-            <div className="min-h-full w-full bg-[#F5F7FB] px-3 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-4">
-              <Outlet />
+            <div className="flex min-h-full w-full bg-[#F5F7FB]">
+              <Outlet context={{ setPageMetaOverride }} />
             </div>
           </div>
         </section>

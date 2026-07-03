@@ -1,7 +1,7 @@
 import { motion as Motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Cloud, Database, ShieldCheck, UsersRound } from 'lucide-react';
 
-import garimLogo from '@/assets/icons/logo.png';
+import garimLogo from '@/assets/icons/simbol.svg';
 import hardImage from '@/assets/images/hard.png';
 import { Container } from './LandingPage.primitives';
 
@@ -37,11 +37,11 @@ export default function GuardrailArchitectureSection() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.45, ease: 'easeOut' }}
         >
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#a99dff]">
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#8B7CFF]">
             How GARIM Works
           </p>
           <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-            GARIM AI 가드레일 구성도
+            GARIM 구성도
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
             임직원의 프롬프트부터 외부 AI 응답까지, 모든 사용 흐름에 기업 보안 정책을 적용합니다.
@@ -79,7 +79,7 @@ export default function GuardrailArchitectureSection() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl border border-[#a99dff]/45 bg-[linear-gradient(135deg,rgba(86,66,174,0.78),rgba(26,27,45,0.96)_52%,rgba(66,80,126,0.78))] px-7 py-7 text-center shadow-[0_0_70px_rgba(106,90,224,0.22)]">
+            <div className="relative overflow-hidden rounded-2xl border border-[#8B7CFF]/45 bg-[linear-gradient(135deg,rgba(86,66,174,0.78),rgba(26,27,45,0.96)_52%,rgba(66,80,126,0.78))] px-7 py-7 text-center shadow-[0_0_70px_rgba(91,57,214,0.22)]">
               <div
                 aria-hidden="true"
                 className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_28%)]"
@@ -89,26 +89,9 @@ export default function GuardrailArchitectureSection() {
                   <img src={garimLogo} alt="" className="h-12 w-12 object-contain" />
                   <span className="text-3xl font-bold tracking-[-0.04em]">GARIM</span>
                 </div>
-                <div className="mt-6 flex items-center justify-center gap-3 text-[15px] font-semibold">
+                <div className="mt-7 flex items-center justify-center gap-3 text-[15px] font-semibold">
                   <StepBadge>2</StepBadge>
                   <span>프롬프트 내 보안 위험 실시간 탐지</span>
-                </div>
-                <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs font-semibold">
-                  {['개인정보', '기밀정보', '위험 프롬프트'].map(label => (
-                    <span
-                      key={label}
-                      className="rounded-full border border-white/14 bg-black/20 px-3 py-1.5 text-white/72"
-                    >
-                      {label}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-3 flex flex-wrap justify-center gap-2 text-xs font-semibold">
-                  {['허용', '마스킹', '차단'].map(label => (
-                    <span key={label} className="rounded-full bg-white px-3 py-1.5 text-[#4b3bb8]">
-                      {label}
-                    </span>
-                  ))}
                 </div>
               </div>
             </div>
@@ -139,7 +122,7 @@ export default function GuardrailArchitectureSection() {
             <div className="absolute inset-x-0 top-0 h-px bg-white/34" />
             <div className="flex items-center justify-center gap-3 text-sm font-semibold text-white/88">
               <StepBadge>5</StepBadge>
-              <Database className="h-5 w-5 text-[#a99dff]" />
+              <Database className="h-5 w-5 text-[#8B7CFF]" />
               <span>사용 이력 · 탐지 근거 · 조치 로그 중앙 관리</span>
             </div>
           </div>
@@ -156,7 +139,7 @@ export default function GuardrailArchitectureSection() {
             <FlowLabel number="1">부서·사용자가 프롬프트 입력</FlowLabel>
             <UsersRound className="mt-5 h-10 w-10 text-white/70" />
           </div>
-          <div className="rounded-2xl border border-[#a99dff]/38 bg-[linear-gradient(135deg,rgba(86,66,174,0.7),rgba(22,22,35,0.96))] p-5">
+          <div className="rounded-2xl border border-[#8B7CFF]/38 bg-[linear-gradient(135deg,rgba(86,66,174,0.7),rgba(22,22,35,0.96))] p-5">
             <FlowLabel number="2">GARIM이 보안 위험 실시간 탐지</FlowLabel>
             <div className="mt-5 flex items-center gap-3">
               <ShieldCheck className="h-10 w-10 text-[#c5baff]" />
@@ -174,7 +157,7 @@ export default function GuardrailArchitectureSection() {
           </div>
           <div className="rounded-2xl border border-white/8 bg-white/[0.035] p-5">
             <FlowLabel number="5">사용 이력·탐지·조치 로그 중앙 관리</FlowLabel>
-            <Database className="mt-5 h-9 w-9 text-[#a99dff]" />
+            <Database className="mt-5 h-9 w-9 text-[#8B7CFF]" />
           </div>
         </Motion.div>
 
@@ -186,16 +169,20 @@ export default function GuardrailArchitectureSection() {
             viewport={{ once: true, amount: 0.35 }}
             transition={{ duration: 0.45, ease: 'easeOut' }}
           >
-            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#a99dff]">
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#8B7CFF]">
               ON-PREMISE DEPLOYMENT
             </p>
             <h3 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-              온프레미스 구축 방식
+            구축 방식
             </h3>
             <p className="mt-5 text-pretty text-sm leading-7 text-white/62 sm:text-base">
-              GARIM은 기업 내부망 또는 전용 인프라에 온프레미스 형태로 구축됩니다. 외부로 보안
-              데이터를 이전하지 않고, 사내 환경 안에서 프롬프트 검사와 정책 적용, 사용 이력 관리를
-              중앙에서 수행합니다.
+              GARIM은 On-Premise 환경에서 Agentless 방식으로 구축됩니다.
+              <br />
+              외부로 보안 데이터를 이전하지 않고,
+              <br />
+              사내 환경 안에서 프롬프트 검사와 정책 적용,
+              <br />
+              사용 이력 관리를 중앙에서 수행합니다.
             </p>
           </Motion.div>
 

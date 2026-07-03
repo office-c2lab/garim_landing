@@ -9,9 +9,7 @@ const GuardrailArchitecture = lazy(() => import('./GuardrailArchitectureSection'
 const SupportedAi = lazy(() => import('./SupportedAiSection'));
 const PromptMonitoring = lazy(() => import('./PromptMonitoringSection'));
 const PolicyManagement = lazy(() => import('./PolicyManagementSection'));
-const AccessManagement = lazy(() => import('./AccessManagementSection'));
 const EasyDeployment = lazy(() => import('./EasyDeploymentSection'));
-const OrbAssistant = lazy(() => import('./OrbAssistantSection'));
 const FAQ = lazy(() => import('./FaqCompositeSection'));
 const Footer = lazy(() => import('./FooterSection'));
 
@@ -50,11 +48,11 @@ export default function LandingPage() {
 
       <Hero onVisibilityChange={handleHeroVisibilityChange} />
       <section className="bg-white px-5 py-14 text-center sm:py-20">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#6a5ae0]">
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#5B39D6]">
           GenAI Access Risk Inspection Management
         </p>
         <h2 className="mt-5 text-balance text-3xl font-semibold tracking-[-0.04em] text-[#171717] sm:text-5xl">
-          중앙 집중형 AI 보안 가드레일 플랫폼
+          생성형 AI 사용 환경 보호 및 거버넌스 솔루션
         </h2>
       </section>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 880 }} />}>
@@ -69,14 +67,8 @@ export default function LandingPage() {
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
         <PromptMonitoring />
       </Suspense>
-      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
-        <OrbAssistant />
-      </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
         <PolicyManagement />
-      </Suspense>
-      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 720 }} />}>
-        <AccessManagement />
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 560 }} />}>
         <EasyDeployment />

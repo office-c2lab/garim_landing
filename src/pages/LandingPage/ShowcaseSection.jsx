@@ -144,7 +144,7 @@ function ApiRequestPreviewCard() {
 function CandidateSearchPreviewCard() {
   return (
     <div className="relative mx-auto w-full max-w-[48rem]">
-      <div className="flex w-full flex-col items-center gap-7 rounded-[18px] bg-[#ffffff] px-6 py-9 text-center shadow-[0_18px_40px_rgba(106,90,224,0.10)] sm:min-h-[27rem] sm:gap-10 sm:px-9 sm:py-12">
+      <div className="flex w-full flex-col items-center gap-7 rounded-[18px] bg-[#ffffff] px-6 py-9 text-center shadow-[0_18px_40px_rgba(91,57,214,0.10)] sm:min-h-[27rem] sm:gap-10 sm:px-9 sm:py-12">
         <p className="relative z-10 text-lg font-bold leading-[145%] text-[#272052] sm:text-xl">
           후보를 탐색하는 중입니다.
         </p>
@@ -185,7 +185,7 @@ function TimelineContentCard({
       {flowLabel ? (
         <div
           className={cn(
-            'text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6a5ae0] sm:text-xs',
+            'text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5B39D6] sm:text-xs',
             centered && 'text-center',
             align === 'left' && 'lg:text-right',
             align === 'right' && 'lg:text-left'
@@ -297,9 +297,9 @@ export default function ShowcaseSection() {
   );
 
   const baseDotClassName =
-    'h-4 w-4 border-[#c8c0ff] bg-[#6a5ae0] shadow-[0_0_0_4px_rgba(221,216,255,0.56)]';
+    'h-4 w-4 border-[#BFB4FF] bg-[#5B39D6] shadow-[0_0_0_4px_rgba(221,216,255,0.56)]';
   const featuredDotClassName =
-    'h-8 w-8 border-[#c8c0ff] bg-[#6a5ae0] shadow-[0_0_0_6px_rgba(221,216,255,0.56),0_0_0_12px_rgba(244,242,255,0.7),0_0_26px_rgba(106,90,224,0.22)] sm:h-10 sm:w-10';
+    'h-8 w-8 border-[#BFB4FF] bg-[#5B39D6] shadow-[0_0_0_6px_rgba(221,216,255,0.56),0_0_0_12px_rgba(244,242,255,0.7),0_0_26px_rgba(91,57,214,0.22)] sm:h-10 sm:w-10';
 
   return (
     <section id="showcase" className="relative py-16 sm:py-20">

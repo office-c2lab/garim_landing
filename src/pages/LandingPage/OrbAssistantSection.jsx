@@ -9,7 +9,7 @@ export default function OrbAssistantSection() {
       <Container className="relative">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,0.52fr)_minmax(0,0.48fr)] lg:items-center lg:gap-16">
           <Motion.div className="max-w-2xl" {...SECTION_TITLE_REVEAL}>
-            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#6a5ae0]">
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#5B39D6]">
               GARIM ALERT
             </p>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-[#171717] sm:text-5xl">

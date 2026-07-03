@@ -1,152 +1,183 @@
 .arena-opening-art {
   position: relative;
-  width: min(86vw, 31rem);
-  height: clamp(11rem, 19vw, 13.25rem);
+  width: min(86vw, 34rem);
+  height: clamp(12rem, 23vw, 16rem);
   pointer-events: none;
+}
+
+.arena-opening-art__halo {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: clamp(13rem, 30vw, 22rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(91, 57, 214, 0.28) 0%, rgba(91, 57, 214, 0.12) 34%, transparent 68%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 42%);
+  filter: blur(1.25rem);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.82);
+  animation: garim-trace-halo 900ms cubic-bezier(0.22, 1, 0.36, 1) 2450ms forwards;
 }
 
 .arena-opening-art__piece {
   position: absolute;
   left: 50%;
-  filter: drop-shadow(0 18px 36px rgba(106, 90, 224, 0.28));
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
 }
 
-.arena-opening-art__piece--logo {
-  top: calc(50% - clamp(6.02rem, 9.26vw, 6.92rem));
-  width: clamp(8.35rem, 14.4vw, 10.75rem);
+.arena-opening-art__piece--symbol {
+  top: 0;
+  width: clamp(6.35rem, 13vw, 8.9rem);
 }
 
 .arena-opening-art__piece--wordmark {
-  top: calc(50% + clamp(3.47rem, 5.01vw, 4.32rem));
-  width: min(86vw, 31rem);
+  bottom: clamp(0.4rem, 1.2vw, 0.85rem);
+  width: min(82vw, 31rem);
 }
 
-.arena-opening-art__vector,
-.arena-opening-art__raster {
+.arena-opening-art__trace,
+.arena-opening-art__final {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.arena-opening-art__vector {
+.arena-opening-art__trace {
   position: relative;
   z-index: 2;
   overflow: visible;
-  opacity: 1;
-  animation: garim-vector-to-raster 220ms ease 1.9s forwards;
+  filter: drop-shadow(0 1.125rem 2.25rem rgba(91, 57, 214, 0.24));
+  animation: garim-trace-fade-out 520ms ease 2580ms forwards;
 }
 
-.arena-opening-art__raster {
+.arena-opening-art__final {
   position: absolute;
   inset: 0;
   z-index: 1;
   opacity: 0;
-  animation: garim-raster-reveal 240ms ease 1.86s forwards;
-}
-
-.arena-opening-art__raster--logo {
-  transform: translateY(-0.1%);
-}
-
-.arena-opening-art__raster--wordmark {
-  transform: translateY(0.1%);
+  filter: drop-shadow(0 1.125rem 2.25rem rgba(91, 57, 214, 0.22));
+  animation: garim-final-reveal 640ms ease 2400ms forwards;
 }
 
 .arena-opening-art__path {
   fill: transparent;
-  stroke: rgba(194, 173, 255, 0.98);
-  stroke-linejoin: round;
-  stroke-linecap: round;
+  fill-opacity: 0;
+  stroke: rgba(216, 201, 255, 0.96);
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  filter: drop-shadow(0 0 18px rgba(106, 90, 224, 0.22));
-  animation: login-intro-draw 2.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  paint-order: stroke fill;
+  animation:
+    garim-path-draw 1950ms cubic-bezier(0.45, 0, 0.2, 1) var(--trace-delay, 0ms) forwards,
+    garim-path-fill 760ms ease calc(var(--trace-delay, 0ms) + 1350ms) forwards;
 }
 
-.arena-opening-art__path--logo {
-  stroke-width: 10;
+.arena-opening-art__path--symbol {
+  stroke-width: 5.5;
+  fill: var(--trace-fill);
 }
 
 .arena-opening-art__path--wordmark {
-  stroke-width: 8;
-  animation: login-intro-draw 2.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  stroke-width: 2.8;
+  fill: var(--trace-fill);
+  animation-duration: 1720ms, 680ms;
 }
 
-.arena-opening-art__shine {
+.arena-opening-art__sheen {
   opacity: 0;
+  fill: rgba(255, 255, 255, 0.34);
+  mix-blend-mode: screen;
+  animation: garim-trace-sheen 920ms ease 1860ms forwards;
 }
 
-.arena-opening-art__wordmark-glow,
-.arena-opening-art__wordmark-shine {
-  opacity: 0;
+.arena-opening-art__sheen--wordmark {
+  animation-delay: 2040ms;
 }
 
-.arena-opening-art__wordmark-glow {
-  opacity: 0;
-}
-
-@keyframes login-intro-draw {
+@keyframes garim-path-draw {
   to {
     stroke-dashoffset: 0;
   }
 }
 
-@keyframes garim-vector-to-raster {
+@keyframes garim-path-fill {
   to {
-    opacity: 0;
+    fill-opacity: 1;
+    stroke-opacity: 0.28;
   }
 }
 
-@keyframes garim-raster-reveal {
+@keyframes garim-trace-sheen {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(520px);
+  }
+}
+
+@keyframes garim-trace-halo {
   to {
     opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes garim-final-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes garim-trace-fade-out {
+  to {
+    opacity: 0;
   }
 }
 
 @media (max-width: 640px) {
   .arena-opening-art {
-    width: min(88vw, 24rem);
-    height: 10.5rem;
+    width: min(88vw, 25rem);
+    height: 12.25rem;
   }
 
-  .arena-opening-art__piece--logo {
-    top: calc(50% - 4.96rem);
-    width: clamp(6.4rem, 19.5vw, 8.1rem);
+  .arena-opening-art__piece--symbol {
+    width: clamp(5.4rem, 24vw, 7rem);
   }
 
   .arena-opening-art__piece--wordmark {
-    top: calc(50% + 2.82rem);
-    width: min(88vw, 24rem);
+    bottom: 0.9rem;
+    width: min(86vw, 23rem);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .arena-opening-art__piece {
+  .arena-opening-art__halo,
+  .arena-opening-art__trace,
+  .arena-opening-art__final,
+  .arena-opening-art__path,
+  .arena-opening-art__sheen {
     animation: none;
   }
 
-  .arena-opening-art__path {
-    animation: none;
-    fill-opacity: 0;
-    stroke-dashoffset: 0;
-    stroke-opacity: 1;
-  }
-
-  .arena-opening-art__vector {
-    animation: none;
-    opacity: 0;
-  }
-
-  .arena-opening-art__raster {
-    animation: none;
+  .arena-opening-art__halo {
     opacity: 1;
+    transform: translate(-50%, -50%);
   }
 
-  .arena-opening-art__shine,
-  .arena-opening-art__wordmark-glow,
-  .arena-opening-art__wordmark-shine {
-    animation: none;
+  .arena-opening-art__trace {
     opacity: 0;
+  }
+
+  .arena-opening-art__final {
+    opacity: 1;
   }
 }

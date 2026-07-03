@@ -88,7 +88,7 @@ function UserPreviewTable() {
         onDeleteUser={handleDeleteUser}
         onSaveUser={handleSaveUser}
         statusMessage={!users.length ? '현재 조건에 맞는 사용자가 없습니다.' : ''}
-        className="rounded-[28px] border border-[#ded9ff] bg-white shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
+        className="rounded-[28px] border border-[#D8D0FF] bg-white shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
         tableClassName="min-w-[860px] text-[13px]"
       />
     </Motion.div>

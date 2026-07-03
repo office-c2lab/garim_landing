@@ -1,6 +1,6 @@
 export const STATUS_LABELS = {
   normal: '정상',
-  allow: '허용',
+  allow: '검토필요',
   masking: '마스킹',
   block: '차단',
 };
@@ -21,7 +21,7 @@ export const STATUS_TEXT_CLASS_NAMES = {
 
 export function getStatusKeyFromLabel(label) {
   if (label === STATUS_LABELS.normal) return 'normal';
-  if (label === STATUS_LABELS.allow) return 'allow';
+  if (label === STATUS_LABELS.allow || label === '허용') return 'allow';
   if (label === STATUS_LABELS.masking) return 'masking';
   if (label === STATUS_LABELS.block) return 'block';
   return 'normal';

@@ -17,6 +17,8 @@ export function useRegisteredClientsQuery() {
   return useQuery({
     queryKey: userManagementQueryKeys.clients(params),
     queryFn: () => getRegisteredClients(params),
+    refetchInterval: 5000,
+    notifyOnChangeProps: ['data', 'error', 'isLoading'],
   });
 }
 

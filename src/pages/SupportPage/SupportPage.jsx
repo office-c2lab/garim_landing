@@ -1,6 +1,7 @@
 import { ChevronUp, Copy, ExternalLink, Info, RefreshCw, Tag, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import AppButton, { primaryButtonClassName } from '../../components/AppButton.jsx';
 import SectionCard from '../../components/SectionCard.jsx';
 import PageLayout from '../../layout/PageLayout.jsx';
 import {
@@ -22,9 +23,11 @@ import {
 const urlExamples = ['/download', '/guide', '/support/download'];
 const modalCancelButtonClass =
   'inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-500 transition hover:bg-slate-50';
-const modalPrimaryButtonClass =
-  'inline-flex h-11 items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-6 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81]';
+const modalPrimaryButtonClass = `${primaryButtonClassName} h-11 px-6`;
 const DOWNLOAD_PREVIEW_WIDTH = 1280;
+const allowedLogoMimeTypes = ['image/png', 'image/jpeg', 'image/webp'];
+const allowedLogoExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+const logoAcceptTypes = '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp';
 
 function DownloadPreviewFrame({ previewKey, src }) {
   const frameContainerRef = useRef(null);
@@ -78,13 +81,9 @@ export function InfoRow({ label, children }) {
 
 function OutlineButton({ children, onClick }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="inline-flex h-12 items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81]"
-    >
+    <AppButton onClick={onClick} className="h-12">
       {children}
-    </button>
+    </AppButton>
   );
 }
 
@@ -117,13 +116,12 @@ function TemplateEditModal({ template, onClose, onSave, isSaving }) {
 
     if (!file) return;
 
-    if (!['image/png', 'image/jpeg'].includes(file.type)) {
-      setLogoError('PNG 또는 JPG 이미지만 선택할 수 있습니다.');
-      return;
-    }
+    const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const hasAllowedType = allowedLogoMimeTypes.includes(file.type);
+    const hasAllowedExtension = allowedLogoExtensions.includes(extension);
 
-    if (file.size > 2 * 1024 * 1024) {
-      setLogoError('이미지 크기는 2MB 이하여야 합니다.');
+    if (!hasAllowedType && !hasAllowedExtension) {
+      setLogoError('PNG, JPG, JPEG, WEBP 이미지만 선택할 수 있습니다.');
       return;
     }
 
@@ -133,8 +131,8 @@ function TemplateEditModal({ template, onClose, onSave, isSaving }) {
       const logoDataUrl = String(reader.result);
       setDraft(current => ({
         ...current,
-        logoPath: logoDataUrl,
         logoSrc: logoDataUrl,
+        logoFile: file,
       }));
       setLogoError('');
     };
@@ -186,7 +184,7 @@ function TemplateEditModal({ template, onClose, onSave, isSaving }) {
                   <input
                     ref={logoInputRef}
                     type="file"
-                    accept="image/png,image/jpeg"
+                    accept={logoAcceptTypes}
                     onChange={handleLogoChange}
                     className="sr-only"
                   />
@@ -194,12 +192,12 @@ function TemplateEditModal({ template, onClose, onSave, isSaving }) {
                     type="button"
                     onClick={() => logoInputRef.current?.click()}
                     disabled={isSaving}
-                    className="inline-flex h-10 items-center justify-center rounded-lg border border-[#D6DAE6] bg-white px-4 text-sm font-bold text-[#344054] transition hover:bg-[#F8FAFC]"
+                    className="inline-flex h-10 items-center justify-center rounded-lg border border-[#D6DAE6] bg-white px-4 text-sm font-bold text-[#344054] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     변경
                   </button>
                   <p className="mt-2 text-xs font-semibold text-[#667085]">
-                    권장 사이즈: 512x512px / PNG, JPG / 최대 2MB
+                    권장 사이즈: 512x512px / PNG, JPG, JPEG, WEBP
                   </p>
                   {logoError ? (
                     <p className="mt-2 text-xs font-semibold text-[#DC2626]">{logoError}</p>
@@ -539,16 +537,12 @@ export default function SupportPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsPreviewOpen(current => !current)}
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-[#4338CA] bg-[#4338CA] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:bg-[#3730A3] active:bg-[#312E81]"
-                >
+                <AppButton onClick={() => setIsPreviewOpen(current => !current)} className="h-12">
                   {isPreviewOpen ? '미리보기 접기' : '미리보기 열기'}
                   <ChevronUp
                     className={`h-4 w-4 transition ${isPreviewOpen ? '' : 'rotate-180'}`.trim()}
                   />
-                </button>
+                </AppButton>
                 <a
                   href={downloadPath}
                   target="_blank"

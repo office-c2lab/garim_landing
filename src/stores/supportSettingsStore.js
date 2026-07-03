@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import logoIcon from '../assets/icons/logo.png';
+import logoIcon from '../assets/icons/logo.svg';
 
 export const DEFAULT_DOWNLOAD_PATH = '/download';
 

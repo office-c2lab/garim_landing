@@ -1,199 +1,135 @@
 import { useId } from 'react';
 
-import garimLogoPng from '@/assets/icons/logo.png';
-import garimWordmarkPng from '@/assets/icons/GARIM.png';
-import garimLogoSvg from '@/assets/icons/garim_logo_transparent.svg?raw';
-import garimWordmarkSvg from '@/assets/icons/garim_transparent.svg?raw';
+import garimSymbolImage from '@/assets/icons/simbol.svg';
+import garimWordmarkImage from '@/assets/icons/logo.svg';
+import garimSymbolSvg from '@/assets/icons/simbol.svg?raw';
+import garimWordmarkSvg from '@/assets/icons/logo.svg?raw';
 
 import './ArenaOpeningHeroArt.css';
 
-const GARIM_LOGO_VIEWBOX =
-  garimLogoSvg.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 793 811';
-const GARIM_LOGO_PATH =
-  garimLogoSvg.match(/<path[^>]*\sd="([^"]+)"/)?.[1] ?? '';
-const GARIM_WORDMARK_VIEWBOX =
-  garimWordmarkSvg.match(/viewBox="([^"]+)"/)?.[1] ?? '0 0 2048 457';
-const GARIM_WORDMARK_PATH =
-  garimWordmarkSvg.match(/<path[^>]*\sd="([^"]+)"/)?.[1] ?? '';
+function getSvgViewBox(svg, fallback) {
+  return svg.match(/viewBox="([^"]+)"/)?.[1] ?? fallback;
+}
+
+function getSvgPaths(svg) {
+  return [...svg.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map(match => match[1]);
+}
+
+const SYMBOL_VIEWBOX = getSvgViewBox(garimSymbolSvg, '0 0 307 336');
+const SYMBOL_PATHS = getSvgPaths(garimSymbolSvg);
+const WORDMARK_VIEWBOX = getSvgViewBox(garimWordmarkSvg, '0 0 665 90');
+const WORDMARK_PATHS = getSvgPaths(garimWordmarkSvg);
+
+function TracePaths({ paths, className, fill, delayStep = 0 }) {
+  return paths.map((path, index) => (
+    <path
+      key={path}
+      d={path}
+      pathLength="1"
+      className={className}
+      style={{
+        '--trace-fill': fill,
+        '--trace-delay': `${index * delayStep}ms`,
+      }}
+      fillRule="evenodd"
+    />
+  ));
+}
 
 export default function ArenaOpeningHeroArt() {
   const uid = useId().replace(/:/g, '');
-  const logoGradientId = `arena-opening-garim-logo-gradient-${uid}`;
-  const logoClipId = `arena-opening-garim-clip-${uid}`;
-  const logoShineOneId = `arena-opening-garim-logo-shine-1-${uid}`;
-  const logoShineTwoId = `arena-opening-garim-logo-shine-2-${uid}`;
-  const wordGradientId = `arena-opening-garim-word-gradient-${uid}`;
-  const wordGlowId = `arena-opening-garim-word-glow-${uid}`;
-  const wordClipId = `arena-opening-garim-word-clip-${uid}`;
-  const wordFlareOneId = `arena-opening-garim-word-flare-1-${uid}`;
-  const wordFlareTwoId = `arena-opening-garim-word-flare-2-${uid}`;
-  const wordSheenId = `arena-opening-garim-word-sheen-${uid}`;
-  const wordLeftSheenId = `arena-opening-garim-word-left-sheen-${uid}`;
+  const symbolGradientId = `garim-symbol-trace-gradient-${uid}`;
+  const wordmarkGradientId = `garim-wordmark-trace-gradient-${uid}`;
+  const symbolClipId = `garim-symbol-trace-clip-${uid}`;
+  const wordmarkClipId = `garim-wordmark-trace-clip-${uid}`;
 
   return (
     <div className="arena-opening-art" aria-hidden="true">
-      <div className="arena-opening-art__piece arena-opening-art__piece--logo">
+      <div className="arena-opening-art__halo" />
+
+      <div className="arena-opening-art__piece arena-opening-art__piece--symbol">
         <svg
-          viewBox={GARIM_LOGO_VIEWBOX}
+          viewBox={SYMBOL_VIEWBOX}
           xmlns="http://www.w3.org/2000/svg"
-          className="arena-opening-art__vector arena-opening-art__logo"
+          className="arena-opening-art__trace arena-opening-art__trace--symbol"
         >
           <defs>
             <linearGradient
-              id={logoGradientId}
-              x1="0"
+              id={symbolGradientId}
+              x1="153.5"
               y1="0"
-              x2="793"
-              y2="811"
+              x2="153.5"
+              y2="335.5"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset="0%" stopColor="#B480E6" />
-              <stop offset="42%" stopColor="#CEA4EC" />
-              <stop offset="70%" stopColor="#A76DE1" />
-              <stop offset="100%" stopColor="#9153D3" />
+              <stop stopColor="#5B39D6" />
+              <stop offset="1" stopColor="#4C2FC0" />
             </linearGradient>
-            <clipPath id={logoClipId}>
-              <path d={GARIM_LOGO_PATH} fillRule="evenodd" />
+            <clipPath id={symbolClipId}>
+              {SYMBOL_PATHS.map(path => (
+                <path key={path} d={path} fillRule="evenodd" />
+              ))}
             </clipPath>
-            <linearGradient
-              id={logoShineOneId}
-              x1="459.94"
-              y1="145.98"
-              x2="586.82"
-              y2="470.38"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
-              <stop offset="45%" stopColor="#FFFFFF" stopOpacity="0.28" />
-              <stop offset="55%" stopColor="#FFFFFF" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient
-              id={logoShineTwoId}
-              x1="95.16"
-              y1="583.92"
-              x2="269.62"
-              y2="770.45"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
-              <stop offset="45%" stopColor="#FFFFFF" stopOpacity="0.34" />
-              <stop offset="55%" stopColor="#FFFFFF" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-            </linearGradient>
           </defs>
-          <path
-            d={GARIM_LOGO_PATH}
-            pathLength="1"
-            fillOpacity="0"
-            strokeOpacity="1"
-            className="arena-opening-art__path arena-opening-art__path--logo"
-            style={{ '--arena-opening-logo-fill': `url(#${logoGradientId})` }}
-            fillRule="evenodd"
+
+          <TracePaths
+            paths={SYMBOL_PATHS}
+            className="arena-opening-art__path arena-opening-art__path--symbol"
+            fill={`url(#${symbolGradientId})`}
           />
-          <g className="arena-opening-art__shine" clipPath={`url(#${logoClipId})`}>
-            <rect x="0" y="0" width="793" height="811" fill={`url(#${logoShineOneId})`} />
-            <rect x="0" y="0" width="793" height="811" fill={`url(#${logoShineTwoId})`} />
+          <g className="arena-opening-art__sheen" clipPath={`url(#${symbolClipId})`}>
+            <rect x="-90" y="-40" width="86" height="430" transform="rotate(20)" />
           </g>
         </svg>
         <img
-          src={garimLogoPng}
+          src={garimSymbolImage}
           alt=""
-          className="arena-opening-art__raster arena-opening-art__raster--logo"
+          className="arena-opening-art__final arena-opening-art__final--symbol"
+          draggable="false"
         />
       </div>
+
       <div className="arena-opening-art__piece arena-opening-art__piece--wordmark">
         <svg
-          viewBox={GARIM_WORDMARK_VIEWBOX}
+          viewBox={WORDMARK_VIEWBOX}
           xmlns="http://www.w3.org/2000/svg"
-          className="arena-opening-art__vector arena-opening-art__wordmark"
+          className="arena-opening-art__trace arena-opening-art__trace--wordmark"
         >
           <defs>
             <linearGradient
-              id={wordGradientId}
+              id={wordmarkGradientId}
               x1="0"
-              y1="0"
-              x2="2048"
-              y2="0"
+              y1="45"
+              x2="665"
+              y2="45"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset="0%" stopColor="#B683E7" />
-              <stop offset="44%" stopColor="#B581E5" />
-              <stop offset="100%" stopColor="#8B46D3" />
+              <stop stopColor="#5B39D6" />
+              <stop offset="0.42" stopColor="#5B39D6" />
+              <stop offset="1" stopColor="#5B39D6" />
             </linearGradient>
-            <radialGradient id={wordGlowId} cx="17%" cy="87%" r="60%">
-              <stop offset="0%" stopColor="#E4C0F6" stopOpacity="0.95" />
-              <stop offset="35%" stopColor="#D8B6F2" stopOpacity="0.55" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-            </radialGradient>
-            <clipPath id={wordClipId}>
-              <path d={GARIM_WORDMARK_PATH} fillRule="evenodd" />
+            <clipPath id={wordmarkClipId}>
+              {WORDMARK_PATHS.map(path => (
+                <path key={path} d={path} fillRule="evenodd" />
+              ))}
             </clipPath>
-            <radialGradient id={wordFlareOneId} cx="61.7%" cy="23.3%" r="18%">
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-              <stop offset="8%" stopColor="#FFFFFF" stopOpacity="0.65" />
-              <stop offset="15%" stopColor="#FFFFFF" stopOpacity="0.14" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id={wordFlareTwoId} cx="69.2%" cy="31%" r="16%">
-              <stop offset="0%" stopColor="#7B2ED4" stopOpacity="0.65" />
-              <stop offset="35%" stopColor="#7B2ED4" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="#7B2ED4" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient
-              id={wordSheenId}
-              x1="1085.44"
-              y1="63.98"
-              x2="1392.64"
-              y2="242.21"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
-              <stop offset="44%" stopColor="#FFFFFF" stopOpacity="0.35" />
-              <stop offset="52%" stopColor="#FFFFFF" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient
-              id={wordLeftSheenId}
-              x1="1167.36"
-              y1="41.13"
-              x2="1454.08"
-              y2="182.8"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
-              <stop offset="46%" stopColor="#FFFFFF" stopOpacity="0.52" />
-              <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.9" />
-              <stop offset="54%" stopColor="#FFFFFF" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-            </linearGradient>
           </defs>
-          <path
-            d={GARIM_WORDMARK_PATH}
-            pathLength="1"
-            fillOpacity="0"
-            strokeOpacity="1"
+
+          <TracePaths
+            paths={WORDMARK_PATHS}
             className="arena-opening-art__path arena-opening-art__path--wordmark"
-            style={{ '--arena-opening-wordmark-fill': `url(#${wordGradientId})` }}
-            fillRule="evenodd"
+            fill={`url(#${wordmarkGradientId})`}
+            delayStep={120}
           />
-          <path
-            d={GARIM_WORDMARK_PATH}
-            className="arena-opening-art__wordmark-glow"
-            fill={`url(#${wordGlowId})`}
-            fillRule="evenodd"
-          />
-          <g className="arena-opening-art__wordmark-shine" clipPath={`url(#${wordClipId})`}>
-            <rect x="0" y="0" width="2048" height="457" fill={`url(#${wordFlareTwoId})`} />
-            <rect x="0" y="0" width="2048" height="457" fill={`url(#${wordSheenId})`} />
-            <rect x="0" y="0" width="2048" height="457" fill={`url(#${wordLeftSheenId})`} />
-            <rect x="0" y="0" width="2048" height="457" fill={`url(#${wordFlareOneId})`} />
+          <g className="arena-opening-art__sheen arena-opening-art__sheen--wordmark" clipPath={`url(#${wordmarkClipId})`}>
+            <rect x="-120" y="-80" width="92" height="250" transform="rotate(22)" />
           </g>
         </svg>
         <img
-          src={garimWordmarkPng}
+          src={garimWordmarkImage}
           alt=""
-          className="arena-opening-art__raster arena-opening-art__raster--wordmark"
+          className="arena-opening-art__final arena-opening-art__final--wordmark"
+          draggable="false"
         />
       </div>
     </div>

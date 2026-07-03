@@ -20,7 +20,7 @@ export default function FooterSection() {
             <div>서울 구로구 디지털로31길 20 에이스테크노타워5차 3층 310호 (08380)</div>
             <div className="flex flex-wrap items-center gap-x-3">
               <span>
-                이메일 <span className="text-[#a99dff]">info@aictl.kr</span>
+                이메일 <span className="text-[#8B7CFF]">info@aictl.kr</span>
               </span>
               <span>|</span>
               <span>전화번호 02-6956-7950</span>

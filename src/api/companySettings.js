@@ -7,7 +7,18 @@ export async function getTemplateSettings() {
 }
 
 export async function patchTemplateSettings(template) {
-  const { data } = await apiClient.patch('/api/company-settings/template', template);
+  const formData = new FormData();
+
+  formData.append('company_name', template.company_name ?? '');
+  formData.append('company_description', template.company_description ?? '');
+  formData.append('support_email', template.support_email ?? '');
+  formData.append('support_phone', template.support_phone ?? '');
+
+  if (template.logo_file) {
+    formData.append('logo_file', template.logo_file);
+  }
+
+  const { data } = await apiClient.patch('/api/company-settings/template', formData);
 
   return data;
 }

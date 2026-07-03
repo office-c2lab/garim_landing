@@ -1,11 +1,14 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Download, RotateCcw } from 'lucide-react';
 import caretDownIcon from '../../assets/icons/caret_down.svg';
 import searchIcon from '../../assets/icons/search-data.svg';
 import ServiceLogoBadge from '../ServiceLogoBadge.jsx';
+import { primaryButtonClassName } from '../AppButton.jsx';
 import {
   monitoringTableCellClass,
   monitoringTableClass,
+  monitoringTableBodyClass,
   monitoringTableHeadClass,
   monitoringTableHeaderCellClass,
   monitoringTableHeaderRowClass,
@@ -23,6 +26,11 @@ import {
 import { getStatusTextClassName } from '../../constants/statusColors.js';
 
 const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
+const monitoringCompactHeaderCellClass = `${monitoringTableHeaderCellClass} !py-1`;
+
+function monitoringCompactTableCellClass(index, className = '') {
+  return monitoringTableCellClass(index, `!py-3 ${className}`);
+}
 
 function parseDateString(value) {
   const [year, month, day] = String(value).split('-').map(Number);
@@ -106,35 +114,43 @@ export function MonitoringActionButton({
   variant = 'secondary',
   onClick,
   disabled = false,
-  widthClass = 'w-[150px] min-w-[120px]',
-  heightClass = 'h-9',
+  widthClass = 'w-[clamp(7.5rem,10.5vw,9.375rem)] min-w-[clamp(6.5rem,8vw,7.5rem)]',
+  heightClass = 'h-[var(--app-control-xs)]',
+  ...buttonProps
 }) {
-  const primaryButtonClassName =
-    'border border-[#4338CA] bg-[#4338CA] text-white shadow-[0_10px_24px_rgba(67,56,202,0.24)] hover:bg-[#3730A3] active:bg-[#312E81]';
-  const className =
+  const activeClassName =
     variant === 'primary'
       ? primaryButtonClassName
       : variant === 'outline'
         ? 'border border-slate-200 bg-white text-[#4338CA] hover:border-[#C7D2FE] hover:bg-[#F8FAFF]'
-        : variant === 'soft'
-          ? 'border border-[#D5E5EE] bg-[#E6F0F5] text-[#2A6F8F]'
-          : variant === 'ghost'
-            ? 'border border-[#31A4BD]/25 bg-[#31A4BD]/10 text-[#8AD4E4]'
-            : primaryButtonClassName;
+        : variant === 'csvDownload'
+          ? 'border border-slate-200 bg-white font-bold tracking-[-0.02em] text-[#4338CA] shadow-[0_6px_14px_rgba(67,56,202,0.16)] hover:border-[#C7D2FE] hover:bg-[#F8FAFF] active:bg-[#EEF2FF]'
+          : variant === 'soft'
+            ? 'border border-[#D5E5EE] bg-[#E6F0F5] text-[#2A6F8F]'
+            : variant === 'ghost'
+              ? 'border border-[#31A4BD]/25 bg-[#31A4BD]/10 text-[#8AD4E4]'
+              : primaryButtonClassName;
+  const disabledClassName =
+    variant === 'csvDownload'
+      ? 'border border-slate-200 bg-white font-bold tracking-[-0.02em] text-[#9CA3AF] shadow-none'
+      : variant === 'outline'
+        ? 'border border-slate-200 bg-white text-[#9CA3AF]'
+        : activeClassName;
+  const className = disabled ? disabledClassName : activeClassName;
 
-  const interactionClassName =
-    variant === 'outline'
+  const interactionClassName = disabled
+    ? 'cursor-not-allowed opacity-60'
+    : variant === 'outline'
       ? ''
-      : disabled
-        ? 'cursor-not-allowed opacity-60'
-        : 'hover:brightness-[1.02]';
+      : 'hover:brightness-[1.02]';
 
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      className={`flex ${heightClass} ${widthClass} items-center justify-center rounded-[10px] px-4 sm:px-6 whitespace-nowrap ${APP_BUTTON_TEXT_CLASS} font-semibold leading-[150%] transition ${
+      {...buttonProps}
+      className={`inline-flex ${heightClass} ${widthClass} items-center justify-center rounded-[var(--app-radius-lg)] px-[var(--app-pad-md)] whitespace-nowrap ${APP_BUTTON_TEXT_CLASS} font-semibold leading-[150%] transition ${
         disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
       } ${interactionClassName} ${className}`.trim()}
     >
@@ -144,19 +160,29 @@ export function MonitoringActionButton({
 }
 
 export function MonitoringResetButton({
-  children = '초기화',
+  children = '',
   onClick,
-  heightClass = 'h-[46px]',
+  heightClass = 'h-[var(--app-control-lg)]',
   widthClass = 'w-fit',
-  textClassName = 'text-[0.98rem] font-bold tracking-[-0.02em]',
+  textClassName = 'text-[clamp(0.9rem,1vw,0.98rem)] font-bold tracking-[-0.02em]',
+  ...buttonProps
 }) {
+  const hasLabel = Boolean(children);
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex ${heightClass} ${widthClass} items-center justify-center gap-2 rounded-[10px] border border-[#D7DEE9] bg-white px-5 ${textClassName} whitespace-nowrap text-[#4A57F5] shadow-[0_6px_16px_rgba(15,23,42,0.04)] transition hover:border-[#BFC7FF] hover:bg-[#F8FAFF] active:scale-[0.98]`.trim()}
+      {...buttonProps}
+      className={`inline-flex ${heightClass} ${widthClass} items-center justify-center gap-[var(--app-gap-xs)] rounded-[var(--app-radius-lg)] border border-slate-200 bg-white ${
+        hasLabel ? 'px-[var(--app-pad-md)]' : 'px-0'
+      } ${textClassName} whitespace-nowrap text-[#4338CA] transition hover:border-[#C7D2FE] hover:bg-[#F8FAFF] active:bg-[#EEF2FF]`.trim()}
     >
-      <RotateCcw className="h-5 w-5" strokeWidth={2.4} aria-hidden="true" />
+      <RotateCcw
+        className="h-[var(--app-icon-sm)] w-[var(--app-icon-sm)]"
+        strokeWidth={2.4}
+        aria-hidden="true"
+      />
       {children}
     </button>
   );
@@ -167,9 +193,9 @@ export function DateRangePicker({
   startDate,
   endDate,
   onChange,
-  widthClass = 'min-w-[190px]',
-  labelClassName = 'text-[13px] font-semibold tracking-[-0.01em] text-[#5C6784]',
-  triggerHeightClass = 'h-[42px]',
+  widthClass = 'min-w-[clamp(8rem,9vw,8.625rem)]',
+  labelClassName = 'text-[clamp(0.76rem,0.9vw,0.82rem)] font-semibold tracking-[-0.01em] text-[#5C6784]',
+  triggerHeightClass = 'h-[var(--app-control-lg)]',
 }) {
   const rootRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -224,7 +250,10 @@ export function DateRangePicker({
   };
 
   return (
-    <label ref={rootRef} className={`relative flex flex-col gap-2 ${widthClass}`.trim()}>
+    <label
+      ref={rootRef}
+      className={`relative flex flex-col gap-[var(--app-gap-xs)] ${widthClass}`.trim()}
+    >
       <span className={labelClassName}>{label}</span>
       <div className="relative">
         <button
@@ -234,18 +263,17 @@ export function DateRangePicker({
             setSelectionStep('start');
             setIsOpen(open => !open);
           }}
-          className={`flex ${triggerHeightClass} w-full cursor-pointer items-center rounded-[10px] border pr-10 pl-4 text-[14px] font-medium text-[#344054] shadow-[0_4px_12px_rgba(15,23,42,0.04)] outline-none transition ${
+          className={`flex ${triggerHeightClass} w-full cursor-pointer items-center justify-center rounded-[var(--app-radius-lg)] border pr-[calc(var(--app-pad-md)*1.2)] pl-[calc(var(--app-pad-xs)*0.75)] text-[clamp(0.7rem,0.78vw,0.76rem)] font-medium whitespace-nowrap text-[#344054] outline-none transition ${
             isOpen
-              ? 'border-[#A5B4FC] bg-[#EEF2FF] ring-4 ring-[#E0E7FF]'
-              : 'border-[#D9DEEA] bg-white hover:border-[#C7D2FE] hover:bg-[#F8FAFF] active:border-[#A5B4FC] active:bg-[#EEF2FF] focus:border-[#A5B4FC] focus:ring-4 focus:ring-[#E0E7FF]'
+              ? 'border-[#A5B4FC] bg-[#EEF2FF] ring-[clamp(0.2rem,0.32vw,0.25rem)] ring-[#E0E7FF]'
+              : 'border-slate-200 bg-white hover:border-[#C7D2FE] hover:bg-[#F8FAFF] active:border-[#A5B4FC] active:bg-[#EEF2FF] focus:border-[#A5B4FC] focus:ring-[clamp(0.2rem,0.32vw,0.25rem)] focus:ring-[#E0E7FF]'
           }`.trim()}
         >
           {dateLabel}
         </button>
-        <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[#667085]">
+        <span className="pointer-events-none absolute top-1/2 right-[calc(var(--app-pad-xs)*0.8)] -translate-y-1/2 text-[#667085]">
           <svg
-            width="16"
-            height="16"
+            className="h-[var(--app-icon-xs)] w-[var(--app-icon-xs)]"
             viewBox="0 0 16 16"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -268,22 +296,22 @@ export function DateRangePicker({
       </div>
 
       {isOpen ? (
-        <div className="absolute top-[calc(100%+0.5rem)] left-0 z-40 w-[20rem] rounded-[14px] border border-[#E3E7F0] bg-white p-3 shadow-[0_16px_36px_rgba(15,23,42,0.12)]">
-          <div className="mb-3 rounded-[10px] bg-[#F7F8FC] px-3 py-2 text-[12px] font-semibold text-[#657086]">
+        <div className="absolute top-[calc(100%+var(--app-gap-xs))] left-0 z-40 w-[min(20rem,calc(100vw-(var(--app-page-x)*2)))] rounded-[var(--app-radius-lg)] border border-[#E3E7F0] bg-white p-[var(--app-pad-sm)] shadow-[0_1rem_2.25rem_rgba(15,23,42,0.12)]">
+          <div className="mb-[var(--app-gap-sm)] rounded-[var(--app-radius-md)] bg-[#F7F8FC] px-[var(--app-pad-sm)] py-[var(--app-pad-xs)] text-[clamp(0.7rem,0.85vw,0.75rem)] font-semibold text-[#657086]">
             {selectionStep === 'start' ? '시작일을 선택하세요' : '종료일을 선택하세요'}
           </div>
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-[var(--app-gap-sm)] flex items-center justify-between">
             <button
               type="button"
               onClick={() =>
                 setViewDate(current => new Date(current.getFullYear(), current.getMonth() - 1, 1))
               }
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[#5C6B7A] transition hover:bg-[#F3F5FB]"
+              className="flex h-[var(--app-control-xs)] w-[var(--app-control-xs)] cursor-pointer items-center justify-center rounded-full text-[#5C6B7A] transition hover:bg-[#F3F5FB]"
               aria-label="이전 달"
             >
               ‹
             </button>
-            <div className="text-[14px] font-bold text-[#2D3C4B]">
+            <div className="text-[clamp(0.82rem,0.95vw,0.9rem)] font-bold text-[#2D3C4B]">
               {viewDate.getFullYear()}.{String(viewDate.getMonth() + 1).padStart(2, '0')}
             </div>
             <button
@@ -291,22 +319,22 @@ export function DateRangePicker({
               onClick={() =>
                 setViewDate(current => new Date(current.getFullYear(), current.getMonth() + 1, 1))
               }
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[#5C6B7A] transition hover:bg-[#F3F5FB]"
+              className="flex h-[var(--app-control-xs)] w-[var(--app-control-xs)] cursor-pointer items-center justify-center rounded-full text-[#5C6B7A] transition hover:bg-[#F3F5FB]"
               aria-label="다음 달"
             >
               ›
             </button>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-[#8D99AE]">
+          <div className="grid grid-cols-7 gap-[calc(var(--app-gap-xs)/2)] text-center text-[clamp(0.64rem,0.76vw,0.7rem)] font-semibold text-[#8D99AE]">
             {WEEKDAY_LABELS.map(day => (
-              <span key={day} className="py-1">
+              <span key={day} className="py-[calc(var(--app-pad-xs)/2)]">
                 {day}
               </span>
             ))}
           </div>
 
-          <div className="mt-1 grid grid-cols-7 gap-1">
+          <div className="mt-[calc(var(--app-gap-xs)/2)] grid grid-cols-7 gap-[calc(var(--app-gap-xs)/2)]">
             {calendarDays.map(({ date, isCurrentMonth }) => {
               const isStart = isSameDay(date, selectedStartDate);
               const isEnd = isSameDay(date, selectedEndDate);
@@ -318,7 +346,7 @@ export function DateRangePicker({
                   key={date.toISOString()}
                   type="button"
                   onClick={() => handleSelectDate(date)}
-                  className={`flex h-9 cursor-pointer items-center justify-center rounded-[10px] text-[12px] font-medium transition ${
+                  className={`flex h-[var(--app-control-xs)] cursor-pointer items-center justify-center rounded-[var(--app-radius-md)] text-[clamp(0.7rem,0.85vw,0.75rem)] font-medium transition ${
                     isSelected
                       ? 'bg-[#4B35D4] text-white shadow-[0_8px_18px_rgba(75,53,212,0.18)]'
                       : isInRange
@@ -344,23 +372,31 @@ export function MonitoringCsvActionMenu({
   onToggle,
   onDownloadClick,
   menuRef,
-  buttonWidthClass = 'w-[6.5rem] min-w-[6.5rem] xl:w-[8rem] xl:min-w-[8rem]',
+  buttonWidthClass = 'w-[clamp(6.5rem,8.5vw,8rem)] min-w-[clamp(6.5rem,8.5vw,8rem)]',
 }) {
   return (
     <div ref={menuRef} className="relative">
-      <MonitoringActionButton onClick={onToggle} widthClass={buttonWidthClass} heightClass="h-10">
+      <MonitoringActionButton
+        onClick={onToggle}
+        widthClass={buttonWidthClass}
+        heightClass="h-[var(--app-control-sm)]"
+      >
         CSV
       </MonitoringActionButton>
 
       {isOpen ? (
-        <div className="absolute top-[calc(100%+0.5rem)] right-0 z-20 flex min-w-[210px] flex-col gap-2 rounded-xl border border-[#D8E4EC] bg-white p-3 shadow-[0_16px_40px_rgba(0,0,0,0.18)]">
+        <div className="absolute top-[calc(100%+var(--app-gap-xs))] right-0 z-20 flex min-w-[clamp(11.5rem,14.6vw,13.125rem)] flex-col gap-[var(--app-gap-xs)] rounded-[var(--app-radius-lg)] border border-[#D8E4EC] bg-white p-[var(--app-pad-sm)] shadow-[0_1rem_2.5rem_rgba(0,0,0,0.18)]">
           <MonitoringActionButton
+            variant="csvDownload"
             onClick={onDownloadClick}
             widthClass="w-full min-w-0"
-            heightClass="h-10"
+            heightClass="h-[var(--app-control-lg)]"
           >
-            <span className="inline-flex items-center gap-2">
-              <Download className="h-4 w-4" />
+            <span className="inline-flex items-center gap-[var(--app-gap-xs)] text-[clamp(0.9rem,1vw,0.98rem)] font-bold tracking-[-0.02em]">
+              <Download
+                className="h-[var(--app-icon-xs)] w-[var(--app-icon-xs)]"
+                strokeWidth={2.8}
+              />
               CSV 다운로드
             </span>
           </MonitoringActionButton>
@@ -375,7 +411,7 @@ export function MonitoringTagChip({ children, active = false, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-9 w-full sm:w-[108px] sm:min-w-[108px] cursor-pointer items-center justify-center rounded-lg px-4 sm:px-5 ${APP_BUTTON_TEXT_CLASS} font-bold leading-[150%] transition ${
+      className={`flex h-[var(--app-control-xs)] w-full cursor-pointer items-center justify-center rounded-[var(--app-radius-md)] px-[var(--app-pad-md)] sm:w-[clamp(6.25rem,7.5vw,6.75rem)] sm:min-w-[clamp(6.25rem,7.5vw,6.75rem)] ${APP_BUTTON_TEXT_CLASS} font-bold leading-[150%] transition ${
         active
           ? 'bg-[#31A4BD] text-white shadow-[0_0_4px_rgba(90,208,222,0.8)]'
           : 'border border-[#01557D] bg-transparent text-[#014069] hover:bg-[#01557D]/10'
@@ -388,20 +424,95 @@ export function MonitoringTagChip({ children, active = false, onClick }) {
 
 export function MonitoringDropdown({
   value,
+  displayValue = value,
   onChange,
   options,
   ariaLabel,
-  widthClass = 'w-full sm:w-[220px]',
-  triggerClassName = 'h-10 border-[#E6E6E6] bg-white hover:border-[#C7D2FE] hover:bg-[#F8FAFF] active:border-[#A5B4FC] active:bg-[#EEF2FF] focus:border-[#A5B4FC] focus:ring-4 focus:ring-[#E0E7FF]',
+  widthClass = 'w-full sm:w-[clamp(12rem,15.3vw,13.75rem)]',
+  triggerClassName = 'h-[var(--app-control-lg)] rounded-[var(--app-radius-lg)] border-slate-200 bg-white shadow-none hover:border-[#C7D2FE] hover:bg-[#F8FAFF] active:border-[#A5B4FC] active:bg-[#EEF2FF] focus:border-[#A5B4FC] focus:ring-[clamp(0.2rem,0.32vw,0.25rem)] focus:ring-[#E0E7FF]',
+  placement = 'bottom',
+  verticalPlacement = 'auto',
+  triggerTextClassName = APP_BODY_TEXT_CLASS,
+  optionTextClassName = APP_BODY_TEXT_CLASS,
+  selectedOptionTextClassName = APP_BUTTON_TEXT_CLASS,
+  optionLabelMap = {},
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [overlayStyle, setOverlayStyle] = useState(null);
+  const [menuMaxHeight, setMenuMaxHeight] = useState(() =>
+    Math.round(Math.min(window.innerHeight * 0.48, 352))
+  );
   const rootRef = useRef(null);
+  const menuRef = useRef(null);
+
+  const updateOverlayPosition = useCallback(() => {
+    if (!rootRef.current) return;
+
+    const rect = rootRef.current.getBoundingClientRect();
+    const viewportPadding = Math.max(window.innerWidth * 0.008, 10);
+    const menuGap = Math.max(window.innerWidth * 0.004, 6);
+    const triggerWidth = rect.width;
+
+    if (placement === 'right') {
+      const availableRight = window.innerWidth - rect.right - viewportPadding - menuGap;
+      const availableLeft = rect.left - viewportPadding - menuGap;
+      const openLeft = availableRight < triggerWidth && availableLeft > availableRight;
+      const availableBelow = window.innerHeight - rect.top - viewportPadding;
+      const availableAbove = rect.bottom - viewportPadding;
+      const alignBottom =
+        verticalPlacement === 'top' ||
+        (verticalPlacement === 'auto' &&
+          availableBelow < window.innerHeight * 0.28 &&
+          availableAbove > availableBelow);
+      const availableHeight = Math.max(
+        window.innerHeight * 0.18,
+        alignBottom ? availableAbove : availableBelow
+      );
+
+      setOverlayStyle({
+        position: 'fixed',
+        top: alignBottom ? 'auto' : `${rect.top}px`,
+        bottom: alignBottom ? `${window.innerHeight - rect.bottom}px` : 'auto',
+        left: openLeft ? 'auto' : `${rect.right + menuGap}px`,
+        right: openLeft ? `${window.innerWidth - rect.left + menuGap}px` : 'auto',
+        width: 'max-content',
+        minWidth: `${triggerWidth}px`,
+        maxWidth: `${Math.max(triggerWidth, openLeft ? availableLeft : availableRight)}px`,
+      });
+      setMenuMaxHeight(Math.min(window.innerHeight * 0.48, availableHeight));
+      return;
+    }
+
+    const availableBelow = window.innerHeight - rect.bottom - viewportPadding - menuGap;
+    const availableAbove = rect.top - viewportPadding - menuGap;
+    const openAbove = availableBelow < window.innerHeight * 0.28 && availableAbove > availableBelow;
+    const availableHeight = Math.max(
+      window.innerHeight * 0.18,
+      openAbove ? availableAbove : availableBelow
+    );
+
+    setOverlayStyle({
+      position: 'fixed',
+      top: openAbove ? 'auto' : `${rect.bottom + menuGap}px`,
+      bottom: openAbove ? `${window.innerHeight - rect.top + menuGap}px` : 'auto',
+      left: `${rect.left}px`,
+      width: 'max-content',
+      minWidth: `${triggerWidth}px`,
+      maxWidth: `${Math.max(triggerWidth, window.innerWidth - rect.left - viewportPadding)}px`,
+    });
+    setMenuMaxHeight(Math.min(window.innerHeight * 0.48, availableHeight));
+  }, [placement, verticalPlacement]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
 
+    updateOverlayPosition();
+
     const handlePointerDown = event => {
-      if (rootRef.current && !rootRef.current.contains(event.target)) {
+      const clickedTrigger = rootRef.current?.contains(event.target);
+      const clickedMenu = menuRef.current?.contains(event.target);
+
+      if (!clickedTrigger && !clickedMenu) {
         setIsOpen(false);
       }
     };
@@ -414,12 +525,58 @@ export function MonitoringDropdown({
 
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', updateOverlayPosition);
+    window.addEventListener('scroll', updateOverlayPosition, true);
 
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', updateOverlayPosition);
+      window.removeEventListener('scroll', updateOverlayPosition, true);
     };
-  }, [isOpen]);
+  }, [isOpen, updateOverlayPosition]);
+
+  const menu =
+    isOpen && overlayStyle
+      ? createPortal(
+          <div
+            ref={menuRef}
+            style={overlayStyle}
+            className="z-[100] rounded-[var(--app-radius-lg)] drop-shadow-[0_1rem_2rem_rgba(15,23,42,0.12)]"
+          >
+            <div className="rounded-[var(--app-radius-lg)] border border-slate-200 bg-white px-[calc(var(--app-pad-xs)*0.55)] py-[calc(var(--app-pad-xs)*0.65)]">
+              <div
+                style={{ maxHeight: `${menuMaxHeight}px` }}
+                className="flex flex-col gap-[calc(var(--app-gap-xs)*0.35)] overflow-auto px-[calc(var(--app-pad-xs)*0.55)]"
+              >
+                {options.map(option => {
+                  const isSelected = option === value;
+                  const optionLabel = optionLabelMap[option] ?? option;
+
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`flex h-[var(--app-control-sm)] w-full shrink-0 cursor-pointer items-center gap-[var(--app-gap-xs)] px-[calc(var(--app-pad-md)*0.9)] text-left whitespace-nowrap transition ${
+                        isSelected
+                          ? `app-solid-button rounded-[var(--app-radius-md)] bg-[#4338CA] ${selectedOptionTextClassName} font-bold leading-[150%] text-white`
+                          : `rounded-[var(--app-radius-sm)] bg-white ${optionTextClassName} font-normal leading-5 tracking-[0.01em] text-[#484848] hover:bg-[#F7F8FC]`
+                      }`.trim()}
+                      onClick={() => {
+                        onChange(option);
+                        setIsOpen(false);
+                      }}
+                    >
+                      <span className="flex-1 whitespace-nowrap">{optionLabel}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <div ref={rootRef} className={`relative ${widthClass}`.trim()}>
@@ -427,53 +584,26 @@ export function MonitoringDropdown({
         type="button"
         aria-label={ariaLabel}
         aria-expanded={isOpen}
-        className={`flex w-full cursor-pointer items-center gap-2 rounded-[10px] border pr-2 pl-0 text-left transition ${triggerClassName} ${
-          isOpen ? 'border-[#A5B4FC] bg-[#EEF2FF] ring-4 ring-[#E0E7FF]' : ''
+        className={`flex w-full cursor-pointer items-center gap-[var(--app-gap-xs)] border pr-[var(--app-pad-xs)] pl-0 text-left transition ${triggerClassName} ${
+          isOpen
+            ? 'border-[#A5B4FC] bg-[#EEF2FF] ring-[clamp(0.2rem,0.32vw,0.25rem)] ring-[#E0E7FF]'
+            : ''
         }`.trim()}
         onClick={() => setIsOpen(open => !open)}
       >
         <span
-          className={`flex flex-1 items-center px-4 ${APP_BODY_TEXT_CLASS} font-medium leading-5 tracking-[0.01em] text-[#344054]`}
+          className={`flex flex-1 items-center px-[var(--app-pad-md)] ${triggerTextClassName} font-medium leading-5 tracking-[0.01em] text-[#344054]`}
         >
-          {value}
+          {displayValue}
         </span>
         <img
           src={caretDownIcon}
           alt=""
           aria-hidden="true"
-          className={`h-6 w-6 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`.trim()}
+          className={`h-[var(--app-icon-md)] w-[var(--app-icon-md)] shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`.trim()}
         />
       </button>
-
-      {isOpen ? (
-        <div className="absolute top-[calc(100%+0.375rem)] left-0 z-40 w-full rounded-[10px] drop-shadow-[0_16px_32px_rgba(15,23,42,0.12)]">
-          <div className="rounded-[10px] border border-[#E5E7EA] bg-white px-0 py-2">
-            <div className="flex max-h-[min(16rem,50vh)] flex-col gap-1 overflow-y-auto px-1">
-              {options.map(option => {
-                const isSelected = option === value;
-
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    className={`flex h-9 w-full cursor-pointer items-center gap-2 px-4 text-left transition ${
-                      isSelected
-                        ? `h-[42px] rounded-[8px] bg-[#4B35D4] ${APP_BUTTON_TEXT_CLASS} font-semibold leading-[150%] text-white`
-                        : `rounded-[8px] bg-white ${APP_BODY_TEXT_CLASS} font-normal leading-5 tracking-[0.01em] text-[#484848] hover:bg-[#F7F8FC]`
-                    }`.trim()}
-                    onClick={() => {
-                      onChange(option);
-                      setIsOpen(false);
-                    }}
-                  >
-                    <span className="flex-1">{option}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {menu}
     </div>
   );
 }
@@ -481,18 +611,24 @@ export function MonitoringDropdown({
 export function MonitoringSearchField({
   value,
   onChange,
-  widthClass = 'w-full sm:w-[348px] sm:shrink-0',
+  widthClass = 'w-full sm:w-[clamp(18rem,24.2vw,21.75rem)] sm:shrink-0',
+  placeholder = 'Search',
 }) {
   return (
     <label
-      className={`flex h-9 items-center gap-2.5 rounded-[4px] bg-[#F9FBFF] px-3 ${APP_SMALL_META_TEXT_CLASS} text-[#B5B7C0] ${widthClass}`.trim()}
+      className={`flex h-[var(--app-control-xs)] items-center gap-[var(--app-gap-xs)] rounded-[var(--app-radius-sm)] bg-[#F9FBFF] px-[var(--app-pad-sm)] ${APP_SMALL_META_TEXT_CLASS} text-[#B5B7C0] ${widthClass}`.trim()}
     >
-      <img src={searchIcon} alt="" aria-hidden="true" className="h-[22px] w-[25px]" />
+      <img
+        src={searchIcon}
+        alt=""
+        aria-hidden="true"
+        className="h-[var(--app-icon-md)] w-[calc(var(--app-icon-md)*1.14)]"
+      />
       <input
         type="text"
         value={value}
         onChange={onChange}
-        placeholder="Search"
+        placeholder={placeholder}
         className={`w-full min-w-0 bg-transparent ${APP_BODY_TEXT_CLASS} text-[#3D3C42] outline-none placeholder:text-[#B5B7C0]`}
       />
     </label>
@@ -504,7 +640,7 @@ function MonitoringResultChip({ result }) {
 
   return (
     <span
-      className={`inline-flex items-center text-[15px] font-semibold whitespace-nowrap ${resultTextClassName}`}
+      className={`inline-flex items-center text-[clamp(0.86rem,1vw,0.94rem)] font-semibold whitespace-nowrap ${resultTextClassName}`}
     >
       {result}
     </span>
@@ -516,56 +652,71 @@ export function MonitoringDataTable({
   activeRowId,
   onSelectRow,
   renderExpandedRow,
+  showSelection = true,
   selectedRowIds = [],
   onToggleRowSelection,
   onToggleAllRowsSelection,
   rowNumberStart = 1,
   className = '',
   bodyClassName = '',
-  showSelection = true,
 }) {
-  const allRowsSelected =
-    showSelection && rows.length > 0 && rows.every(row => selectedRowIds.includes(row.id));
+  const allRowsSelected = rows.length > 0 && rows.every(row => selectedRowIds.includes(row.id));
 
   return (
     <div className={`${monitoringTableSurfaceClass} ${className}`.trim()}>
       <div className={monitoringTableScrollClass}>
-        <table className={`min-w-[980px] ${monitoringTableClass} xl:min-w-0`}>
+        <table className={`min-w-[min(100%,61.25rem)] ${monitoringTableClass} xl:min-w-0`}>
           <colgroup>
-            {showSelection ? <col className="w-[38px]" /> : null}
-            <col className="w-[40px]" />
-            <col className="w-[108px]" />
-            <col className="w-[74px]" />
-            <col className="w-[172px]" />
-            <col className="w-[116px]" />
-            <col className="w-[206px]" />
-            <col className="w-[128px]" />
-            <col className="w-[110px]" />
+            {showSelection ? <col className="w-[4%]" /> : null}
+            <col className="w-[4%]" />
+            <col className="w-[16%]" />
+            <col className="w-[9%]" />
+            <col className="w-[8%]" />
+            <col className="w-[20%]" />
+            <col className="w-[17%]" />
+            <col className="w-[12%]" />
+            <col className="w-[10%]" />
           </colgroup>
           <thead className={monitoringTableHeadClass}>
             <tr className={monitoringTableHeaderRowClass}>
               {showSelection ? (
-                <th className={`${monitoringTableHeaderCellClass} px-0 text-center align-middle`}>
+                <th className={`${monitoringCompactHeaderCellClass} px-0 text-center align-middle`}>
                   <input
                     type="checkbox"
                     checked={allRowsSelected}
                     onChange={() => onToggleAllRowsSelection?.(rows.map(row => row.id))}
                     aria-label="현재 페이지 전체 선택"
-                    className="mx-auto block h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#4338CA]"
+                    className="mx-auto block h-[var(--app-icon-xs)] w-[var(--app-icon-xs)] cursor-pointer rounded border-slate-300 accent-[#4338CA]"
                   />
                 </th>
               ) : null}
-              <th className={`${monitoringTableHeaderCellClass} px-0 text-center`}>No.</th>
-              <th className={`${monitoringTableHeaderCellClass} xl:px-5`}>탐지 일시</th>
-              <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>서비스</th>
-              <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>프롬프트</th>
-              <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>탐지 결과</th>
-              <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>탐지 내용</th>
-              <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>IP</th>
-              <th className={`${monitoringTableHeaderCellClass} px-3 xl:px-4`}>사용자명</th>
+              <th className={`${monitoringCompactHeaderCellClass} px-0 text-center`}>No.</th>
+              <th className={`${monitoringCompactHeaderCellClass} px-[var(--app-pad-sm)]`}>
+                탐지 일시
+              </th>
+              <th
+                className={`${monitoringCompactHeaderCellClass} px-[var(--app-pad-sm)] !text-center`}
+              >
+                서비스
+              </th>
+              <th
+                className={`${monitoringCompactHeaderCellClass} whitespace-nowrap px-[var(--app-pad-sm)]`}
+              >
+                탐지 결과
+              </th>
+              <th className={`${monitoringCompactHeaderCellClass} px-[var(--app-pad-sm)]`}>
+                프롬프트
+              </th>
+              <th className={`${monitoringCompactHeaderCellClass} px-[var(--app-pad-sm)]`}>
+                적용 정책
+              </th>
+              <th className={`${monitoringCompactHeaderCellClass} px-[var(--app-pad-sm)]`}>IP</th>
+              <th className={`${monitoringCompactHeaderCellClass} px-[var(--app-pad-sm)]`}>
+                사용자명
+              </th>
             </tr>
           </thead>
-          <tbody className={bodyClassName}>
+          <tbody className={`${monitoringTableBodyClass} ${bodyClassName}`.trim()}>
             {rows.map((row, index) => {
               const isSelected = activeRowId === row.id;
               const isChecked = selectedRowIds.includes(row.id);
@@ -582,7 +733,10 @@ export function MonitoringDataTable({
                   >
                     {showSelection ? (
                       <td
-                        className={monitoringTableCellClass(index, 'px-0 text-center align-middle')}
+                        className={monitoringCompactTableCellClass(
+                          index,
+                          'px-0 text-center align-middle'
+                        )}
                         onClick={event => event.stopPropagation()}
                       >
                         <input
@@ -590,57 +744,45 @@ export function MonitoringDataTable({
                           checked={isChecked}
                           onChange={() => onToggleRowSelection?.(row.id)}
                           aria-label={`${row.aiType} 행 선택`}
-                          className="mx-auto block h-4 w-4 cursor-pointer rounded border-slate-300 accent-[#4338CA]"
+                          className="mx-auto block h-[var(--app-icon-xs)] w-[var(--app-icon-xs)] cursor-pointer rounded border-slate-300 accent-[#4338CA]"
                         />
                       </td>
                     ) : null}
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `px-0 text-center ${isSelected ? 'font-semibold text-[#353E73]' : 'text-[#667085]'}`
+                        'px-0 text-center text-[#667085]'
                       )}
                     >
                       {row.no ?? rowNumberStart + index}
                     </td>
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `xl:px-5 ${isSelected ? 'font-semibold text-[#353E73]' : 'text-[#475467]'}`
+                        'px-[var(--app-pad-sm)] text-[#475467]'
                       )}
                     >
-                      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                        {row.detectedAt}
-                      </div>
+                      <div className="whitespace-nowrap">{row.detectedAt}</div>
                     </td>
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `px-3 xl:px-4 ${isSelected ? 'font-semibold text-[#353E73]' : 'text-[#475467]'}`
+                        'px-[var(--app-pad-sm)] text-[#475467]'
                       )}
                     >
-                      <div className="flex items-center justify-center xl:justify-start">
+                      <div className="flex items-center justify-center">
                         <ServiceLogoBadge
                           name={row.aiType}
                           variant="compact"
-                          className="h-8 w-8"
-                          iconClassName="h-6 w-6"
+                          className="h-7 w-7 !border-[#A99DFF] bg-[#FAF9FF] shadow-[0_0.625rem_1.5rem_rgba(106,90,224,0.08)]"
+                          iconClassName="h-[var(--app-icon-sm)] w-[var(--app-icon-sm)]"
                         />
                       </div>
                     </td>
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `px-3 xl:px-4 ${isSelected ? 'font-semibold text-[#252B5C]' : 'text-[#2E3363]'}`
-                      )}
-                    >
-                      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                        {row.prompt}
-                      </div>
-                    </td>
-                    <td
-                      className={monitoringTableCellClass(
-                        index,
-                        `px-3 xl:px-4 ${isSelected ? 'font-semibold' : ''}`
+                        'px-[var(--app-pad-sm)] font-semibold'
                       )}
                     >
                       <div className="overflow-hidden">
@@ -651,9 +793,19 @@ export function MonitoringDataTable({
                       </div>
                     </td>
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `px-3 xl:px-4 ${isSelected ? 'font-semibold text-[#252B5C]' : 'text-[#2E3363]'}`
+                        'px-[var(--app-pad-sm)] text-[#2E3363]'
+                      )}
+                    >
+                      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        {row.prompt}
+                      </div>
+                    </td>
+                    <td
+                      className={monitoringCompactTableCellClass(
+                        index,
+                        'px-[var(--app-pad-sm)] text-[#2E3363]'
                       )}
                     >
                       <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -661,9 +813,9 @@ export function MonitoringDataTable({
                       </div>
                     </td>
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `px-3 xl:px-4 ${isSelected ? 'font-semibold text-[#252B5C]' : 'text-[#2E3363]'}`
+                        'px-[var(--app-pad-sm)] text-[#2E3363]'
                       )}
                     >
                       <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -671,9 +823,9 @@ export function MonitoringDataTable({
                       </div>
                     </td>
                     <td
-                      className={monitoringTableCellClass(
+                      className={monitoringCompactTableCellClass(
                         index,
-                        `px-3 xl:px-4 ${isSelected ? 'font-semibold text-[#252B5C]' : 'text-[#2E3363]'}`
+                        'px-[var(--app-pad-sm)] text-[#2E3363]'
                       )}
                     >
                       <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -705,23 +857,23 @@ export function MonitoringDomainTable({ rows, renderLogo, renderToggle, classNam
   return (
     <div className={`flex min-h-0 w-full flex-col pb-0 ${className}`.trim()}>
       <div className="min-h-0 w-full overflow-x-auto">
-        <div className="min-w-[760px] rounded-[22px]">
-          <div className="grid h-[46px] w-full grid-cols-[minmax(15rem,1.45fr)_minmax(16rem,2fr)_8rem] items-center rounded-t-[22px] border-b border-[#E7EBF4] bg-[linear-gradient(180deg,#F8FAFF_0%,#F2F5FC_100%)] px-6 text-[14px] font-semibold tracking-[-0.01em] text-[#59627A] lg:px-8">
+        <div className="min-w-[min(100%,47.5rem)] rounded-[var(--app-radius-xl)]">
+          <div className="grid h-[var(--app-control-lg)] w-full grid-cols-[minmax(15rem,1.45fr)_minmax(16rem,2fr)_minmax(7rem,0.5fr)] items-center rounded-t-[var(--app-radius-xl)] border-b border-[#E7EBF4] bg-[linear-gradient(180deg,#F8FAFF_0%,#F2F5FC_100%)] px-[var(--app-pad-lg)] text-[clamp(0.82rem,0.95vw,0.9rem)] font-semibold tracking-[-0.01em] text-[#59627A]">
             <span>서비스</span>
             <span>URL</span>
             <span className="text-center">사용/비사용</span>
           </div>
 
-          <div className="overflow-hidden rounded-b-[22px]">
+          <div className="overflow-hidden rounded-b-[var(--app-radius-xl)]">
             {rows.map((row, index) => {
               return (
                 <div
                   key={row.id}
-                  className={`grid min-h-[66px] w-full grid-cols-[minmax(15rem,1.45fr)_minmax(16rem,2fr)_8rem] items-center bg-white px-6 text-[14px] leading-[150%] text-[#334155] lg:px-8 ${
+                  className={`grid min-h-[clamp(3.75rem,4.6vw,4.125rem)] w-full grid-cols-[minmax(15rem,1.45fr)_minmax(16rem,2fr)_minmax(7rem,0.5fr)] items-center bg-white px-[var(--app-pad-lg)] text-[clamp(0.82rem,0.95vw,0.9rem)] leading-[150%] text-[#334155] ${
                     index === 0 ? '' : 'border-t border-[#EEF1F6]'
                   }`.trim()}
                 >
-                  <div className="flex items-center gap-3 py-3 pr-4">
+                  <div className="flex items-center gap-[var(--app-gap-sm)] py-[var(--app-pad-sm)] pr-[var(--app-pad-md)]">
                     {renderLogo(row)}
                     <div className="truncate font-semibold text-[#1F2A44]">{row.name}</div>
                   </div>
@@ -729,12 +881,14 @@ export function MonitoringDomainTable({ rows, renderLogo, renderToggle, classNam
                     href={row.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="truncate pr-4 text-[#667085] underline decoration-transparent transition hover:text-[#3F49B5] hover:decoration-[#3F49B5]"
+                    className="truncate pr-[var(--app-pad-md)] text-[#667085] underline decoration-transparent transition hover:text-[#3F49B5] hover:decoration-[#3F49B5]"
                     title={row.url}
                   >
                     {row.url}
                   </a>
-                  <div className="flex justify-center py-3">{renderToggle(row)}</div>
+                  <div className="flex justify-center py-[var(--app-pad-sm)]">
+                    {renderToggle(row)}
+                  </div>
                 </div>
               );
             })}

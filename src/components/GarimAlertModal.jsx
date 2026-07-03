@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import { STATUS_COLORS } from '../constants/statusColors.js';
+
 const vertexShaderSource = `
   attribute vec2 a_position;
   varying vec2 v_uv;
@@ -22,6 +24,11 @@ const fragmentShaderSource = `
   uniform float u_speed;
   uniform float u_intensity;
   uniform float u_alpha_floor;
+  uniform vec3 u_deep_color;
+  uniform vec3 u_mid_color;
+  uniform vec3 u_accent_color;
+  uniform vec3 u_surface_color;
+  uniform float u_white_highlight;
 
   vec2 rotate(vec2 uv, float th) {
     return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
@@ -87,17 +94,14 @@ const fragmentShaderSource = `
 
     float pulse = 0.88 + 0.12 * sin(u_time * 0.00032 + u_scroll_progress * 6.28318);
 
-    vec3 deepNavy = vec3(0.004, 0.004, 0.012);
-    vec3 oceanBlue = vec3(0.035, 0.025, 0.075);
-    vec3 aquaGlow = vec3(0.416, 0.353, 0.878);
-    vec3 surfaceCyan = vec3(0.720, 0.650, 1.000);
-
-    vec3 color = mix(deepNavy, oceanBlue, surfaceLight * 0.52);
-    color = mix(color, aquaGlow, clamp(glow * 1.65 + pointerGlow * centerOnlyMask, 0.0, 1.0));
-    color += surfaceCyan * pow(surfaceLight, 3.0) * 0.018 * centerOnlyMask;
+    vec3 color = mix(u_deep_color, u_mid_color, surfaceLight * 0.52);
+    color = mix(color, u_accent_color, clamp(glow * 1.65 + pointerGlow * centerOnlyMask, 0.0, 1.0));
+    color += u_surface_color * pow(surfaceLight, 3.0) * 0.018 * centerOnlyMask;
+    color += vec3(1.0) * pow(surfaceLight, 4.0) * 0.014 * centerOnlyMask;
 
     vec3 finalColor = color * glow * pulse * u_intensity;
-    finalColor += aquaGlow * pow(glow, 2.0) * 0.28 * u_intensity;
+    finalColor += u_accent_color * pow(glow, 2.0) * 0.28 * u_intensity;
+    finalColor += vec3(1.0) * pow(glow, 2.45) * u_white_highlight * u_intensity;
 
     float alpha = clamp(max(glow, u_alpha_floor * centerOnlyMask * centerKnotFade), 0.0, 0.88);
 
@@ -107,6 +111,69 @@ const fragmentShaderSource = `
 
 function cx(...classes) {
   return classes.filter(Boolean).join(' ');
+}
+
+function normalizeHexColor(value, fallback = STATUS_COLORS.normal) {
+  const color = String(value || '').trim();
+
+  if (/^#[0-9a-f]{6}$/i.test(color)) {
+    return color;
+  }
+
+  return fallback;
+}
+
+function hexToRgb(value) {
+  const color = normalizeHexColor(value).slice(1);
+  const number = Number.parseInt(color, 16);
+
+  return {
+    r: (number >> 16) & 255,
+    g: (number >> 8) & 255,
+    b: number & 255,
+  };
+}
+
+function hexToGlColor(value) {
+  const { r, g, b } = hexToRgb(value);
+
+  return [r / 255, g / 255, b / 255];
+}
+
+function getColorLuminance(value) {
+  const { r, g, b } = hexToRgb(value);
+
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}
+
+function hexToRgba(value, alpha) {
+  const { r, g, b } = hexToRgb(value);
+
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function mixHexColor(color, target, amount) {
+  const sourceRgb = hexToRgb(color);
+  const targetRgb = hexToRgb(target);
+  const mixChannel = channel =>
+    Math.round(sourceRgb[channel] + (targetRgb[channel] - sourceRgb[channel]) * amount);
+
+  return `#${[mixChannel('r'), mixChannel('g'), mixChannel('b')]
+    .map(channel => channel.toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+
+function getAlertOrbPalette(statusKey = 'normal') {
+  const accentColor = normalizeHexColor(STATUS_COLORS[statusKey], STATUS_COLORS.normal);
+  const luminance = getColorLuminance(accentColor);
+
+  return {
+    accentColor,
+    deepColor: mixHexColor(accentColor, '#020207', 0.88),
+    midColor: mixHexColor(accentColor, '#05040d', 0.72),
+    surfaceColor: mixHexColor(accentColor, '#ffffff', 0.66),
+    whiteHighlight: 0.045 + luminance * 0.055,
+  };
 }
 
 function createShader(gl, type, source) {
@@ -150,9 +217,11 @@ function ShaderBackground({
   speed = 0.00072,
   intensity = 1,
   alphaFloor = 0,
+  palette,
 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const { accentColor, deepColor, midColor, surfaceColor, whiteHighlight } = palette;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -178,6 +247,11 @@ function ShaderBackground({
     const speedLocation = gl.getUniformLocation(program, 'u_speed');
     const intensityLocation = gl.getUniformLocation(program, 'u_intensity');
     const alphaFloorLocation = gl.getUniformLocation(program, 'u_alpha_floor');
+    const deepColorLocation = gl.getUniformLocation(program, 'u_deep_color');
+    const midColorLocation = gl.getUniformLocation(program, 'u_mid_color');
+    const accentColorLocation = gl.getUniformLocation(program, 'u_accent_color');
+    const surfaceColorLocation = gl.getUniformLocation(program, 'u_surface_color');
+    const whiteHighlightLocation = gl.getUniformLocation(program, 'u_white_highlight');
     const vertexBuffer = gl.createBuffer();
 
     if (
@@ -190,6 +264,11 @@ function ShaderBackground({
       !speedLocation ||
       !intensityLocation ||
       !alphaFloorLocation ||
+      !deepColorLocation ||
+      !midColorLocation ||
+      !accentColorLocation ||
+      !surfaceColorLocation ||
+      !whiteHighlightLocation ||
       !vertexBuffer
     ) {
       gl.deleteProgram(program);
@@ -213,6 +292,11 @@ function ShaderBackground({
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.uniform3fv(deepColorLocation, hexToGlColor(deepColor));
+    gl.uniform3fv(midColorLocation, hexToGlColor(midColor));
+    gl.uniform3fv(accentColorLocation, hexToGlColor(accentColor));
+    gl.uniform3fv(surfaceColorLocation, hexToGlColor(surfaceColor));
+    gl.uniform1f(whiteHighlightLocation, whiteHighlight);
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
@@ -299,20 +383,38 @@ function ShaderBackground({
       gl.deleteBuffer(vertexBuffer);
       gl.deleteProgram(program);
     };
-  }, [alphaFloor, intensity, minimumGlow, speed]);
+  }, [
+    accentColor,
+    alphaFloor,
+    deepColor,
+    intensity,
+    midColor,
+    minimumGlow,
+    speed,
+    surfaceColor,
+    whiteHighlight,
+  ]);
 
   return (
     <div
       ref={containerRef}
-      className={cx(
-        'pointer-events-none absolute inset-0 overflow-hidden bg-[radial-gradient(circle_at_50%_-14%,rgba(154,132,255,0.15),transparent_50%),radial-gradient(circle_at_18%_18%,rgba(106,90,224,0.11),transparent_38%),radial-gradient(circle_at_82%_82%,rgba(82,56,180,0.13),transparent_46%),linear-gradient(180deg,#05040d_0%,#080712_50%,#020207_100%)]',
-        className,
-      )}
+      className={cx('pointer-events-none absolute inset-0 overflow-hidden', className)}
+      style={{
+        background: `radial-gradient(circle at 50% -14%, ${hexToRgba(surfaceColor, 0.15)}, transparent 50%), radial-gradient(circle at 18% 18%, ${hexToRgba(accentColor, 0.11)}, transparent 38%), radial-gradient(circle at 82% 82%, ${hexToRgba(midColor, 0.2)}, transparent 46%), linear-gradient(180deg, ${deepColor} 0%, #080712 50%, #020207 100%)`,
+      }}
       aria-hidden="true"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-[0.98] mix-blend-screen" />
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 h-full w-full opacity-[0.98] mix-blend-screen"
+      />
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(197,181,255,0.08),transparent_46%),radial-gradient(circle_at_16%_12%,rgba(156,132,255,0.09),transparent_36%),radial-gradient(circle_at_86%_78%,rgba(106,90,224,0.11),transparent_48%),linear-gradient(180deg,rgba(4,4,12,0.1)_0%,rgba(5,5,14,0.3)_48%,rgba(1,1,5,0.64)_100%)] mix-blend-screen" />
+      <div
+        className="absolute inset-0 mix-blend-screen"
+        style={{
+          background: `radial-gradient(circle at 50% 28%, ${hexToRgba(surfaceColor, 0.08)}, transparent 46%), radial-gradient(circle at 16% 12%, ${hexToRgba(accentColor, 0.09)}, transparent 36%), radial-gradient(circle at 86% 78%, ${hexToRgba(accentColor, 0.11)}, transparent 48%), linear-gradient(180deg, rgba(4,4,12,0.1) 0%, rgba(5,5,14,0.3) 48%, rgba(1,1,5,0.64) 100%)`,
+        }}
+      />
 
       <div className="absolute inset-[-100%] rotate-[10deg] opacity-[0.06] [background-image:radial-gradient(rgba(255,255,255,0.7)_0.7px,transparent_0.7px)] [background-size:8px_8px]" />
     </div>
@@ -337,19 +439,42 @@ function CloseIcon() {
   );
 }
 
-export function GarimAlertOrb({ className = '' }) {
-  return (
-    <div className={cx('relative flex h-[230px] w-[230px] shrink-0 items-center justify-center', className)}>
-      <div className="absolute inset-[-36px] rounded-full bg-[#6a5ae0]/20 blur-3xl" />
-      <div className="absolute inset-[-16px] rounded-full border border-[#b8aaff]/14 bg-[#6a5ae0]/6 blur-[1px]" />
+export function GarimAlertOrb({ className = '', statusKey = 'normal' }) {
+  const palette = getAlertOrbPalette(statusKey);
+  const { accentColor, midColor, surfaceColor } = palette;
 
-      <div className="relative h-full w-full overflow-hidden rounded-full border border-white/16 bg-[#05040d] shadow-[0_0_30px_rgba(169,157,255,0.34),0_0_78px_rgba(106,90,224,0.22)]">
+  return (
+    <div
+      className={cx(
+        'relative flex h-[clamp(12rem,16vw,14.375rem)] w-[clamp(12rem,16vw,14.375rem)] shrink-0 items-center justify-center',
+        className
+      )}
+    >
+      <div
+        className="absolute inset-[-36px] rounded-full blur-3xl"
+        style={{ backgroundColor: hexToRgba(accentColor, 0.2) }}
+      />
+      <div
+        className="absolute inset-[-16px] rounded-full border blur-[1px]"
+        style={{
+          backgroundColor: hexToRgba(accentColor, 0.06),
+          borderColor: hexToRgba(surfaceColor, 0.14),
+        }}
+      />
+
+      <div
+        className="relative h-full w-full overflow-hidden rounded-full border border-white/16 bg-[#05040d]"
+        style={{
+          boxShadow: `0 0 30px ${hexToRgba(surfaceColor, 0.34)}, 0 0 78px ${hexToRgba(accentColor, 0.22)}`,
+        }}
+      >
         <ShaderBackground
           className="contrast-[1.9] saturate-[1.75] brightness-[1.35]"
           minimumGlow={0.04}
           speed={0.0005}
           intensity={2.05}
           alphaFloor={0.02}
+          palette={palette}
         />
 
         <ShaderBackground
@@ -358,18 +483,26 @@ export function GarimAlertOrb({ className = '' }) {
           speed={0.0005}
           intensity={1.45}
           alphaFloor={0.01}
+          palette={palette}
         />
 
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(circle_at_32%_24%,rgba(255,255,255,0.18),transparent_17%),radial-gradient(circle_at_62%_68%,rgba(169,157,255,0.1),transparent_28%),radial-gradient(circle_at_50%_50%,rgba(106,90,224,0)_42%,rgba(2,2,7,0.2)_100%)]"
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(circle at 32% 24%, rgba(255,255,255,0.19), transparent 15%), radial-gradient(circle at 58% 38%, rgba(255,255,255,0.065), transparent 16%), radial-gradient(circle at 62% 68%, ${hexToRgba(surfaceColor, 0.1)}, transparent 28%), radial-gradient(circle at 50% 50%, ${hexToRgba(midColor, 0)} 42%, rgba(2,2,7,0.2) 100%)`,
+          }}
         />
-
-        <div aria-hidden="true" className="absolute inset-[10px] rounded-full border border-white/10" />
 
         <div
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 h-[72%] w-[132%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full border border-[#d9d3ff]/20"
+          className="absolute inset-[10px] rounded-full border border-white/10"
+        />
+
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 h-[72%] w-[132%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full border"
+          style={{ borderColor: hexToRgba(surfaceColor, 0.2) }}
         />
       </div>
     </div>
@@ -378,6 +511,7 @@ export function GarimAlertOrb({ className = '' }) {
 
 export default function GarimAlertModal({
   className = '',
+  statusKey = 'normal',
   headline = '새로운 보안 알림이 도착했습니다.',
   detail = '위험 요청 및 정책 탐지 내역을 확인해 주세요',
   ctaHref,
@@ -387,18 +521,20 @@ export default function GarimAlertModal({
   onClose,
   onCtaClick,
   renderCta,
+  renderOrb,
 }) {
   const resolvedCtaHref = ctaHref || ctaTo;
+  const palette = getAlertOrbPalette(statusKey);
 
   const ctaClassName =
-    'mt-7 inline-flex h-12 min-w-[190px] items-center justify-center rounded-xl border border-[#4338CA] bg-[#4338CA] px-7 text-[15px] font-bold text-white no-underline shadow-[0_10px_24px_rgba(67,56,202,0.24)] transition hover:border-[#3730A3] hover:bg-[#3730A3] active:border-[#312E81] active:bg-[#312E81]';
+    'mt-[calc(var(--app-gap-lg)*1.15)] inline-flex h-[var(--app-control-lg)] min-w-[clamp(10.5rem,13.2vw,11.875rem)] items-center justify-center rounded-[var(--app-radius-lg)] border border-[#4338CA] bg-[#4338CA] px-[var(--app-pad-lg)] text-[clamp(0.86rem,1vw,0.94rem)] font-bold text-white no-underline shadow-[0_0.625rem_1.5rem_rgba(67,56,202,0.24)] transition hover:border-[#3730A3] hover:bg-[#3730A3] active:border-[#312E81] active:bg-[#312E81]';
 
   return (
     <aside
       aria-label="GARIM Alert"
       className={cx(
-        'relative flex min-h-[560px] w-full max-w-[390px] animate-[garim-alert-modal-enter_550ms_ease-out_both] flex-col overflow-hidden rounded-[34px] border border-white/12 bg-[#070724]/94 text-white shadow-[0_28px_90px_rgba(0,0,0,0.38)] backdrop-blur-xl motion-reduce:animate-none',
-        className,
+        'relative flex min-h-[min(88vh,35rem)] w-full max-w-[min(100%,24.375rem)] animate-[garim-alert-modal-enter_550ms_ease-out_both] flex-col overflow-hidden rounded-[clamp(1.75rem,2.4vw,2.125rem)] border border-white/12 bg-[#070724]/94 text-white shadow-[0_1.75rem_5.625rem_rgba(0,0,0,0.38)] backdrop-blur-xl motion-reduce:animate-none',
+        className
       )}
     >
       <style>
@@ -418,12 +554,15 @@ export default function GarimAlertModal({
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_52%_24%,rgba(126,58,242,0.2),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_42%)]"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `radial-gradient(circle at 52% 24%, ${hexToRgba(palette.accentColor, 0.2)}, transparent 34%), linear-gradient(180deg, rgba(255,255,255,0.05), transparent 42%)`,
+        }}
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute right-[-120px] top-0 h-full w-[210px] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)] blur-sm"
+        className="pointer-events-none absolute right-[clamp(-7.5rem,-8.3vw,-6rem)] top-0 h-full w-[clamp(11rem,14.6vw,13.125rem)] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)] blur-sm"
       />
 
       <header className="relative flex h-14 items-center justify-between px-5">
@@ -443,7 +582,7 @@ export default function GarimAlertModal({
       </header>
 
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-10">
-        <GarimAlertOrb />
+        {renderOrb ? renderOrb({ statusKey }) : <GarimAlertOrb statusKey={statusKey} />}
 
         <div className="mt-8 text-center">
           <p className="m-0 text-[15px] font-bold leading-7 text-white">{headline}</p>

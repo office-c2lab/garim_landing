@@ -63,7 +63,7 @@ export default function FaqSection() {
                 <span
                   className={cn(
                     'text-[15px] font-bold tracking-[-0.02em] transition sm:text-base',
-                    isOpen ? 'text-[#6a5ae0]' : 'text-[#30343b] group-hover:text-[#6a5ae0]'
+                    isOpen ? 'text-[#5B39D6]' : 'text-[#30343b] group-hover:text-[#5B39D6]'
                   )}
                 >
                   Q. {item.q}
@@ -73,8 +73,8 @@ export default function FaqSection() {
                   className={cn(
                     'h-5 w-5 shrink-0 transition duration-300',
                     isOpen
-                      ? 'rotate-180 text-[#6a5ae0]'
-                      : 'text-[#b8b8b8] group-hover:text-[#6a5ae0]'
+                      ? 'rotate-180 text-[#5B39D6]'
+                      : 'text-[#b8b8b8] group-hover:text-[#5B39D6]'
                   )}
                 />
               </button>

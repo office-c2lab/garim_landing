@@ -11,8 +11,6 @@ import DownloadPage from './pages/DownloadPage/DownloadPage.jsx';
 import LandingPage from './pages/LandingPage/LandingPage.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import MyPage from './pages/MyPage/MyPage.jsx';
-import SettingsPage from './pages/SettingsPage/SettingsPage.jsx';
-import NotificationPage from './pages/NotificationPage/NotificationPage.jsx';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage.jsx';
 import { useDownloadSettingsQuery } from './queries/companySettingsQueries.js';
 import { DEFAULT_DOWNLOAD_PATH, normalizeDownloadSettings } from './utils/downloadSettings.js';
@@ -49,8 +47,6 @@ export default function App() {
         <Route path="/domains" element={<DomainPage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/mypage" element={<MyPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/notifications" element={<NotificationPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

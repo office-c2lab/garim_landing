@@ -11,9 +11,9 @@ import {
   ShieldCheck,
   Trash2,
 } from 'lucide-react';
+import AppButton from '../../components/AppButton.jsx';
 import garimMoonImage from '../../assets/images/garim_moon.png';
-import garimLogo from '../../assets/icons/GARIM.png';
-import logoIcon from '../../assets/icons/logo.png';
+import garimLogo from '../../assets/icons/logo.svg';
 import packIcon from '../../assets/images/pac.png';
 import { useTemplateSettingsQuery } from '../../queries/companySettingsQueries.js';
 import { useWindowsSetupDownloadMutation } from '../../queries/downloadQueries.js';
@@ -117,9 +117,8 @@ export default function DownloadPage() {
   return (
     <main className="min-h-screen bg-[#F3F6FA] text-[#111827]">
       <header className="sticky top-0 z-30 h-[4.5rem] bg-black">
-        <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-8">
-          <div className="flex items-center gap-3">
-            <img src={logoIcon} alt="" className="h-8 w-8 rounded-md object-cover" />
+        <div className="mx-auto flex h-full max-w-[min(100%,80rem)] items-center justify-between px-8">
+          <div className="flex items-center">
             <img src={garimLogo} alt="GARIM" className="h-8 w-auto" />
           </div>
           <nav className="hidden items-center gap-10 text-sm font-bold text-white md:flex">
@@ -146,26 +145,25 @@ export default function DownloadPage() {
           backgroundPosition: 'center bottom',
         }}
       >
-        <div className="relative z-10 mx-auto max-w-[820px] text-center">
+        <div className="relative z-10 mx-auto max-w-[min(100%,51.25rem)] text-center">
           <h1 className="text-[clamp(2.4rem,5vw,4.2rem)] font-bold leading-tight tracking-[-0.02em]">
             운영지원
           </h1>
           <p className="mx-auto mt-6 max-w-[42rem] text-xl font-semibold leading-8 ">
-            GARIM 적용에 필요한 압축 파일을 다운로드하고 실행 및 적용 방법을 확인해 주세요.
+            GARIM 적용에 필요한 압축 파일을 다운로드하고<br />실행 및 적용 방법을 확인해 주세요.
           </p>
-          <button
-            type="button"
+          <AppButton
             onClick={handleDownloadClick}
             disabled={isDownloadPending}
-            className="mt-9 inline-flex h-16 items-center justify-center gap-3 rounded-xl border border-[#5B39D6] bg-[#5B39D6] px-8 text-lg font-black text-white shadow-[0_14px_30px_rgba(91,57,214,0.24)] transition hover:bg-[#4C2FC0]"
+            className="mt-9 h-16 px-8 text-lg font-black"
           >
             <Download className="h-5 w-5" />
             {isDownloadPending ? '다운로드 준비 중' : '압축 파일 다운로드'}
-          </button>
+          </AppButton>
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-16 px-8 py-12">
+      <div className="mx-auto flex max-w-[min(100%,80rem)] flex-col gap-16 px-8 py-12">
         <section id="apply" className="scroll-mt-28">
           <SectionHeader
             title="설치 안내"
@@ -219,15 +217,14 @@ export default function DownloadPage() {
                 </p>
               </div>
               <div className="flex flex-col items-stretch gap-4 lg:min-w-[14rem]">
-                <button
-                  type="button"
+                <AppButton
                   onClick={handleDownloadClick}
                   disabled={isDownloadPending}
-                  className="inline-flex h-16 items-center justify-center gap-3 rounded-xl border border-[#5B39D6] bg-[#5B39D6] px-8 text-lg font-black text-white shadow-[0_14px_30px_rgba(91,57,214,0.24)] transition hover:bg-[#4C2FC0]"
+                  className="h-16 px-8 text-lg font-black"
                 >
                   <Download className="h-5 w-5" />
                   {isDownloadPending ? '다운로드 준비 중' : '압축 파일 다운로드'}
-                </button>
+                </AppButton>
               </div>
             </div>
           </div>
@@ -354,11 +351,10 @@ export default function DownloadPage() {
       </div>
 
       <footer className="mt-2 bg-[#101722]">
-        <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-8 py-8 text-sm font-semibold text-white/62 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-[min(100%,80rem)] flex-col gap-4 px-8 py-8 text-sm font-semibold text-white/62 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <img src={logoIcon} alt="" className="h-7 w-7 rounded-md object-cover" />
-              <img src={garimLogo} alt="GARIM" className="h-7 w-auto" />
+            <div className="flex items-center">
+              <img src={garimLogo} alt="GARIM" className="h-8 w-auto" />
             </div>
             <span>GARIM은 안전하고 효율적인 IT 환경을 제공하는 기술 기업입니다.</span>
           </div>
