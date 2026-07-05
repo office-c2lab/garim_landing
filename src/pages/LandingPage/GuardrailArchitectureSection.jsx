@@ -97,7 +97,7 @@ export default function GuardrailArchitectureSection() {
             </div>
 
             <div className="px-4">
-              <FlowLabel number="3">정책 적용 후 질의</FlowLabel>
+              <FlowLabel number="3">정책 처리 후 전달</FlowLabel>
               <div className="mt-3 flex items-center text-white/70">
                 <div className="h-px flex-1 bg-white/55" />
                 <ArrowRight className="-ml-px h-5 w-5" />
@@ -106,7 +106,7 @@ export default function GuardrailArchitectureSection() {
                 <ArrowLeft className="-mr-px h-5 w-5" />
                 <div className="h-px flex-1 bg-white/35" />
               </div>
-              <p className="mt-3 text-right text-xs font-medium text-white/45">승인된 응답 반환</p>
+              <p className="mt-3 text-right text-xs font-medium text-white/45">안전한 응답 반환</p>
             </div>
 
             <div className="flex h-48 flex-col items-center justify-center rounded-2xl border border-white/8 bg-white/[0.035] px-5 text-center shadow-[0_20px_50px_rgba(0,0,0,0.24)]">
@@ -149,7 +149,7 @@ export default function GuardrailArchitectureSection() {
             </div>
           </div>
           <div className="rounded-2xl border border-white/8 bg-white/[0.035] p-5">
-            <FlowLabel number="3">정책 적용 후 생성형 AI에 전달</FlowLabel>
+            <FlowLabel number="3">정책 처리 후 생성형 AI에 전달</FlowLabel>
             <Cloud className="mt-5 h-10 w-10 text-white/70" />
           </div>
           <div className="rounded-2xl border border-white/8 bg-white/[0.035] p-5">

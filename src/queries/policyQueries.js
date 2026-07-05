@@ -28,10 +28,11 @@ export function usePatchPolicyEnabledMutation() {
   });
 }
 
-export function useFileUploadExtensionsQuery() {
+export function useFileUploadExtensionsQuery(options = {}) {
   return useQuery({
     queryKey: policyQueryKeys.fileUploadExtensions(),
     queryFn: getFileUploadExtensions,
+    ...options,
   });
 }
 

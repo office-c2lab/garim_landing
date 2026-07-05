@@ -6,6 +6,7 @@ import NavbarSection from './NavbarSection';
 
 const Features = lazy(() => import('./FeaturesSection'));
 const GuardrailArchitecture = lazy(() => import('./GuardrailArchitectureSection'));
+const UsageDashboard = lazy(() => import('./UsageDashboardSection'));
 const SupportedAi = lazy(() => import('./SupportedAiSection'));
 const PromptMonitoring = lazy(() => import('./PromptMonitoringSection'));
 const PolicyManagement = lazy(() => import('./PolicyManagementSection'));
@@ -63,6 +64,9 @@ export default function LandingPage() {
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
         <SupportedAi />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 760 }} />}>
+        <UsageDashboard />
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
         <PromptMonitoring />

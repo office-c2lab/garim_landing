@@ -36,7 +36,7 @@ function normalizeDropdownOptionNames(items) {
     .sort((left, right) => left.localeCompare(right, 'ko'));
 }
 
-function normalizeMonitoringEvent(event, index) {
+export function normalizeMonitoringEvent(event, index) {
   if (event.detectedAt) {
     const originalPrompt = getOriginalPromptDetail(event);
     const forwardedPrompt = getForwardedPromptDetail(event);
@@ -665,6 +665,95 @@ export function MonitoringLogExpandedRow({ row }) {
       <DetailPanel title="탐지 근거">
         <DetailAnalysisList results={detail.evidenceLines} />
       </DetailPanel>
+    </div>
+  );
+}
+
+export function MonitoringLogDetailContent({ row }) {
+  const detail = buildDetailContext(row);
+  const [showOriginalPrompt, setShowOriginalPrompt] = useState(false);
+  const promptPanel = buildPromptPanelState(row, showOriginalPrompt);
+
+  return (
+    <div className="grid gap-0">
+      <section className="bg-white">
+        <div className="grid gap-0 md:grid-cols-2 xl:grid-cols-4">
+          <div className="px-4 py-4">
+            <DetailSummaryItem label="탐지 일시" value={row.detectedAt} />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4 md:border-t-0 md:border-l md:border-[#E7EBF5]">
+            <DetailSummaryItem label="서비스" value={row.aiType} />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4 xl:border-t-0 xl:border-l xl:border-[#E7EBF5]">
+            <DetailSummaryItem
+              label="처리 상태"
+              value={detail.actionStatus}
+              valueClassName={getStatusTextClassName(row)}
+            />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4 md:border-t md:border-[#E7EBF5] xl:border-t-0 xl:border-l xl:border-[#E7EBF5]">
+            <DetailSummaryItem label="적용 정책" value={detail.policyName} />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4">
+            <DetailSummaryItem label="IP" value={row.userIp} />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4 md:border-l md:border-[#E7EBF5]">
+            <DetailSummaryItem label="사용자명" value={row.userId ?? '-'} />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4 xl:border-l xl:border-[#E7EBF5]">
+            <DetailSummaryItem label="부서" value={row.department ?? '-'} />
+          </div>
+          <div className="border-t border-[#E7EBF5] px-4 py-4 md:border-l md:border-[#E7EBF5] xl:border-l xl:border-[#E7EBF5]">
+            <DetailSummaryItem label="직책" value={row.position ?? '-'} />
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-[#E7EBF5] bg-white">
+        <div className="grid lg:grid-cols-2">
+          <div className="min-w-0 border-b border-[#E7EBF5] lg:border-r lg:border-[#E7EBF5]">
+            <DetailPanel
+              title={promptPanel.title}
+              action={
+                promptPanel.canToggle ? (
+                  <PromptVisibilityToggle
+                    showOriginal={showOriginalPrompt}
+                    label={promptPanel.toggleLabel}
+                    onToggle={() => setShowOriginalPrompt(current => !current)}
+                  />
+                ) : null
+              }
+            >
+              <DetailPanelText>{promptPanel.text}</DetailPanelText>
+            </DetailPanel>
+          </div>
+          <div className="min-w-0 border-b border-[#E7EBF5]">
+            <DetailPanel title="답변">
+              <DetailPanelText>{detail.answerDetail}</DetailPanelText>
+            </DetailPanel>
+          </div>
+          <div className="min-w-0 border-b border-[#E7EBF5] lg:border-r lg:border-[#E7EBF5]">
+            <DetailPanel title="첨부된 파일">
+              <DetailFileList files={row.attachedFiles ?? []} />
+            </DetailPanel>
+          </div>
+          <div className="min-w-0 border-b border-[#E7EBF5]">
+            <DetailPanel title="첨부 파일 분석 결과">
+              <DetailAnalysisList results={row.attachmentAnalysisResults ?? []} />
+            </DetailPanel>
+          </div>
+          <div className="min-w-0 border-b border-[#E7EBF5] lg:border-r lg:border-[#E7EBF5]">
+            <DetailPanel title="탐지 근거">
+              <DetailBulletList items={detail.evidenceLines} showMarkers={false} />
+            </DetailPanel>
+          </div>
+          <div className="min-w-0 border-b border-[#E7EBF5]">
+            <DetailPanel title="조치 내용">
+              <DetailBulletList items={detail.actionLines} showMarkers={false} />
+            </DetailPanel>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

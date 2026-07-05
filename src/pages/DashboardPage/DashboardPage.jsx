@@ -1206,6 +1206,31 @@ function DashboardDetailTable({
   );
 }
 
+export function DashboardPreviewContent() {
+  return (
+    <div className="grid gap-5">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+        {summaryCards.map(card => (
+          <SummaryCard key={card.title} {...card} />
+        ))}
+      </section>
+
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
+        <DashboardPanel title="처리상태 추이">
+          <ChartLegend seriesList={statusChartSeries} />
+          <DashboardLineChart seriesList={statusChartSeries} isAnimationActive />
+        </DashboardPanel>
+        <DashboardPanel title="정책분포">
+          <ChartLegend seriesList={policyDonutSegments} />
+          <DashboardChartViewport>
+            <DonutChart segments={policyDonutSegments} isAnimationActive />
+          </DashboardChartViewport>
+        </DashboardPanel>
+      </section>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [activeDashboardTab, setActiveDashboardTab] = useState('all');
   const [chartDateRange, setChartDateRange] = useState(chartDateRangeDefaults);

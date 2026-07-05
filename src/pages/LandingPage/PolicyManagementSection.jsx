@@ -3,10 +3,10 @@ import { motion as Motion } from 'framer-motion';
 
 import {
   POLICY_PREVIEW_POLICIES,
-  PolicyDetailPanel,
   PolicyManagementTable,
   createPolicyDraft,
 } from '@/pages/PolicyPage/PolicyPage.jsx';
+import { FileUploadProtectionContent } from '@/components/settings/SettingsContent.jsx';
 import {
   Container,
   SectionTitle,
@@ -14,7 +14,172 @@ import {
   SECTION_TITLE_REVEAL,
 } from './LandingPage.primitives';
 
-const POLICY_PREVIEW_ROWS = POLICY_PREVIEW_POLICIES.slice(0, 4);
+const POLICY_PREVIEW_ROWS = POLICY_PREVIEW_POLICIES.filter(
+  policy => policy.code !== 'prompt_injection'
+).slice(0, 4);
+
+const POLICY_DETAIL_PREVIEWS = {
+  privacy_protection: {
+    variant: 'privacy',
+    rows: [
+      {
+        id: 'privacy-1',
+        category: '성함',
+        keywords: ['유동석', '김가림', '홍길동'],
+        action: '마스킹',
+        enabled: true,
+      },
+      {
+        id: 'privacy-2',
+        category: '주민등록번호',
+        keywords: ['900101-1234567', '880505-2345678'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'privacy-3',
+        category: '휴대전화 번호',
+        keywords: ['010-1234-5678', '01098765432'],
+        action: '마스킹',
+        enabled: true,
+      },
+      {
+        id: 'privacy-4',
+        category: '이메일 주소',
+        keywords: ['user@example.com', 'admin@company.co.kr'],
+        action: '마스킹',
+        enabled: true,
+      },
+      {
+        id: 'privacy-5',
+        category: '계좌번호',
+        keywords: ['123456-01-123456', '110-123-456789'],
+        action: '차단',
+        enabled: true,
+      },
+    ],
+  },
+  secret_protection: {
+    variant: 'privacy',
+    rows: [
+      {
+        id: 'secret-1',
+        category: 'API Key',
+        keywords: ['sk-...', 'AKIA...'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'secret-2',
+        category: '계정 정보',
+        keywords: ['password=', 'admin token'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'secret-3',
+        category: '프로젝트 코드',
+        keywords: ['Project Orion', '내부 코드명'],
+        action: '마스킹',
+        enabled: true,
+      },
+      {
+        id: 'secret-4',
+        category: '계약 정보',
+        keywords: ['견적서 초안', '계약 조건'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'secret-5',
+        category: '재무 수치',
+        keywords: ['매출 전망', '원가율'],
+        action: '차단',
+        enabled: true,
+      },
+    ],
+  },
+  harmful_expression_protection: {
+    variant: 'privacy',
+    rows: [
+      {
+        id: 'harmful-1',
+        category: '욕설',
+        keywords: ['비속어', '모욕 표현'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'harmful-2',
+        category: '혐오 표현',
+        keywords: ['차별 표현', '혐오 발언'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'harmful-3',
+        category: '폭력 표현',
+        keywords: ['위협', '폭력 묘사'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'harmful-4',
+        category: '자해 표현',
+        keywords: ['자해 암시', '극단 선택'],
+        action: '차단',
+        enabled: true,
+      },
+      {
+        id: 'harmful-5',
+        category: '불법 행위',
+        keywords: ['우회 방법', '불법 제작'],
+        action: '차단',
+        enabled: true,
+      },
+    ],
+  },
+  file_upload_protection: {
+    variant: 'file',
+    rows: [
+      {
+        extension: 'env',
+        label: '환경 변수 파일',
+        category: 'credential',
+        mime_types: ['text/plain'],
+        blocked: true,
+      },
+      {
+        extension: 'key',
+        label: '키 파일',
+        category: 'credential',
+        mime_types: ['application/octet-stream', 'text/plain'],
+        blocked: true,
+      },
+      {
+        extension: 'pem',
+        label: 'PEM 인증서/키 파일',
+        category: 'credential',
+        mime_types: ['application/x-pem-file', 'text/plain'],
+        blocked: true,
+      },
+      {
+        extension: 'csv',
+        label: 'CSV 파일',
+        category: 'data',
+        mime_types: ['text/csv'],
+        blocked: true,
+      },
+      {
+        extension: 'json',
+        label: 'JSON 파일',
+        category: 'data',
+        mime_types: ['application/json'],
+        blocked: true,
+      },
+    ],
+  },
+};
 
 function PolicyPreviewTable({
   policyRows,
@@ -54,30 +219,26 @@ function PolicyPreviewTable({
   );
 }
 
-function PolicyDetailCard({
-  draftPolicy,
-  handleDeletePolicy,
-  handleCancelEdit,
-  handleSavePolicy,
-  setDraftPolicy,
-}) {
+function PolicySettingsPreview({ selectedPolicy }) {
+  const preview =
+    POLICY_DETAIL_PREVIEWS[selectedPolicy?.code] ?? POLICY_DETAIL_PREVIEWS.privacy_protection;
+
   return (
     <Motion.div
+      key={selectedPolicy?.code ?? 'privacy_protection'}
       initial={{ opacity: 0, y: 20, scale: 0.985 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.22 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
-      className="overflow-hidden rounded-[28px] border border-[#D8D0FF] bg-white shadow-[0_24px_70px_rgba(64,48,150,0.12)]"
     >
-      {draftPolicy ? (
-        <PolicyDetailPanel
-          draftPolicy={draftPolicy}
-          handleDeletePolicy={handleDeletePolicy}
-          handleCancelEdit={handleCancelEdit}
-          handleSavePolicy={handleSavePolicy}
-          setDraftPolicy={setDraftPolicy}
-        />
-      ) : null}
+      <FileUploadProtectionContent
+        variant={preview.variant}
+        showToolbar={false}
+        showPagination={false}
+        previewLimit={5}
+        allowRowExpand={false}
+        previewRows={preview.rows}
+      />
     </Motion.div>
   );
 }
@@ -161,12 +322,16 @@ export default function PolicyManagementSection() {
             <Motion.div className="max-w-xl" {...SECTION_TITLE_REVEAL}>
               <SectionTitle
                 eyebrow="POLICY MANAGEMENT"
-                title={<>어떤 기준으로 탐지하고 처리할지 직접 설정합니다</>}
+                title={<>보안 정책 설정</>}
                 desc={
                   <>
-                    개인정보, 기밀정보, 프롬프트 인젝션 같은 탐지 기준을 정책으로 관리합니다.
+                    AI 사용에 필요한 보안 기준을
                     <br />
-                    서비스별 적용 범위와 허용·마스킹·차단 조치를 한 화면에서 조정합니다.
+                    정책으로 체계화하고,
+                    <br />
+                    상황에 맞는 탐지와 조치를
+                    <br />
+                    일관되게 적용합니다.
                   </>
                 }
               />
@@ -190,25 +355,22 @@ export default function PolicyManagementSection() {
 
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.58fr)_minmax(0,0.42fr)] lg:items-center lg:gap-12 xl:gap-14">
             <Motion.div className="min-w-0 lg:order-1" {...SECTION_COPY_REVEAL}>
-              <PolicyDetailCard
-                draftPolicy={draftPolicy}
-                handleDeletePolicy={handleDeletePolicy}
-                handleCancelEdit={handleCancelEdit}
-                handleSavePolicy={handleSavePolicy}
-                setDraftPolicy={setDraftPolicy}
-              />
+              <PolicySettingsPreview selectedPolicy={selectedPolicy} />
             </Motion.div>
 
             <Motion.div className="max-w-xl lg:order-2" {...SECTION_TITLE_REVEAL}>
               <SectionTitle
                 eyebrow="POLICY DETAIL"
-                title={<>탐지 항목과 조치 방식을 세부 기준으로 조정합니다</>}
+                title={<>정책 상세 설정</>}
                 desc={
                   <>
-                    선택한 정책의 적용 서비스, 탐지 항목, 예외 조건, 관리자 알림을 세밀하게
-                    설정합니다.
+                    정책별 탐지 기준과
                     <br />
-                    업무 목적에 따라 허용·마스킹·차단 기준을 빠르게 바꿀 수 있습니다.
+                    처리 방식을 세분화하고,
+                    <br />
+                    업무 환경에 맞게
+                    <br />
+                    보안 설정을 조정합니다.
                   </>
                 }
               />

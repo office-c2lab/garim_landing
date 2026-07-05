@@ -1215,16 +1215,32 @@ export function DropdownSettingsContent({ toolbarAction = null }) {
   );
 }
 
-export function FileUploadProtectionContent({ toolbarAction = null, variant = 'file' }) {
+export function FileUploadProtectionContent({
+  toolbarAction = null,
+  variant = 'file',
+  showToolbar = true,
+  showPagination = true,
+  previewLimit = null,
+  allowRowExpand = true,
+  previewRows = null,
+}) {
   const isPrivacyVariant = variant === 'privacy';
-  const { data, isLoading, isError } = useFileUploadExtensionsQuery();
+  const canExpandPrivacyRows = isPrivacyVariant && allowRowExpand;
+  const hasPreviewRows = Array.isArray(previewRows);
+  const { data, isLoading, isError } = useFileUploadExtensionsQuery({ enabled: !hasPreviewRows });
   const { mutate: saveFileUploadExtensions, isPending: isSaving } =
     usePutFileUploadExtensionsMutation();
   const extensions = Array.isArray(data?.extensions) ? data.extensions : [];
   const [privacyRows, setPrivacyRows] = useState(PRIVACY_KEYWORD_ROWS);
-  const rows = isPrivacyVariant ? privacyRows : extensions;
-  const showLoading = !isPrivacyVariant && isLoading;
-  const showError = !isPrivacyVariant && isError;
+  const rows = isPrivacyVariant
+    ? hasPreviewRows
+      ? previewRows
+      : privacyRows
+    : hasPreviewRows
+      ? previewRows
+      : extensions;
+  const showLoading = !hasPreviewRows && !isPrivacyVariant && isLoading;
+  const showError = !hasPreviewRows && !isPrivacyVariant && isError;
   const [blockedExtensions, setBlockedExtensions] = useState([]);
   const [privacyActions, setPrivacyActions] = useState({});
   const [privacyModalState, setPrivacyModalState] = useState({ mode: null, draft: null });
@@ -1291,10 +1307,10 @@ export function FileUploadProtectionContent({ toolbarAction = null, variant = 'f
   }, [isPrivacyVariant, privacyActions, rows, searchQuery, selectedCategory]);
   const totalPages = Math.max(1, Math.ceil(filteredExtensions.length / rowsPerPage));
   const safePage = Math.min(currentPage, totalPages);
-  const visibleExtensions = filteredExtensions.slice(
-    (safePage - 1) * rowsPerPage,
-    safePage * rowsPerPage
-  );
+  const visibleExtensions =
+    Number.isFinite(previewLimit) && previewLimit > 0
+      ? filteredExtensions.slice(0, previewLimit)
+      : filteredExtensions.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
   const getTableCellClass = (index, className = '') =>
     monitoringTableCellClass(
       index,
@@ -1314,6 +1330,8 @@ export function FileUploadProtectionContent({ toolbarAction = null, variant = 'f
       );
       return;
     }
+
+    if (hasPreviewRows) return;
 
     saveFileUploadExtensions(
       {
@@ -1473,39 +1491,43 @@ export function FileUploadProtectionContent({ toolbarAction = null, variant = 'f
 
   return (
     <>
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        {toolbarAction ? <div className="flex shrink-0 justify-start">{toolbarAction}</div> : null}
+      {showToolbar ? (
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          {toolbarAction ? (
+            <div className="flex shrink-0 justify-start">{toolbarAction}</div>
+          ) : null}
 
-        <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:justify-end">
-          <MonitoringDropdown
-            value={selectedCategory}
-            options={categoryOptions}
-            onChange={handleChangeCategory}
-            ariaLabel={isPrivacyVariant ? '개인정보 키워드 분류 필터' : '파일 확장자 분류 필터'}
-            widthClass="w-full lg:w-[12rem] lg:shrink-0"
-            triggerClassName="h-12 rounded-xl border-slate-200 bg-white shadow-none"
-          />
-
-          <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-[34rem]">
-            <AppSearchField
-              value={searchInput}
-              onChange={event => setSearchInput(event.target.value)}
-              placeholder={
-                isPrivacyVariant ? '분류, 키워드, 처리 방식 검색' : '확장자, 정보, MIME 타입 검색'
-              }
+          <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:justify-end">
+            <MonitoringDropdown
+              value={selectedCategory}
+              options={categoryOptions}
+              onChange={handleChangeCategory}
+              ariaLabel={isPrivacyVariant ? '개인정보 키워드 분류 필터' : '파일 확장자 분류 필터'}
+              widthClass="w-full lg:w-[12rem] lg:shrink-0"
+              triggerClassName="h-12 rounded-xl border-slate-200 bg-white shadow-none"
             />
-            <AppButton onClick={handleSearch} className="h-12 min-w-[4.5rem]">
-              검색
-            </AppButton>
-            {isPrivacyVariant ? (
-              <AppButton onClick={handleOpenPrivacyAddModal} className="h-12 min-w-[5.25rem]">
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                새 분류 추가
+
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-[34rem]">
+              <AppSearchField
+                value={searchInput}
+                onChange={event => setSearchInput(event.target.value)}
+                placeholder={
+                  isPrivacyVariant ? '분류, 키워드, 처리 방식 검색' : '확장자, 정보, MIME 타입 검색'
+                }
+              />
+              <AppButton onClick={handleSearch} className="h-12 min-w-[4.5rem]">
+                검색
               </AppButton>
-            ) : null}
+              {isPrivacyVariant ? (
+                <AppButton onClick={handleOpenPrivacyAddModal} className="h-12 min-w-[5.25rem]">
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  새 분류 추가
+                </AppButton>
+              ) : null}
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div ref={tableAreaRef} className={monitoringTableSurfaceClass}>
         <div className="overflow-x-auto">
@@ -1554,18 +1576,19 @@ export function FileUploadProtectionContent({ toolbarAction = null, variant = 'f
                 const keywords = Array.isArray(item.keywords) ? item.keywords : [];
                 const mimeTypes = Array.isArray(item.mime_types) ? item.mime_types : [];
                 const isBlocked = blockedSet.has(extension);
-                const isSelectedPrivacyRow = isPrivacyVariant && selectedPrivacyRowId === item.id;
+                const isSelectedPrivacyRow =
+                  canExpandPrivacyRows && selectedPrivacyRowId === item.id;
 
                 return (
                   <Fragment key={extension}>
                     <tr
                       onClick={
-                        isPrivacyVariant ? () => handleOpenPrivacyEditModal(item) : undefined
+                        canExpandPrivacyRows ? () => handleOpenPrivacyEditModal(item) : undefined
                       }
                       className={monitoringTableRowClass({
                         selected: isSelectedPrivacyRow,
                         striped: index % 2 === 1,
-                        interactive: isPrivacyVariant,
+                        interactive: canExpandPrivacyRows,
                       })}
                     >
                       <td className={getTableCellClass(index, 'whitespace-nowrap')}>
@@ -1657,7 +1680,7 @@ export function FileUploadProtectionContent({ toolbarAction = null, variant = 'f
                         </span>
                       </td>
                     </tr>
-                    {isSelectedPrivacyRow && privacyDetailDraft ? (
+                    {canExpandPrivacyRows && isSelectedPrivacyRow && privacyDetailDraft ? (
                       <tr className="bg-white">
                         <td colSpan={4} className="border-t border-[#E6EAF4] px-0 py-0">
                           <PrivacyKeywordDetailPanel
@@ -1690,7 +1713,7 @@ export function FileUploadProtectionContent({ toolbarAction = null, variant = 'f
         ) : null}
       </div>
 
-      {filteredExtensions.length ? (
+      {showPagination && filteredExtensions.length ? (
         <FixedPaginationBar
           currentPage={safePage}
           totalPages={totalPages}

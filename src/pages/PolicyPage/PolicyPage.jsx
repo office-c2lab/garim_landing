@@ -105,6 +105,23 @@ export const POLICY_PREVIEW_POLICIES = [
     alerts: { admin: true },
   },
   {
+    id: 'pol_preview_harmful',
+    code: 'harmful_expression_protection',
+    name: '유해 표현 차단 정책',
+    category: '유해 표현',
+    services: ['전체 서비스'],
+    serviceLabel: '전체 서비스',
+    action: '차단',
+    status: '사용',
+    enabled: true,
+    updatedAt: '2026-06-03 11:30',
+    description: '욕설, 혐오 표현, 폭력적 표현 등 부적절한 프롬프트를 탐지해 차단합니다.',
+    detects: ['욕설', '혐오 표현', '폭력 표현'],
+    exceptions: [],
+    handling: '차단',
+    alerts: { admin: true },
+  },
+  {
     id: 'pol_preview_file',
     code: 'file_upload_protection',
     name: '파일 업로드 검사 정책',
@@ -381,15 +398,17 @@ export function PolicyManagementTable({
     <div className={joinClasses(monitoringTableSurfaceClass, className)}>
       <div className="overflow-x-auto">
         <table
-          className={joinClasses('min-w-[760px] text-left', monitoringTableClass, tableClassName)}
+          className={joinClasses(
+            'min-w-[min(100%,47.5rem)] text-left',
+            monitoringTableClass,
+            tableClassName
+          )}
         >
           <thead className={monitoringTableHeadClass}>
             <tr className={monitoringTableHeaderRowClass}>
               <th className={`${monitoringTableHeaderCellClass} w-12 px-5 sm:px-6`} />
               <th className={`${monitoringTableHeaderCellClass} w-[22%]`}>정책명</th>
-              <th className={`${monitoringTableHeaderCellClass} w-[14%]`}>분류</th>
-              <th className={`${monitoringTableHeaderCellClass} w-[34%]`}>설명</th>
-              <th className={`${monitoringTableHeaderCellClass} w-[16%]`}>조치 방식</th>
+              <th className={`${monitoringTableHeaderCellClass} w-[64%]`}>설명</th>
               <th className={`${monitoringTableHeaderCellClass} w-[14%] !text-center`}>
                 사용 여부
               </th>
@@ -434,26 +453,10 @@ export function PolicyManagementTable({
                   >
                     {policy.name}
                   </td>
-                  <td
-                    className={monitoringTableCellClass(
-                      index,
-                      'whitespace-nowrap font-semibold text-slate-700'
-                    )}
-                  >
-                    {policy.category}
-                  </td>
                   <td className={monitoringTableCellClass(index)}>
                     <div className="truncate text-slate-600" title={policy.description}>
                       {policy.description || '-'}
                     </div>
-                  </td>
-                  <td
-                    className={monitoringTableCellClass(
-                      index,
-                      'whitespace-nowrap font-semibold text-slate-700'
-                    )}
-                  >
-                    {policy.action}
                   </td>
                   <td
                     className={monitoringTableCellClass(
