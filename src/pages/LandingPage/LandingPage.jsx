@@ -14,14 +14,36 @@ const EasyDeployment = lazy(() => import('./EasyDeploymentSection'));
 const FAQ = lazy(() => import('./FaqCompositeSection'));
 const Footer = lazy(() => import('./FooterSection'));
 
+const SECTION_REVEAL = {
+  initial: { opacity: 0, y: 34 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.14 },
+  transition: { duration: 0.6, ease: 'easeOut' },
+};
+
+function SectionReveal({ children }) {
+  return <Motion.div {...SECTION_REVEAL}>{children}</Motion.div>;
+}
+
 export default function LandingPage() {
   const [showFloatingNav, setShowFloatingNav] = useState(false);
 
   useEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration;
+
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.documentElement.classList.add('landing-scroll-hidden');
     document.body.classList.add('landing-scroll-hidden');
 
     return () => {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = previousScrollRestoration;
+      }
+
       document.documentElement.classList.remove('landing-scroll-hidden');
       document.body.classList.remove('landing-scroll-hidden');
     };
@@ -48,40 +70,60 @@ export default function LandingPage() {
       </AnimatePresence>
 
       <Hero onVisibilityChange={handleHeroVisibilityChange} />
-      <section className="bg-white px-5 py-14 text-center sm:py-20">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#5B39D6]">
-          GenAI Access Risk Inspection Management
-        </p>
-        <h2 className="mt-5 text-balance text-3xl font-semibold tracking-[-0.04em] text-[#171717] sm:text-5xl">
-          생성형 AI 사용 환경 보호 및 거버넌스 솔루션
-        </h2>
-      </section>
+      <SectionReveal>
+        <section className="bg-white px-5 py-14 text-center sm:py-20">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#5B39D6]">
+            GenAI Access Risk Inspection Management
+          </p>
+          <h2 className="mt-5 text-balance text-3xl font-semibold tracking-[-0.04em] text-[#171717] sm:text-5xl">
+            생성형 AI 사용 환경 보호 및 거버넌스 솔루션
+          </h2>
+        </section>
+      </SectionReveal>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 880 }} />}>
-        <Features />
+        <SectionReveal>
+          <Features />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 1280 }} />}>
-        <GuardrailArchitecture />
+        <SectionReveal>
+          <GuardrailArchitecture />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 760 }} />}>
-        <UsageDashboard />
+        <SectionReveal>
+          <UsageDashboard />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
-        <SupportedAi />
+        <SectionReveal>
+          <SupportedAi />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
-        <PromptMonitoring />
+        <SectionReveal>
+          <PromptMonitoring />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
-        <PolicyManagement />
+        <SectionReveal>
+          <PolicyManagement />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 560 }} />}>
-        <EasyDeployment />
+        <SectionReveal>
+          <EasyDeployment />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 920 }} />}>
-        <FAQ />
+        <SectionReveal>
+          <FAQ />
+        </SectionReveal>
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 280 }} />}>
-        <Footer />
+        <SectionReveal>
+          <Footer />
+        </SectionReveal>
       </Suspense>
     </div>
   );

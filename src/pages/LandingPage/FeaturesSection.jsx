@@ -12,14 +12,14 @@ import {
 function GuardrailDemoVideo() {
   return (
     <Motion.div
-      className="relative aspect-video w-full overflow-hidden rounded-3xl border border-black/8 bg-white shadow-[0_24px_60px_rgba(37,56,138,0.18)]"
+      className="relative aspect-video w-full overflow-hidden rounded-3xl border border-[#8B7CFF] bg-white shadow-[0_24px_60px_rgba(91,57,214,0.18)]"
       initial={{ opacity: 0, y: 20, scale: 0.985 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
     >
       <video
-        className="h-full w-full object-cover"
+        className="h-full w-full object-contain"
         src={guardrailDemoVideo}
         autoPlay
         loop
@@ -44,9 +44,12 @@ export default function FeaturesSection() {
                 title="AI 거버넌스 솔루션"
                 desc={
                   <>
-GARIM은 기업 내 생성형 AI 사용을 실시간으로 탐지하고,<br />
-개인정보·민감정보가 포함된 프롬프트를 식별해<br />
-기업 정책에 따라 차단하거나 마스킹합니다.<br />
+                    GARIM은 기업 내 생성형 AI 사용을 실시간으로 탐지하고,
+                    <br />
+                    개인정보·민감정보가 포함된 프롬프트를 식별해
+                    <br />
+                    기업 정책에 따라 차단하거나 마스킹합니다.
+                    <br />
                   </>
                 }
               />
@@ -55,8 +58,7 @@ GARIM은 기업 내 생성형 AI 사용을 실시간으로 탐지하고,<br />
             <Motion.div
               className="max-w-lg text-sm leading-7 text-[#57534e] sm:text-base"
               {...SECTION_COPY_REVEAL}
-            >
-            </Motion.div>
+            ></Motion.div>
 
             <Motion.div
               className="grid gap-3 sm:grid-cols-2"
@@ -64,10 +66,7 @@ GARIM은 기업 내 생성형 AI 사용을 실시간으로 탐지하고,<br />
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.35 }}
               transition={{ duration: 0.45, ease: 'easeOut', delay: 0.12 }}
-            >
-              
-              
-            </Motion.div>
+            ></Motion.div>
           </div>
 
           <div className="w-full">

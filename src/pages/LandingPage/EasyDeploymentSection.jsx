@@ -1,8 +1,7 @@
 import { motion as Motion } from 'framer-motion';
 
 import SectionCard from '@/components/SectionCard.jsx';
-import DownloadPage from '@/pages/DownloadPage/DownloadPage.jsx';
-import { CardHeader, InfoRow } from '@/pages/SupportPage/SupportPage.jsx';
+import DownloadPagePreview from './DownloadPagePreview.jsx';
 import {
   Container,
   SectionTitle,
@@ -19,6 +18,30 @@ const SUPPORT_TEMPLATE = {
   downloadPath: '/download',
   fullDownloadUrl: 'https://aigarim.kr/download',
 };
+
+function CardHeader({ title, action, onAction }) {
+  return (
+    <div className="flex items-center justify-between border-b border-[#E3E8F2] px-6 py-4">
+      <h3 className="text-base font-black text-slate-900">{title}</h3>
+      <button
+        type="button"
+        onClick={onAction}
+        className="rounded-lg border border-[#D8D0FF] bg-white px-3 py-2 text-xs font-black text-[#5B39D6]"
+      >
+        {action}
+      </button>
+    </div>
+  );
+}
+
+function InfoRow({ label, children }) {
+  return (
+    <div className="grid min-h-[4rem] grid-cols-[10rem_1fr] items-center border-t border-slate-200 px-6 text-sm sm:grid-cols-[12rem_1fr]">
+      <dt className="font-bold text-slate-500">{label}</dt>
+      <dd className="font-semibold text-[#64728C]">{children}</dd>
+    </div>
+  );
+}
 
 function SupportPreview() {
   return (
@@ -88,7 +111,7 @@ function DownloadPreview() {
       </div>
 
       <div className="h-[38rem] overflow-y-auto bg-[#F3F6FA] sm:h-[44rem]">
-        <DownloadPage />
+        <DownloadPagePreview />
       </div>
     </Motion.div>
   );
