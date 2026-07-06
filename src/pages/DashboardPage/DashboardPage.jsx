@@ -116,7 +116,7 @@ const topUserDonutSegments = [
   { label: 'user04', value: 17, count: '57건', color: ORGANIZATION_CHART_COLORS.fifth },
 ];
 
-const chartLabels = ['12/02', '12/03', '12/04', '12/05', '12/06', '12/07', '12/08'];
+const chartLabels = ['06/30', '07/01', '07/02', '07/03', '07/04', '07/05', '07/06'];
 
 const statusChartSeries = [
   {
@@ -136,7 +136,7 @@ const statusChartSeries = [
     key: 'allow',
     label: '검토필요',
     color: STATUS_COLORS.allow,
-    values: [42, 48, 44, 53, 58, 55, 61],
+    values: [1, 3, 5, 2, 0, 2, 4],
   },
 ];
 

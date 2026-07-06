@@ -62,11 +62,11 @@ export default function LandingPage() {
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 1280 }} />}>
         <GuardrailArchitecture />
       </Suspense>
-      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
-        <SupportedAi />
-      </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 760 }} />}>
         <UsageDashboard />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 360 }} />}>
+        <SupportedAi />
       </Suspense>
       <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 780 }} />}>
         <PromptMonitoring />

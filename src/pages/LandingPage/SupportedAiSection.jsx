@@ -7,7 +7,7 @@ const SUPPORTED_SERVICES = ALL_SERVICE_LOGO_NAMES;
 
 export default function SupportedAiSection() {
   return (
-    <section className="relative overflow-hidden bg-white px-5 py-14 sm:py-20">
+    <section id="supported-ai" className="relative overflow-hidden bg-white px-5 py-14 sm:py-20">
       <Container className="flex flex-col items-center text-center">
         <Motion.div
           initial={{ opacity: 0, y: 16 }}
