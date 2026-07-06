@@ -8,10 +8,12 @@ import { Container } from './LandingPage.primitives';
 export default function NavbarSection({ className = '' }) {
   const items = useMemo(
     () => [
-      { label: 'AI ACCESS CONTROL', href: '#features' },
-      { label: '검증 기능', href: '#judge' },
-      { label: '등록 방식', href: '#showcase' },
-      { label: '결과 분석', href: '#history' },
+      { label: 'AI GOVERNANCE', href: '#ai-governance' },
+      { label: '구성도', href: '#architecture' },
+      { label: '대시보드', href: '#usage-dashboard' },
+      { label: '모니터링', href: '#prompt-monitoring' },
+      { label: '정책', href: '#policy-management' },
+      { label: '운영지원', href: '#easy-deployment' },
       { label: 'FAQ', href: '#faq' },
     ],
     []
@@ -40,12 +42,12 @@ export default function NavbarSection({ className = '' }) {
 
         <div className="flex items-center gap-2">
           <Link
-  to="/dashboard"
-  className="group inline-flex items-center gap-2 rounded-xl border border-[#D8D0FF] bg-white px-4 py-2 text-sm font-medium text-[#5B39D6] shadow-[0_8px_20px_rgba(91,57,214,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-[#5B39D6] hover:bg-[#5B39D6] hover:text-white hover:shadow-[0_12px_28px_rgba(91,57,214,0.22)] focus:outline-none focus-visible:-translate-y-0.5 focus-visible:border-[#5B39D6] focus-visible:bg-[#5B39D6] focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#8B7CFF] focus-visible:ring-offset-2"
->
-  도입 문의하기
-  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
-</Link>
+            to="/dashboard"
+            className="group inline-flex items-center gap-2 rounded-xl border border-[#D8D0FF] bg-white px-4 py-2 text-sm font-medium text-[#5B39D6] shadow-[0_8px_20px_rgba(91,57,214,0.08)] transition duration-300 hover:-translate-y-0.5 hover:border-[#5B39D6] hover:bg-[#5B39D6] hover:text-white hover:shadow-[0_12px_28px_rgba(91,57,214,0.22)] focus:outline-none focus-visible:-translate-y-0.5 focus-visible:border-[#5B39D6] focus-visible:bg-[#5B39D6] focus-visible:text-white focus-visible:ring-2 focus-visible:ring-[#8B7CFF] focus-visible:ring-offset-2"
+          >
+            도입 문의하기
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1" />
+          </Link>
         </div>
       </Container>
     </div>

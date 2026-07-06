@@ -5,7 +5,7 @@ import { Container, SECTION_TITLE_REVEAL } from './LandingPage.primitives';
 
 export default function UsageDashboardSection() {
   return (
-    <section className="relative overflow-hidden bg-white">
+    <section id="usage-dashboard" className="relative overflow-hidden bg-white">
       <img src={dashboardBg} alt="" className="block h-auto w-full" aria-hidden="true" />
 
       <Container className="absolute inset-0">

@@ -71,7 +71,7 @@ export default function LandingPage() {
 
       <Hero onVisibilityChange={handleHeroVisibilityChange} />
       <SectionReveal>
-        <section className="bg-white px-5 py-14 text-center sm:py-20">
+        <section id="ai-governance" className="bg-white px-5 py-14 text-center sm:py-20">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#5B39D6]">
             GenAI Access Risk Inspection Management
           </p>

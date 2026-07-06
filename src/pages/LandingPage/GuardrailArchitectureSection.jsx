@@ -28,7 +28,10 @@ function FlowLabel({ number, children, align = 'left' }) {
 
 export default function GuardrailArchitectureSection() {
   return (
-    <section className="relative overflow-hidden bg-black py-20 text-white sm:py-28">
+    <section
+      id="architecture"
+      className="relative overflow-hidden bg-black py-20 text-white sm:py-28"
+    >
       <Container className="relative">
         <Motion.div
           className="text-center"
@@ -173,7 +176,7 @@ export default function GuardrailArchitectureSection() {
               ON-PREMISE DEPLOYMENT
             </p>
             <h3 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-            구축 방식
+              구축 방식
             </h3>
             <p className="mt-5 text-pretty text-sm leading-7 text-white/62 sm:text-base">
               GARIM은 On-Premise 환경에서 Agentless 방식으로 구축됩니다.

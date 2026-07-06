@@ -1,6 +1,8 @@
 import { motion as Motion } from 'framer-motion';
 
+import garimSymbol from '@/assets/icons/simbol.svg';
 import SectionCard from '@/components/SectionCard.jsx';
+import { CardHeader, InfoRow } from '@/pages/SupportPage/SupportPage.jsx';
 import DownloadPagePreview from './DownloadPagePreview.jsx';
 import {
   Container,
@@ -11,6 +13,7 @@ import {
 
 const SUPPORT_TEMPLATE = {
   logoLabel: 'GARIM',
+  logoSrc: garimSymbol,
   companyName: 'C2Lab GARIM 운영팀',
   companyDescription: '전사 생성형 AI 보안 정책과 배포 URL을 관리합니다.',
   adminEmail: 'security@company.co.kr',
@@ -18,30 +21,6 @@ const SUPPORT_TEMPLATE = {
   downloadPath: '/download',
   fullDownloadUrl: 'https://aigarim.kr/download',
 };
-
-function CardHeader({ title, action, onAction }) {
-  return (
-    <div className="flex items-center justify-between border-b border-[#E3E8F2] px-6 py-4">
-      <h3 className="text-base font-black text-slate-900">{title}</h3>
-      <button
-        type="button"
-        onClick={onAction}
-        className="rounded-lg border border-[#D8D0FF] bg-white px-3 py-2 text-xs font-black text-[#5B39D6]"
-      >
-        {action}
-      </button>
-    </div>
-  );
-}
-
-function InfoRow({ label, children }) {
-  return (
-    <div className="grid min-h-[4rem] grid-cols-[10rem_1fr] items-center border-t border-slate-200 px-6 text-sm sm:grid-cols-[12rem_1fr]">
-      <dt className="font-bold text-slate-500">{label}</dt>
-      <dd className="font-semibold text-[#64728C]">{children}</dd>
-    </div>
-  );
-}
 
 function SupportPreview() {
   return (
@@ -52,12 +31,16 @@ function SupportPreview() {
       transition={{ duration: 0.55, ease: 'easeOut' }}
       className="space-y-5"
     >
-      <SectionCard className="overflow-hidden rounded-[28px] border-[#D8D0FF] shadow-[0_24px_70px_rgba(64,48,150,0.12)]">
+      <SectionCard className="overflow-hidden">
         <CardHeader title="템플릿 관리" action="수정하기" onAction={() => {}} />
         <dl>
           <InfoRow label="로고">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-[#5B39D6] text-xs font-black text-white">
-              {SUPPORT_TEMPLATE.logoLabel}
+            <div className="flex items-center gap-3">
+              <img
+                src={SUPPORT_TEMPLATE.logoSrc}
+                alt={SUPPORT_TEMPLATE.logoLabel}
+                className="h-10 w-10 rounded-lg border border-slate-200 object-cover"
+              />
             </div>
           </InfoRow>
           <InfoRow label="회사 정보">{SUPPORT_TEMPLATE.companyName}</InfoRow>
@@ -67,21 +50,24 @@ function SupportPreview() {
         </dl>
       </SectionCard>
 
-      <SectionCard className="overflow-hidden rounded-[28px] border-[#D8D0FF] shadow-[0_24px_70px_rgba(64,48,150,0.12)]">
+      <SectionCard className="overflow-hidden">
         <CardHeader title="다운로드 URL 관리" action="변경하기" onAction={() => {}} />
         <div className="px-6 py-5">
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-bold text-slate-500">현재 URL</span>
-              <span className="inline-flex h-10 items-center rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-5 text-sm font-bold text-[#64728C]">
-                {SUPPORT_TEMPLATE.downloadPath}
-              </span>
-            </div>
-            <div className="flex min-w-0 items-center gap-4">
-              <span className="shrink-0 text-sm font-bold text-slate-500">전체 주소</span>
-              <span className="truncate text-sm font-bold text-[#5B39D6]">
-                {SUPPORT_TEMPLATE.fullDownloadUrl}
-              </span>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-8 gap-y-3">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-bold text-slate-500">현재 URL</span>
+                <span className="inline-flex h-10 items-center rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-5 text-sm font-bold text-[#64728C]">
+                  {SUPPORT_TEMPLATE.downloadPath}
+                </span>
+              </div>
+
+              <div className="flex min-w-0 items-center gap-4">
+                <span className="shrink-0 text-sm font-bold text-slate-500">전체 주소</span>
+                <span className="truncate text-sm font-bold text-[#4338CA]">
+                  {SUPPORT_TEMPLATE.fullDownloadUrl}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -106,7 +92,7 @@ function DownloadPreview() {
           <span className="h-2.5 w-2.5 rounded-full bg-[#00CA4E]" />
         </div>
         <div className="min-w-0 flex-1 rounded-lg border border-[#E2E8F0] bg-white px-4 py-1.5 text-xs font-bold text-[#64728C] shadow-inner">
-          <span className="block truncate">https://aigarim.kr/downloa</span>
+          <span className="block truncate">https://aigarim.kr/download</span>
         </div>
       </div>
 
