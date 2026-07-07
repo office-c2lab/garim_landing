@@ -789,7 +789,7 @@ export function FileManagementContent() {
 
       <div className={monitoringTableSurfaceClass}>
         <div className="overflow-x-auto">
-          <table className={`min-w-[min(100%,60rem)] ${monitoringTableClass} text-left`}>
+          <table className={`min-w-[60rem] ${monitoringTableClass} text-left`}>
             <colgroup>
               <col className="w-[24%]" />
               <col className="w-[28%]" />

@@ -157,7 +157,7 @@ export function NotificationSettingsContent() {
 
       <SectionCard className="overflow-hidden bg-[radial-gradient(circle_at_top,#FFFFFF_0%,#FBFCFF_72%,#F6F8FD_100%)]">
         <div className="min-h-0 w-full overflow-x-auto">
-          <div className="min-w-[min(100%,60rem)]">
+          <div className="min-w-[60rem]">
             <div className="grid h-[var(--app-control-lg)] grid-cols-[minmax(9rem,1fr)_minmax(24rem,3fr)_minmax(9rem,0.8fr)] items-center border-b border-[#E7EBF4] bg-[linear-gradient(180deg,#F8FAFF_0%,#F2F5FC_100%)] px-[var(--app-pad-lg)] text-[clamp(0.82rem,0.95vw,0.9rem)] font-semibold tracking-[-0.01em] text-[#59627A]">
               <span>처리 상태</span>
               <span>설명</span>

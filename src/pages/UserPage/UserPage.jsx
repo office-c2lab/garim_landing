@@ -322,7 +322,9 @@ export function UserManagementTable({
   return (
     <div className={`${monitoringTableSurfaceClass} ${className}`.trim()}>
       <div className="overflow-x-auto">
-        <table className={`${monitoringTableClass} text-left ${tableClassName}`.trim()}>
+        <table
+          className={`${monitoringTableClass} min-w-[60rem] text-left ${tableClassName}`.trim()}
+        >
           <thead className={monitoringTableHeadClass}>
             <tr className={monitoringTableHeaderRowClass}>
               <th className={`${monitoringTableHeaderCellClass} w-[4%] px-4`} />
@@ -617,7 +619,10 @@ export default function UserPage() {
                   </AppButton>
                 </div>
               </div>
-              <AppButton onClick={() => handleChangeView('dropdowns')} className="h-12 shrink-0 px-5">
+              <AppButton
+                onClick={() => handleChangeView('dropdowns')}
+                className="h-12 shrink-0 px-5"
+              >
                 부서/직책 설정
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </AppButton>
@@ -629,8 +634,8 @@ export default function UserPage() {
           <>
             <SectionCard className="overflow-hidden">
               <div ref={tableAreaRef} className={monitoringTableSurfaceClass}>
-                <div className="overflow-hidden">
-                  <table className={`${monitoringTableClass} text-left`}>
+                <div className="overflow-x-auto">
+                  <table className={`${monitoringTableClass} min-w-[60rem] text-left`}>
                     <thead className={monitoringTableHeadClass}>
                       <tr className={monitoringTableHeaderRowClass}>
                         <th className={`${monitoringTableHeaderCellClass} w-[4%] px-4`} />

@@ -295,7 +295,7 @@ export default function MyPage() {
         ) : (
           <SectionCard className="overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[min(100%,45rem)] border-separate border-spacing-0 text-left">
+              <table className="w-full min-w-[45rem] border-separate border-spacing-0 text-left">
                 <thead className="bg-[#F8FAFF]">
                   <tr>
                     {['시간', '활동', '계정', 'IP'].map(label => (

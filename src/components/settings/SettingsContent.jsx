@@ -1120,7 +1120,7 @@ export function DropdownSettingsContent({ toolbarAction = null }) {
 
       <div ref={tableAreaRef} className={monitoringTableSurfaceClass}>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[min(100%,60rem)] table-fixed border-separate border-spacing-0 text-left">
+          <table className="w-full min-w-[60rem] table-fixed border-separate border-spacing-0 text-left">
             <thead className="bg-[linear-gradient(180deg,#F8FAFF_0%,#F2F5FC_100%)]">
               <tr className="text-sm font-black text-[#4A5578]">
                 <th className="w-[6%] border-b border-[#E2E8F0] px-3 py-3" />
@@ -1531,7 +1531,7 @@ export function FileUploadProtectionContent({
 
       <div ref={tableAreaRef} className={monitoringTableSurfaceClass}>
         <div className="overflow-x-auto">
-          <table className={`min-w-[min(100%,53.75rem)] ${monitoringTableClass} text-left`}>
+          <table className={`min-w-[53.75rem] ${monitoringTableClass} text-left`}>
             {isPrivacyVariant ? (
               <colgroup>
                 <col className="w-[36%]" />

@@ -398,11 +398,7 @@ export function PolicyManagementTable({
     <div className={joinClasses(monitoringTableSurfaceClass, className)}>
       <div className="overflow-x-auto">
         <table
-          className={joinClasses(
-            'min-w-[min(100%,47.5rem)] text-left',
-            monitoringTableClass,
-            tableClassName
-          )}
+          className={joinClasses('min-w-[47.5rem] text-left', monitoringTableClass, tableClassName)}
         >
           <thead className={monitoringTableHeadClass}>
             <tr className={monitoringTableHeaderRowClass}>
@@ -606,7 +602,7 @@ export default function PolicyPage() {
             <SectionCard className="overflow-hidden">
               <div ref={tableAreaRef} className={monitoringTableSurfaceClass}>
                 <div className="overflow-x-auto">
-                  <table className={`min-w-[min(100%,47.5rem)] ${monitoringTableClass} text-left`}>
+                  <table className={`min-w-[47.5rem] ${monitoringTableClass} text-left`}>
                     <thead className={monitoringTableHeadClass}>
                       <tr className={monitoringTableHeaderRowClass}>
                         <th className={`${monitoringTableHeaderCellClass} w-12 px-5 sm:px-6`} />

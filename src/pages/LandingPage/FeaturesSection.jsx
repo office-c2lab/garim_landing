@@ -70,7 +70,7 @@ export default function FeaturesSection() {
           </div>
 
           <div className="w-full">
-            <LazyVisual minHeight={620}>
+            <LazyVisual minHeight="min(620px, calc((100vw - 2.5rem) * 0.5625))">
               <GuardrailDemoVideo />
             </LazyVisual>
           </div>

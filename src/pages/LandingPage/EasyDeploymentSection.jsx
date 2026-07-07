@@ -96,8 +96,10 @@ function DownloadPreview() {
         </div>
       </div>
 
-      <div className="h-[38rem] overflow-y-auto bg-[#F3F6FA] sm:h-[44rem]">
-        <DownloadPagePreview />
+      <div className="h-[38rem] overflow-y-auto overflow-x-hidden bg-[#F3F6FA] [container-type:inline-size] sm:h-[44rem]">
+        <div className="w-[80rem] origin-top-left" style={{ zoom: 'min(1, calc(100cqw / 80rem))' }}>
+          <DownloadPagePreview />
+        </div>
       </div>
     </Motion.div>
   );

@@ -1,7 +1,7 @@
 export const monitoringTableSurfaceClass =
   'flex min-h-0 w-full flex-col overflow-hidden rounded-[var(--app-radius-lg)] border border-[#ECEFF5] bg-white shadow-[0_0.5rem_1.5rem_rgba(15,23,42,0.06)]';
 
-export const monitoringTableScrollClass = 'min-h-0 w-full overflow-x-auto xl:overflow-x-hidden';
+export const monitoringTableScrollClass = 'min-h-0 w-full overflow-x-auto';
 
 export const monitoringTableClass = 'w-full table-fixed border-separate border-spacing-0';
 

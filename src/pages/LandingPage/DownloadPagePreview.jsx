@@ -117,13 +117,13 @@ function CompactGuideCard({ icon, number, title, description }) {
 
 export default function DownloadPagePreview() {
   return (
-    <main className="min-h-screen bg-[#F3F6FA] text-[#111827]">
+    <main className="min-h-screen min-w-[80rem] bg-[#F3F6FA] text-[#111827]">
       <header className="sticky top-0 z-30 h-[4.5rem] bg-black">
         <div className="mx-auto flex h-full max-w-[min(100%,80rem)] items-center justify-between px-8">
           <div className="flex items-center">
             <img src={garimLogo} alt="GARIM" className="h-8 w-auto" />
           </div>
-          <nav className="hidden items-center gap-10 text-sm font-bold text-white md:flex">
+          <nav className="flex items-center gap-10 text-sm font-bold text-white">
             {[
               ['#apply', '설치 안내'],
               ['#pack-download', '다운로드'],
@@ -175,7 +175,7 @@ export default function DownloadPagePreview() {
             }
           />
 
-          <div className="mt-6 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-6 grid grid-cols-3 gap-7">
             {installSteps.map(([Icon, title, description], index) => (
               <CompactGuideCard
                 key={title}
@@ -201,7 +201,7 @@ export default function DownloadPagePreview() {
           />
 
           <div className="mt-8 rounded-xl border border-[#DDE4EF] bg-[#FAFBFF] p-6">
-            <div className="grid gap-6 lg:grid-cols-[10rem_1fr_auto] lg:items-center">
+            <div className="grid grid-cols-[10rem_1fr_auto] items-center gap-6">
               <img src={packIcon} alt="" className="h-40 w-40 object-contain" />
               <div>
                 <h3 className="break-all text-[clamp(1.35rem,3vw,2rem)] font-black tracking-[-0.03em] text-slate-900">
@@ -217,7 +217,7 @@ export default function DownloadPagePreview() {
                   GARIM 정책 및 환경 설정 적용을 위한 압축 파일입니다.
                 </p>
               </div>
-              <div className="flex flex-col items-stretch gap-4 lg:min-w-[14rem]">
+              <div className="flex min-w-[14rem] flex-col items-stretch gap-4">
                 <AppButton onClick={stopPreviewAction} className="h-16 px-8 text-lg font-black">
                   <Download className="h-5 w-5" />
                   압축 파일 다운로드
@@ -232,7 +232,7 @@ export default function DownloadPagePreview() {
             title="주의사항"
             description="설치 또는 삭제를 진행하기 전에 아래 내용을 확인해 주세요."
           />
-          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <div className="mt-6 grid grid-cols-2 gap-4">
             {cautionItems.map(([title, description]) => (
               <div
                 key={title}
@@ -261,15 +261,15 @@ export default function DownloadPagePreview() {
             }
           />
 
-          <div className="mt-6 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-6 grid grid-cols-3 gap-7">
             {deleteSteps.map(([Icon, title, description], index) => (
               <div
                 key={title}
                 className={
                   index === 3
-                    ? 'xl:col-start-1 xl:translate-x-[calc(50%+0.875rem)]'
+                    ? 'col-start-1 translate-x-[calc(50%+0.875rem)]'
                     : index === 4
-                      ? 'xl:col-start-2 xl:translate-x-[calc(50%+0.875rem)]'
+                      ? 'col-start-2 translate-x-[calc(50%+0.875rem)]'
                       : ''
                 }
               >
@@ -289,7 +289,7 @@ export default function DownloadPagePreview() {
             title="적용 후 확인 방법"
             description="적용이 완료되면 아래 항목을 확인해 주세요."
           />
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid grid-cols-2 gap-6">
             {verifyItems.map(([title, description]) => (
               <div
                 key={title}
@@ -315,7 +315,7 @@ export default function DownloadPagePreview() {
             title="문제가 발생했나요?"
             description="압축 파일 다운로드, 실행 또는 적용 중 문제가 발생하면 관리자에게 문의해 주세요."
           />
-          <div className="mt-8 grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
+          <div className="mt-8 grid grid-cols-[1.3fr_1fr_1fr] gap-4">
             <div className="flex items-center gap-5 rounded-[10px] border border-[#E3E8F2] bg-[#FAFBFF] px-10 py-7">
               <img
                 src={previewTemplate.logoSrc}
@@ -356,7 +356,7 @@ export default function DownloadPagePreview() {
       </div>
 
       <footer className="mt-2 bg-[#101722]">
-        <div className="mx-auto flex max-w-[min(100%,80rem)] flex-col gap-4 px-8 py-8 text-sm font-semibold text-white/62 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-[min(100%,80rem)] flex-row items-center justify-between gap-4 px-8 py-8 text-sm font-semibold text-white/62">
           <div className="flex items-center gap-8">
             <div className="flex items-center">
               <img src={garimLogo} alt="GARIM" className="h-8 w-auto" />

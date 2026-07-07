@@ -6,9 +6,7 @@ import { Container, SECTION_TITLE_REVEAL } from './LandingPage.primitives';
 export default function UsageDashboardSection() {
   return (
     <section id="usage-dashboard" className="relative overflow-hidden bg-white">
-      <img src={dashboardBg} alt="" className="block h-auto w-full" aria-hidden="true" />
-
-      <Container className="absolute inset-0">
+      <Container className="relative z-10 py-10 sm:absolute sm:inset-0 sm:py-0">
         <div className="flex h-full items-center">
           <Motion.div className="max-w-[32rem]" {...SECTION_TITLE_REVEAL}>
             <div className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-[#5B39D6]">
@@ -27,6 +25,8 @@ export default function UsageDashboardSection() {
           </Motion.div>
         </div>
       </Container>
+
+      <img src={dashboardBg} alt="" className="block h-auto w-full" aria-hidden="true" />
     </section>
   );
 }

@@ -665,7 +665,7 @@ export function MonitoringDataTable({
   return (
     <div className={`${monitoringTableSurfaceClass} ${className}`.trim()}>
       <div className={monitoringTableScrollClass}>
-        <table className={`min-w-[min(100%,61.25rem)] ${monitoringTableClass} xl:min-w-0`}>
+        <table className={`min-w-[61.25rem] ${monitoringTableClass}`}>
           <colgroup>
             {showSelection ? <col className="w-[4%]" /> : null}
             <col className="w-[4%]" />
@@ -857,7 +857,7 @@ export function MonitoringDomainTable({ rows, renderLogo, renderToggle, classNam
   return (
     <div className={`flex min-h-0 w-full flex-col pb-0 ${className}`.trim()}>
       <div className="min-h-0 w-full overflow-x-auto">
-        <div className="min-w-[min(100%,47.5rem)] rounded-[var(--app-radius-xl)]">
+        <div className="min-w-[47.5rem] rounded-[var(--app-radius-xl)]">
           <div className="grid h-[var(--app-control-lg)] w-full grid-cols-[minmax(15rem,1.45fr)_minmax(16rem,2fr)_minmax(7rem,0.5fr)] items-center rounded-t-[var(--app-radius-xl)] border-b border-[#E7EBF4] bg-[linear-gradient(180deg,#F8FAFF_0%,#F2F5FC_100%)] px-[var(--app-pad-lg)] text-[clamp(0.82rem,0.95vw,0.9rem)] font-semibold tracking-[-0.01em] text-[#59627A]">
             <span>서비스</span>
             <span>URL</span>
