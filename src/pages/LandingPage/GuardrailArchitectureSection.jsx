@@ -52,7 +52,7 @@ export default function GuardrailArchitectureSection() {
         </Motion.div>
 
         <Motion.div
-          className="relative z-10 mx-auto mt-8 max-w-[26rem] sm:mt-14 sm:max-w-none"
+          className="mt-12 sm:mt-14"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
