@@ -364,21 +364,22 @@ function buildDetailContext(row) {
   const statusCategory = getLogStatusCategory(row);
   const detectionDetail = row.detectionDetail || '-';
   const policyName = getDetectedPolicyName(row);
+  const actionStatus =
+    statusCategory === 'allow'
+      ? '검토필요 처리'
+      : statusCategory === 'masking'
+        ? '마스킹 처리'
+        : statusCategory === 'block'
+          ? '차단 처리'
+          : '정상 처리';
 
   return {
     policyName,
-    actionStatus:
-      statusCategory === 'allow'
-        ? '검토필요 처리'
-        : statusCategory === 'masking'
-          ? '마스킹 처리'
-          : statusCategory === 'block'
-            ? '차단 처리'
-            : '정상 처리',
+    actionStatus,
     policyItems: policyName === '-' ? [] : [policyName],
     answerDetail: buildAnswerDetail(row),
     evidenceLines: splitDetailLines(detectionDetail),
-    actionLines: ['-'],
+    actionLines: [actionStatus],
   };
 }
 
@@ -602,7 +603,7 @@ function DetailPanelText({ children, subtle = false }) {
   );
 }
 
-function DetailBulletList({ items, showMarkers = true }) {
+function DetailBulletList({ items, showMarkers = true, itemClassName = '' }) {
   return (
     <ul className="monitoring-detail-scroll max-h-[min(28vh,13.75rem)] min-w-0 space-y-[var(--app-gap-xs)] overflow-y-auto rounded-[var(--app-radius-sm)] border border-[#EEF1FB] bg-[#FCFDFF] px-[var(--app-pad-sm)] py-[var(--app-pad-xs)] text-[clamp(0.74rem,0.87vw,0.78rem)] leading-[1.65] text-[#2F3A56]">
       {items.map(item => (
@@ -610,7 +611,9 @@ function DetailBulletList({ items, showMarkers = true }) {
           {showMarkers ? (
             <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#6A5AE0]" />
           ) : null}
-          <span className="min-w-0 break-words [overflow-wrap:anywhere]">{item}</span>
+          <span className={`min-w-0 break-words [overflow-wrap:anywhere] ${itemClassName}`.trim()}>
+            {item}
+          </span>
         </li>
       ))}
     </ul>
@@ -752,7 +755,11 @@ export function MonitoringLogDetailContent({ row }) {
             </div>
             <div className="min-w-0 border-b border-[#E7EBF5]">
               <DetailPanel title="조치 내용">
-                <DetailBulletList items={detail.actionLines} showMarkers={false} />
+                <DetailBulletList
+                  items={detail.actionLines}
+                  showMarkers={false}
+                  itemClassName={`font-semibold ${getStatusTextClassName(row)}`}
+                />
               </DetailPanel>
             </div>
           </div>
@@ -1267,7 +1274,11 @@ export function MonitoringLogView({
                         </div>
                         <div className="min-w-0 border-b border-[#E7EBF5]">
                           <DetailPanel title="조치 내용">
-                            <DetailBulletList items={detail.actionLines} showMarkers={false} />
+                            <DetailBulletList
+                              items={detail.actionLines}
+                              showMarkers={false}
+                              itemClassName={`font-semibold ${getStatusTextClassName(row)}`}
+                            />
                           </DetailPanel>
                         </div>
                       </div>
