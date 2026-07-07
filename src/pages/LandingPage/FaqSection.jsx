@@ -1,13 +1,29 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { cn, SectionTitle, SECTION_TITLE_REVEAL } from './LandingPage.primitives';
 
 const FAQ_ITEMS = [
   {
+    q: '관리자 화면을 미리 체험해볼 수 있나요?',
+    a: (
+      <>
+        목업 관리자 페이지에서 대시보드, 모니터링, 정책, 사용자 관리 화면을 확인할 수 있습니다.
+        <br />
+        <Link
+          to="/dashboard"
+          className="font-bold text-[#5B39D6] underline decoration-[#C4B5FD] underline-offset-4 transition hover:text-[#3F22B8]"
+        >
+          목업 페이지 바로가기
+        </Link>
+      </>
+    ),
+  },
+  {
     q: '기존 AI 사이트 차단 솔루션과 무엇이 다른가요?',
-    a: 'GARIM은 생성형 AI 사용 자체를 막는 대신, 실제 업무에 안전하게 활용할 수 있도록 돕습니다.\n사용자가 입력하는 프롬프트를 실시간으로 점검하고 기업 정책에 따라 허용·마스킹·차단합니다.',
+    a: 'GARIM은 생성형 AI 사용 자체를 막는 대신, 실제 업무에 안전하게 활용할 수 있도록 돕습니다.\n별도 사용자 단말 에이전트 설치 없이 프록시 기반으로 적용할 수 있으며,\n사용자가 입력하는 프롬프트를 실시간으로 점검하고 기업 정책에 따라 허용·마스킹·차단합니다.',
   },
   {
     q: '어떤 생성형 AI 서비스를 관리할 수 있나요?',
@@ -18,12 +34,8 @@ const FAQ_ITEMS = [
     a: '개인정보, 기밀정보, 위험 키워드 등 기업이 설정한 탐지 항목을 실시간으로 확인합니다.\n탐지 결과와 정책에 따라 프롬프트를 그대로 허용하거나, 민감정보만 마스킹하거나, 전송을 차단할 수 있습니다.',
   },
   {
-    q: '부서나 사용자별로 다른 정책을 적용할 수 있나요?',
-    a: '가능합니다.\n사용자·부서·직책·IP를 기준으로 AI 접근 권한과 사용 환경을 세부 설정하고, LLM 서비스별로 서로 다른 보안 정책과 탐지 항목을 운영할 수 있습니다.',
-  },
-  {
-    q: '도입하려면 별도의 인프라 구축이 필요한가요?',
-    a: '복잡한 별도 인프라 구성 없이 경량 GARIM Pack으로 빠르게 적용할 수 있습니다.\nPack 다운로드, 관리자 설정, 배포 URL 전달, 전사 적용 및 모니터링의 4단계로 배포할 수 있습니다.',
+    q: '사용자에게는 어떻게 적용하나요?',
+    a: 'GARIM은 온프레미스 환경에 설치한 뒤, 관리자가 안내한 PAC를 사용자 PC에 적용하는 방식으로 운영합니다.\n사용자는 안내된 압축 파일을 내려받아 실행하고, 이후 AI 서비스에 다시 접속하면 조직 정책에 따라 프롬프트 점검과 모니터링이 적용됩니다.',
   },
   {
     q: '탐지 및 조치 내역을 감사 자료로 활용할 수 있나요?',
@@ -36,18 +48,15 @@ export default function FaqSection() {
 
   return (
     <div className="mx-auto flex w-full  flex-col gap-9">
-      <motion.div {...SECTION_TITLE_REVEAL}>
+      <Motion.div {...SECTION_TITLE_REVEAL}>
         <SectionTitle
           eyebrow="FAQ"
           title="자주 묻는 질문"
           desc={
-            <>
-              GARIM의 보안 정책, 지원 서비스, 배포 및 운영에 대해 자주 묻는 질문을
-              정리했습니다.
-            </>
+            <>GARIM의 보안 정책, 지원 서비스, 배포 및 운영에 대해 자주 묻는 질문을 정리했습니다.</>
           }
         />
-      </motion.div>
+      </Motion.div>
 
       <div className="overflow-hidden border-y border-[#e5e1ff] bg-white">
         {FAQ_ITEMS.map((item, index) => {
@@ -80,7 +89,7 @@ export default function FaqSection() {
               </button>
 
               {isOpen ? (
-                <motion.div
+                <Motion.div
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.18, ease: 'easeOut' }}
@@ -89,7 +98,7 @@ export default function FaqSection() {
                   <p className="whitespace-pre-line text-[15px] leading-8 text-[#6b6f76] sm:text-base">
                     {item.a}
                   </p>
-                </motion.div>
+                </Motion.div>
               ) : null}
             </div>
           );

@@ -1,29 +1,22 @@
-import { apiClient } from './client.js';
+import {
+  mockGetFileUploadExtensions,
+  mockGetPolicies,
+  mockPatchPolicyEnabled,
+  mockPutFileUploadExtensions,
+} from '../../mockData.js';
 
 export async function getPolicies() {
-  const { data } = await apiClient.get('/api/policies');
-
-  return data;
+  return mockGetPolicies();
 }
 
 export async function patchPolicyEnabled({ code, enabled }) {
-  const { data } = await apiClient.patch(`/api/policies/${code}/enabled`, {
-    enabled,
-  });
-
-  return data;
+  return mockPatchPolicyEnabled({ code, enabled });
 }
 
 export async function getFileUploadExtensions() {
-  const { data } = await apiClient.get('/api/policies/file-upload/extensions');
-
-  return data;
+  return mockGetFileUploadExtensions();
 }
 
 export async function putFileUploadExtensions({ blockedExtensions }) {
-  const { data } = await apiClient.put('/api/policies/file-upload/extensions', {
-    blocked_extensions: blockedExtensions,
-  });
-
-  return data;
+  return mockPutFileUploadExtensions({ blockedExtensions });
 }

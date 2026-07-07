@@ -59,39 +59,39 @@ const FILE_UPLOAD_PREVIEW_ROWS = [
 
 const SECRET_FILE_PREVIEW_ROWS = [
   {
-    id: 'secret-1',
-    category: '재무 실적 파일',
-    keywords: ['매출 실적', '영업이익', '원가율'],
-    action: '차단',
-    enabled: true,
+    extension: 'xlsx',
+    label: '재무 실적 파일',
+    category: 'confidential',
+    mime_types: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+    blocked: true,
   },
   {
-    id: 'secret-2',
-    category: '계약서 초안 파일',
-    keywords: ['계약 조건', '견적 금액', '거래처명'],
-    action: '차단',
-    enabled: true,
+    extension: 'docx',
+    label: '계약서 초안 파일',
+    category: 'confidential',
+    mime_types: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    blocked: true,
   },
   {
-    id: 'secret-3',
-    category: '사업 전략 발표 파일',
-    keywords: ['시장 진입 전략', '로드맵', '신규 사업'],
-    action: '차단',
-    enabled: true,
+    extension: 'pptx',
+    label: '사업 전략 발표 파일',
+    category: 'confidential',
+    mime_types: ['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+    blocked: true,
   },
   {
-    id: 'secret-4',
-    category: '인사 평가 문서',
-    keywords: ['평가 등급', '연봉 조정', '승진 후보'],
-    action: '차단',
-    enabled: true,
+    extension: 'pdf',
+    label: '인사 평가 문서',
+    category: 'confidential',
+    mime_types: ['application/pdf'],
+    blocked: true,
   },
   {
-    id: 'secret-5',
-    category: '소스코드 파일',
-    keywords: ['repository', 'access token', 'internal api'],
-    action: '차단',
-    enabled: true,
+    extension: 'zip',
+    label: '소스코드 압축 파일',
+    category: 'confidential',
+    mime_types: ['application/zip'],
+    blocked: true,
   },
 ];
 
@@ -148,7 +148,7 @@ function PolicySettingsPreview({ selectedPolicy }) {
   return (
     <FileUploadProtectionContent
       key={selectedPolicy?.code ?? 'privacy_protection'}
-      variant={isFilePolicy ? 'file' : 'privacy'}
+      variant={isFilePolicy || isSecretPolicy ? 'file' : 'privacy'}
       showToolbar={false}
       showPagination={false}
       previewLimit={5}

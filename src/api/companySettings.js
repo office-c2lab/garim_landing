@@ -1,36 +1,22 @@
-import { apiClient } from './client.js';
+import {
+  mockGetDownloadSettings,
+  mockGetTemplateSettings,
+  mockPatchDownloadSettings,
+  mockPatchTemplateSettings,
+} from '../../mockData.js';
 
 export async function getTemplateSettings() {
-  const { data } = await apiClient.get('/api/company-settings/template');
-
-  return data;
+  return mockGetTemplateSettings();
 }
 
 export async function patchTemplateSettings(template) {
-  const formData = new FormData();
-
-  formData.append('company_name', template.company_name ?? '');
-  formData.append('company_description', template.company_description ?? '');
-  formData.append('support_email', template.support_email ?? '');
-  formData.append('support_phone', template.support_phone ?? '');
-
-  if (template.logo_file) {
-    formData.append('logo_file', template.logo_file);
-  }
-
-  const { data } = await apiClient.patch('/api/company-settings/template', formData);
-
-  return data;
+  return mockPatchTemplateSettings(template);
 }
 
 export async function getDownloadSettings() {
-  const { data } = await apiClient.get('/api/company-settings/download');
-
-  return data;
+  return mockGetDownloadSettings();
 }
 
 export async function patchDownloadSettings(settings) {
-  const { data } = await apiClient.patch('/api/company-settings/download', settings);
-
-  return data;
+  return mockPatchDownloadSettings(settings);
 }

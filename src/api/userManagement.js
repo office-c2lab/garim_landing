@@ -1,15 +1,9 @@
-import { apiClient } from './client.js';
+import { mockGetRegisteredClients, mockPatchClientMetadata } from '../../mockData.js';
 
 export async function getRegisteredClients(params) {
-  const { data } = await apiClient.get('/api/user-management/clients', {
-    params,
-  });
-
-  return data;
+  return mockGetRegisteredClients(params);
 }
 
 export async function patchClientMetadata({ id, metadata }) {
-  const { data } = await apiClient.patch(`/api/user-management/clients/${id}`, metadata);
-
-  return data;
+  return mockPatchClientMetadata({ id, metadata });
 }

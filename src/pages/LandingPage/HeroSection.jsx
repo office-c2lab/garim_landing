@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { motion as Motion, useInView } from 'framer-motion';
 
 import LoginAnimatedBackground from '@/components/LoginAnimatedBackground';
 import ArenaOpeningHeroArt from './ArenaOpeningHeroArt';
@@ -79,7 +78,7 @@ export default function HeroSection({ onVisibilityChange }) {
       <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center gap-10 px-5 py-8 text-center sm:gap-12 sm:px-8 sm:py-10">
         <ArenaOpeningHeroArt />
 
-        <motion.p
+        <Motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut', delay: shaderRevealMs / 1000 }}
@@ -115,16 +114,18 @@ export default function HeroSection({ onVisibilityChange }) {
             </span>
             anagement
           </span>
-        </motion.p>
+        </Motion.p>
 
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut', delay: shaderRevealMs / 1000 + 0.13 }}
           className="flex flex-col items-center"
         >
-          <Link
-            to="/dashboard"
+          <a
+            href="https://c2lab.kr/"
+            target="_blank"
+            rel="noreferrer"
             className="group relative z-[1] inline-flex min-w-[280px] items-center justify-center overflow-hidden rounded-2xl bg-[#1d1d1d] px-7 py-4 text-base font-bold leading-[26px] text-[#747474] no-underline shadow-[0_4px_12px_rgba(0,0,0,0.18),0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_1px_rgba(255,255,255,0.05)] transition duration-300 hover:scale-[1.04] hover:bg-[#5B39D6] hover:text-white hover:shadow-[0_0_90px_rgba(91,57,214,0.4),0_4px_12px_rgba(0,0,0,0.18),0_1px_2px_rgba(0,0,0,0.16),inset_0_1px_1px_rgba(255,255,255,0.32)] active:scale-[1.02]"
           >
             <span
@@ -186,8 +187,8 @@ export default function HeroSection({ onVisibilityChange }) {
                 }
               `}
             </style>
-          </Link>
-        </motion.div>
+          </a>
+        </Motion.div>
       </div>
     </section>
   );

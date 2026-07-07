@@ -11,6 +11,8 @@ export const monitoringQueryKeys = {
 export function getMonitoringApiStatus(statusFilter) {
   if (statusFilter === 'normal') return 'normal';
   if (statusFilter === 'block') return 'block';
+  if (statusFilter === 'masking') return 'masking';
+  if (statusFilter === 'allow') return 'allow';
 
   return 'all';
 }

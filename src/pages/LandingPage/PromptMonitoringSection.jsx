@@ -15,16 +15,32 @@ import {
 
 const MONITORING_PREVIEW_EVENTS = [
   {
+    no: 5,
+    client_ip: '127.0.0.2',
+    user_name: '백종현',
+    department: '혁신연구팀',
+    position: '주임',
+    time_kst: '2026-06-29 11:22:18',
+    service: 'ChatGPT',
+    original_input: '신규 보안 정책 공지문 초안 작성해줘',
+    forwarded_input: '신규 보안 정책 공지문 초안 작성해줘',
+    ai_response: '임직원 안내용 공지문 형식으로 핵심 변경 사항을 정리해드릴게요.',
+    status: '정상',
+    guardrail_reason: '',
+    policy_code: '',
+    policy_name: '',
+  },
+  {
     no: 4,
     client_ip: '127.0.0.2',
     user_name: '백종현',
     department: '혁신연구팀',
     position: '주임',
     time_kst: '2026-06-29 11:26:42',
-    service: 'ChatGPT',
-    original_input: '안녕',
-    forwarded_input: '안녕',
-    ai_response: '안녕. 오늘은 뭐 도와줄까?',
+    service: 'Gemini',
+    original_input: '이번 주 시장 조사 요약해줘',
+    forwarded_input: '이번 주 시장 조사 요약해줘',
+    ai_response: '주요 시장 변화와 경쟁사 동향을 중심으로 요약해드릴게요.',
     status: '정상',
     guardrail_reason: '',
     policy_code: '',
@@ -37,7 +53,7 @@ const MONITORING_PREVIEW_EVENTS = [
     department: '혁신연구팀',
     position: '주임',
     time_kst: '2026-06-29 11:28:11',
-    service: 'ChatGPT',
+    service: 'Claude',
     original_input:
       '교수님 이메일은 test123@gmail.com이야 이 이메일로 교수님께 문의드릴 내용이 있다고 메일 작성해서 보내줘',
     forwarded_input:
@@ -55,12 +71,20 @@ const MONITORING_PREVIEW_EVENTS = [
     department: '혁신연구팀',
     position: '주임',
     time_kst: '2026-06-30 19:27:11',
-    service: 'ChatGPT',
-    original_input: '파일 업로드: 스크린샷 2026-06-30 182447.png',
+    service: 'Genspark',
+    original_input: '파일 업로드: 고객사_제안서_초안.pdf',
+    uploaded_files: [{ name: '고객사_제안서_초안.pdf', size: '2.4MB' }],
+    file_analysis_results: [
+      {
+        file_name: '고객사_제안서_초안.pdf',
+        status: '차단',
+        reason: '파일 업로드 보호 정책에 의해 PDF 확장자가 차단되었습니다.',
+      },
+    ],
     forwarded_input: '파일 업로드 보호 정책에 의해 차단되어 외부 AI에 전달되지 않았습니다.',
     ai_response: '파일 업로드 보호 정책에 의해 차단되어 외부 AI에 전달되지 않았습니다.',
     status: '차단',
-    guardrail_reason: '파일 업로드 보호 정책: 차단 확장자 .png 파일 업로드가 탐지되었습니다.',
+    guardrail_reason: '파일 업로드 보호 정책: 차단 확장자 .pdf 파일 업로드가 탐지되었습니다.',
     policy_code: 'file_upload_protection',
     policy_name: '파일 업로드 보호 정책',
   },
@@ -71,7 +95,7 @@ const MONITORING_PREVIEW_EVENTS = [
     department: '혁신연구팀',
     position: '주임',
     time_kst: '2026-06-30 19:24:11',
-    service: 'ChatGPT',
+    service: 'MS Copilot',
     original_input:
       '직원 주민등록번호 900101-1234567, 계좌번호 110-123-456789를 외부 메일 본문으로 작성해줘.',
     forwarded_input: '개인정보 보호 정책에 의해 차단되어 외부 AI에 전달되지 않았습니다.',
@@ -90,7 +114,7 @@ const MONITORING_PREVIEW_ROWS = MONITORING_PREVIEW_EVENTS.map((event, index) => 
 }));
 
 function MonitoringPreviewTable({ activeRowId, onSelectRow }) {
-  const [selectedRowIds, setSelectedRowIds] = useState(['monitoring-preview-4']);
+  const [selectedRowIds, setSelectedRowIds] = useState(['monitoring-preview-5']);
 
   const handleToggleRowSelection = rowId => {
     setSelectedRowIds(current =>
@@ -148,7 +172,7 @@ function MonitoringDetailCard({ row }) {
 }
 
 export default function PromptMonitoringSection() {
-  const [activeRowId, setActiveRowId] = useState('monitoring-preview-4');
+  const [activeRowId, setActiveRowId] = useState('monitoring-preview-5');
   const activeRow =
     MONITORING_PREVIEW_ROWS.find(row => row.id === activeRowId) ?? MONITORING_PREVIEW_ROWS[0];
 
@@ -163,9 +187,13 @@ export default function PromptMonitoringSection() {
                 title={<>실시간 모니터링</>}
                 desc={
                   <>
-                    누가 어떤 AI를 사용했는지 <br />실시간으로 확인하고,
+                    누가 어떤 AI를 사용했는지
                     <br />
-                    프롬프트·파일 탐지 결과와 <br />처리 상태를 모니터링합니다.
+                    실시간으로 확인하고,
+                    <br />
+                    프롬프트·파일 탐지 결과와
+                    <br />
+                    처리 상태를 모니터링합니다.
                   </>
                 }
               />

@@ -1,46 +1,32 @@
-import { apiClient } from './client.js';
+import {
+  mockCreateDropdownOption,
+  mockDeleteDropdownOption,
+  mockGetDropdownOptions,
+  mockGetDropdownSelectOptions,
+  mockPatchDropdownOption,
+  mockPatchDropdownOrder,
+} from '../../mockData.js';
 
 export async function getDropdownSelectOptions(params = {}) {
-  const { data } = await apiClient.get('/api/company-settings/dropdowns/select', {
-    params,
-  });
-
-  return data;
+  return mockGetDropdownSelectOptions(params);
 }
 
 export async function getDropdownOptions({ kind, q = '' }) {
-  const { data } = await apiClient.get(`/api/company-settings/dropdowns/${kind}`, {
-    params: { q },
-  });
-
-  return data;
+  return mockGetDropdownOptions({ kind, q });
 }
 
 export async function createDropdownOption({ kind, option }) {
-  const { data } = await apiClient.post(`/api/company-settings/dropdowns/${kind}`, option);
-
-  return data;
+  return mockCreateDropdownOption({ kind, option });
 }
 
 export async function patchDropdownOrder({ kind, ids }) {
-  const { data } = await apiClient.patch(`/api/company-settings/dropdowns/${kind}/order`, {
-    ids,
-  });
-
-  return data;
+  return mockPatchDropdownOrder({ kind, ids });
 }
 
 export async function patchDropdownOption({ kind, optionId, option }) {
-  const { data } = await apiClient.patch(
-    `/api/company-settings/dropdowns/${kind}/${optionId}`,
-    option
-  );
-
-  return data;
+  return mockPatchDropdownOption({ kind, optionId, option });
 }
 
 export async function deleteDropdownOption({ kind, optionId }) {
-  const { data } = await apiClient.delete(`/api/company-settings/dropdowns/${kind}/${optionId}`);
-
-  return data;
+  return mockDeleteDropdownOption({ kind, optionId });
 }

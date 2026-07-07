@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getSystemIpaddr, getSystemResourceStreamUrl } from '../api/system.js';
+import { getSystemIpaddr, getSystemResource } from '../api/system.js';
 
 export const systemQueryKeys = {
   all: ['system'],
@@ -16,42 +16,36 @@ export function useSystemIpaddrQuery() {
 }
 
 export function useSystemResourceStream() {
-  const isEventSourceSupported = typeof EventSource !== 'undefined';
   const [resource, setResource] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState(() =>
-    isEventSourceSupported ? null : new Error('EventSource is not supported.')
-  );
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!isEventSourceSupported) return undefined;
+    let isMounted = true;
 
-    const eventSource = new EventSource(getSystemResourceStreamUrl());
-
-    const handleResourceMessage = event => {
-      try {
-        setResource(JSON.parse(event.data));
-        setError(null);
-      } catch (parseError) {
-        setError(parseError);
-      }
+    const loadResource = () => {
+      getSystemResource()
+        .then(data => {
+          if (!isMounted) return;
+          setResource(data);
+          setIsConnected(true);
+          setError(null);
+        })
+        .catch(resourceError => {
+          if (!isMounted) return;
+          setIsConnected(false);
+          setError(resourceError);
+        });
     };
 
-    eventSource.addEventListener('open', () => {
-      setIsConnected(true);
-      setError(null);
-    });
-    eventSource.addEventListener('resource', handleResourceMessage);
-    eventSource.addEventListener('message', handleResourceMessage);
-    eventSource.addEventListener('error', () => {
-      setIsConnected(false);
-      setError(new Error('System resource stream disconnected.'));
-    });
+    loadResource();
+    const intervalId = window.setInterval(loadResource, 5000);
 
     return () => {
-      eventSource.close();
+      isMounted = false;
+      window.clearInterval(intervalId);
     };
-  }, [isEventSourceSupported]);
+  }, []);
 
   return { data: resource, error, isConnected };
 }
